@@ -25,6 +25,7 @@ import {
   setGeminiApiKey,
   removeGeminiApiKey,
   hasGeminiApiKey,
+  isUsingCustomApiKey,
 } from '../services/geminiService';
 
 interface ChatMessage {
@@ -269,7 +270,7 @@ export function AITutorChatbot({
                       className="status-live-dot"
                       style={{ background: isLiveAI ? '#22c55e' : '#94a3b8' }}
                     />
-                    {isLiveAI ? 'Google Gemini AI 2.5 Flash' : 'Tra cứu ngoại tuyến · Hướng dẫn 24/7'}
+                    {isLiveAI ? 'Google Gemini AI (Trực tuyến 24/7)' : 'Tra cứu ngoại tuyến · Hướng dẫn 24/7'}
                   </span>
                 </div>
               </div>
@@ -341,13 +342,13 @@ export function AITutorChatbot({
                 </div>
 
                 <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  Nhập Google AI Studio API Key để mở khóa trí tuệ nhân tạo Gemini thật: trả lời mọi câu hỏi, đàm thoại song ngữ tự do và phân tích ngữ pháp theo ngữ cảnh.
+                  Hệ thống đã kích hoạt sẵn Google Gemini AI cho toàn bộ người học. Bạn có thể dán mã API Key cá nhân nếu muốn sử dụng hạn mức riêng.
                 </p>
 
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                   <input
                     type="password"
-                    placeholder="Dán mã API Key (AIzaSy...)"
+                    placeholder={isUsingCustomApiKey() ? "Dán mã API Key cá nhân..." : "Đang dùng Key mặc định của hệ thống..."}
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
                     style={{
@@ -378,30 +379,32 @@ export function AITutorChatbot({
                     }}
                   >
                     {apiKeySavedSuccess ? <Check size={14} /> : <CheckCircle2 size={14} />}
-                    {apiKeySavedSuccess ? 'Đã Lưu' : 'Kích Hoạt'}
+                    {apiKeySavedSuccess ? 'Đã Lưu' : 'Lưu Key'}
                   </button>
                 </div>
 
                 {isLiveAI && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
                     <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700 }}>
-                      ✓ Đang kết nối Gemini 2.5 Flash
+                      {isUsingCustomApiKey() ? '✓ Đang dùng Key cá nhân của bạn' : '✓ Đang dùng Key mặc định hệ thống (Sẵn sàng 24/7)'}
                     </span>
-                    <button
-                      type="button"
-                      onClick={handleRemoveApiKey}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: '#ef4444',
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        padding: '2px 4px',
-                      }}
-                    >
-                      Xóa Key / Dùng Offline
-                    </button>
+                    {isUsingCustomApiKey() && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveApiKey}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#ef4444',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          padding: '2px 4px',
+                        }}
+                      >
+                        Khôi phục Key mặc định
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

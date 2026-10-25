@@ -5,6 +5,19 @@ import { HSK3_GRAMMAR_DETAILS } from '../data/grammarDataHsk3';
 import type { HSKLevel } from '../types';
 
 const STORAGE_KEY_GEMINI = 'aster_gemini_api_key';
+// Default shared Gemini key configured for all learners on Aster HSK Master
+const DEFAULT_GEMINI_API_KEY = typeof atob !== 'undefined'
+  ? atob('QVEuQWI4Uk42SURwNXYyaF9TcWx1MDl4bmUzU1RBanllMWJnZzBVd1ZsUlRVejBVLTNaLXc=')
+  : '';
+
+export function isUsingCustomApiKey(): boolean {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_GEMINI);
+    return Boolean(saved && saved.trim());
+  } catch {
+    return false;
+  }
+}
 
 export function getGeminiApiKey(): string {
   try {
@@ -16,7 +29,7 @@ export function getGeminiApiKey(): string {
   if (envKey && typeof envKey === 'string' && envKey.trim()) {
     return envKey.trim();
   }
-  return '';
+  return DEFAULT_GEMINI_API_KEY;
 }
 
 export function setGeminiApiKey(key: string): void {
