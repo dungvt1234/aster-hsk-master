@@ -83,7 +83,13 @@ Nhiệm vụ của bạn:
     },
   ];
 
-  const models = ['gemini-2.5-flash', 'gemini-1.5-flash'];
+  const models = [
+    'gemini-3-flash-preview',
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+    'gemini-2.5-flash',
+  ];
 
   for (const model of models) {
     try {
@@ -109,11 +115,11 @@ Nhiệm vụ của bạn:
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.warn(`Gemini model ${model} error:`, errorData);
-        if (response.status === 400 || response.status === 403) {
-          throw new Error('API Key không hợp lệ hoặc đã hết hạn mức. Vui lòng kiểm tra lại key.');
+        console.warn(`Gemini model ${model} status ${response.status}:`, errorData);
+        if (response.status === 403) {
+          throw new Error('API Key không có quyền truy cập hoặc đã bị khóa. Vui lòng kiểm tra lại key trên Google AI Studio.');
         }
-        continue; // Try next model
+        continue; // Try next available model in list
       }
 
       const data = await response.json();
