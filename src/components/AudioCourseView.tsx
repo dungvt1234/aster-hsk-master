@@ -2590,6 +2590,349 @@ export function AudioCourseView({
                 </div>
               </div>
 
+              {/* KHUNG LỜI THOẠI & GIẢI THÍCH NỘI DUNG AUDIO CHI TIẾT */}
+              <div
+                style={{
+                  background: 'var(--surface)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  boxShadow: 'var(--card-shadow)',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '20px' }}>📜</span>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                        Lời Thoại & Giải Thích Chi Tiết: {currentTrack ? currentTrack.label : 'Chọn track để xem'}
+                      </h4>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        Đồng bộ chuẩn giáo trình CTI & Đài phát thanh Bắc Kinh
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {onOpenChatAI && currentTrack && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onOpenChatAI(
+                            `Tôi đang nghe Track Audio ${currentTrack.trackNumber}: "${currentTrack.label}" của Bài ${selectedLesson.number} ("${selectedLesson.titleCn}"). Hãy giải thích chi tiết nội dung đoạn nghe này, phân tích các từ vựng trọng tâm, điểm ngữ pháp và lưu ý phát âm/biến điệu cần nhớ!`
+                          )
+                        }
+                        style={{
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          background: 'rgba(2, 132, 199, 0.1)',
+                          border: '1px solid rgba(2, 132, 199, 0.3)',
+                          color: '#0284c7',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <Sparkles size={14} color="#0284c7" /> Hỏi AI Phân Tích Track Này
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveSubTab('dialogue')}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        background: 'var(--surface-hover)',
+                        border: '1px solid var(--border)',
+                        color: 'var(--text-heading)',
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Mở Bài Khóa Đầy Đủ ➔
+                    </button>
+                  </div>
+                </div>
+
+                {/* Phân loại nội dung hiển thị theo loại Track */}
+                {(() => {
+                  const trackLabel = currentTrack?.label?.toLowerCase() || '';
+                  const trackNum = currentTrack?.trackNumber || '';
+
+                  // Trường hợp 1: Track Bài khóa / Hội thoại
+                  if (trackLabel.includes('bài khóa') || trackLabel.includes('hội thoại') || trackNum.endsWith('-1') || trackNum.endsWith('-3') || trackNum.endsWith('-5')) {
+                    const lines = grammarDetail?.dialogue?.lines || [];
+
+                    return (
+                      <div>
+                        <div
+                          style={{
+                            background: 'rgba(56, 189, 248, 0.08)',
+                            borderLeft: '4px solid #0284c7',
+                            padding: '10px 14px',
+                            borderRadius: '0 8px 8px 0',
+                            marginBottom: '16px',
+                            fontSize: '12px',
+                            color: 'var(--text-heading)',
+                          }}
+                        >
+                          <strong>💡 Hướng Dẫn Nghe Hiệu Quả:</strong> Đoạn audio này là bài đọc hội thoại tình huống. Vừa nghe phát thanh viên đọc, bạn hãy đối chiếu từng dòng chữ Hán và Pinyin bên dưới để rèn luyện thính giác nhận diện mặt chữ!
+                        </div>
+
+                        {lines.length > 0 ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {lines.map((l: any, idx: number) => (
+                              <div
+                                key={idx}
+                                style={{
+                                  padding: '12px 14px',
+                                  background: 'var(--surface-card)',
+                                  borderRadius: '10px',
+                                  border: '1px solid var(--border)',
+                                  display: 'flex',
+                                  alignItems: 'flex-start',
+                                  gap: '12px',
+                                }}
+                              >
+                                <span
+                                  style={{
+                                    fontSize: '11px',
+                                    fontWeight: 800,
+                                    background: l.speaker === 'A' ? '#0284c7' : '#d97706',
+                                    color: '#fff',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    marginTop: '2px',
+                                  }}
+                                >
+                                  {l.name || l.speaker}
+                                </span>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ fontFamily: 'var(--font-hanzi)', fontSize: '17px', fontWeight: 700, color: 'var(--text-heading)' }}>
+                                    {l.cn}
+                                  </div>
+                                  <div style={{ fontSize: '13px', marginTop: '2px' }}>
+                                    {renderColoredPinyin(l.pinyin, '13px')}
+                                  </div>
+                                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                                    {l.vi}
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => speak(l.cn)}
+                                  style={{
+                                    width: '28px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    background: 'var(--surface-hover)',
+                                    border: '1px solid var(--border)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--text-heading)',
+                                    cursor: 'pointer',
+                                    flexShrink: 0,
+                                  }}
+                                  title="Nghe lại câu này"
+                                >
+                                  <Volume2 size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                            Đang tải lời thoại bài khóa... Bạn có thể chuyển sang tab "Bài Khóa & Hội Thoại" để đọc trọn bộ.
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  // Trường hợp 2: Track Từ vựng (New Words)
+                  if (trackLabel.includes('từ vựng') || trackLabel.includes('new words') || trackNum.endsWith('-2') || trackNum.endsWith('-4')) {
+                    const vocabList = grammarDetail?.keyVocab || [];
+
+                    return (
+                      <div>
+                        <div
+                          style={{
+                            background: 'rgba(16, 185, 129, 0.08)',
+                            borderLeft: '4px solid #10b981',
+                            padding: '10px 14px',
+                            borderRadius: '0 8px 8px 0',
+                            marginBottom: '16px',
+                            fontSize: '12px',
+                            color: 'var(--text-heading)',
+                          }}
+                        >
+                          <strong>💡 Hướng Dẫn Nghe Từ Vựng:</strong> Phát thanh viên đọc từng từ 2 lần. Lần 1: Nghe chuẩn thanh điệu 4 thanh; Lần 2: Mở miệng đọc to lặp lại theo (Shadowing)!
+                        </div>
+
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px' }}>
+                          {vocabList.map((v: any, vIdx: number) => (
+                            <div
+                              key={vIdx}
+                              style={{
+                                padding: '10px 14px',
+                                background: 'var(--surface-card)',
+                                borderRadius: '10px',
+                                border: '1px solid var(--border)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <div>
+                                <span style={{ fontFamily: 'var(--font-hanzi)', fontSize: '18px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                                  {v.hanzi}
+                                </span>
+                                <div style={{ fontSize: '12px', fontWeight: 700 }}>
+                                  {renderColoredPinyin(v.pinyin, '12px')}
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                  {v.meaning}
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => speak(v.hanzi)}
+                                style={{
+                                  width: '28px',
+                                  height: '28px',
+                                  borderRadius: '50%',
+                                  background: 'var(--surface-hover)',
+                                  border: '1px solid var(--border)',
+                                  color: 'var(--text-heading)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                }}
+                                title="Phát âm từ này"
+                              >
+                                <Volume2 size={14} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // Trường hợp 3: Track Ngữ pháp / Tiểu Ngữ giảng đường
+                  if (trackLabel.includes('tiểu ngữ') || trackLabel.includes('ngữ pháp') || trackNum.endsWith('-6')) {
+                    const points = grammarDetail?.grammarPoints || [];
+
+                    return (
+                      <div>
+                        <div
+                          style={{
+                            background: 'rgba(217, 56, 56, 0.08)',
+                            borderLeft: '4px solid #d93838',
+                            padding: '10px 14px',
+                            borderRadius: '0 8px 8px 0',
+                            marginBottom: '16px',
+                            fontSize: '12px',
+                            color: 'var(--text-heading)',
+                          }}
+                        >
+                          <strong>💡 Trọng Điểm Ngữ Pháp Đang Giảng:</strong> Audio này hướng dẫn chi tiết các cấu trúc ngữ pháp then chốt của bài.
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                          {points.map((pt: any, pIdx: number) => (
+                            <div
+                              key={pIdx}
+                              style={{
+                                padding: '14px',
+                                background: 'var(--surface-card)',
+                                borderRadius: '10px',
+                                border: '1px solid var(--border)',
+                              }}
+                            >
+                              <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '4px' }}>
+                                {pt.title}
+                              </div>
+                              {pt.formula && (
+                                <div style={{ fontSize: '13px', fontWeight: 700, color: '#f87171', background: 'rgba(217, 56, 56, 0.06)', padding: '6px 10px', borderRadius: '6px', marginBottom: '6px' }}>
+                                  📐 {pt.formula}
+                                </div>
+                              )}
+                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                                {pt.explanation}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // Mặc định: Track Luyện tập / Hoạt động
+                  return (
+                    <div
+                      style={{
+                        background: 'var(--surface-card)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '12px',
+                        padding: '16px 20px',
+                        lineHeight: 1.6,
+                        fontSize: '13px',
+                        color: 'var(--text-heading)',
+                      }}
+                    >
+                      <h5 style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                        🎧 Trọng Tâm Luyện Nghe Bài {selectedLesson.number}
+                      </h5>
+                      <p style={{ margin: '0 0 10px', color: 'var(--text-muted)' }}>
+                        Track audio này chứa các bài tập nghe hiểu câu hỏi trắc nghiệm, luyện thanh điệu và mở rộng phản xạ ngữ âm của sách giáo khoa chuẩn FLTRP.
+                      </p>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          onClick={() => setActiveSubTab('dialogue')}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            background: '#0284c7',
+                            border: 'none',
+                            color: '#fff',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Đọc Lời Thoại Bài Khóa
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setActiveSubTab('pdf')}
+                          style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            background: 'var(--surface-hover)',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-heading)',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Mở Sách Scan PDF để xem câu hỏi gốc
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
               {/* Danh sách các Tracks của bài */}
               <div
                 style={{
@@ -2599,7 +2942,7 @@ export function AudioCourseView({
                   padding: '20px',
                 }}
               >
-                <h4 style={{ fontSize: '15px', fontWeight: 800, color: '#fff', marginBottom: '14px' }}>
+                <h4 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '14px' }}>
                   DANH SÁCH {selectedLesson.tracks?.length || 0} TRACKS AUDIO CỦA BÀI {selectedLesson.number}
                 </h4>
 
@@ -2618,8 +2961,8 @@ export function AudioCourseView({
                           justifyContent: 'space-between',
                           padding: '12px 16px',
                           borderRadius: '10px',
-                          background: isCur ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.02)',
-                          border: `1px solid ${isCur ? '#38bdf8' : 'rgba(255, 255, 255, 0.06)'}`,
+                          background: isCur ? 'rgba(2, 132, 199, 0.12)' : 'var(--surface-card)',
+                          border: `1.5px solid ${isCur ? '#0284c7' : 'var(--border)'}`,
                           cursor: 'pointer',
                         }}
                       >
@@ -2629,19 +2972,20 @@ export function AudioCourseView({
                               width: '28px',
                               height: '28px',
                               borderRadius: '50%',
-                              background: isCur ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)',
+                              background: isCur ? '#0284c7' : 'var(--surface-hover)',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: isCur ? '#000' : '#fff',
+                              color: isCur ? '#fff' : 'var(--text-heading)',
                               fontWeight: 700,
                               fontSize: '12px',
+                              border: '1px solid var(--border)',
                             }}
                           >
                             {isCur && isPlaying ? '▶' : track.trackNumber.split('-')[1]}
                           </span>
                           <div>
-                            <div style={{ fontSize: '14px', fontWeight: 600, color: isCur ? '#38bdf8' : '#fff' }}>
+                            <div style={{ fontSize: '14px', fontWeight: 700, color: isCur ? '#0284c7' : 'var(--text-heading)' }}>
                               {track.label}
                             </div>
                             <div style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
@@ -2652,7 +2996,7 @@ export function AudioCourseView({
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           {isDone && (
-                            <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#34d399', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
+                            <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#16a34a', padding: '2px 8px', borderRadius: '4px', fontWeight: 700 }}>
                               ✓ Đã nghe
                             </span>
                           )}
@@ -2668,6 +3012,7 @@ export function AudioCourseView({
                               color: 'var(--text-dim)',
                               background: 'none',
                               border: 'none',
+                              cursor: 'pointer',
                             }}
                             title="Đánh dấu đã nghe hoặc chưa nghe"
                           >
