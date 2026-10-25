@@ -10,6 +10,7 @@ import {
   Headphones,
   ArrowRight,
   FolderDown,
+  Gift,
 } from 'lucide-react';
 import type { HSKLevel, UserStats } from '../types';
 import { LEVEL_COUNTS } from '../data/hskData';
@@ -42,8 +43,13 @@ export function Dashboard({
   return (
     <div className="dashboard-view" style={{ maxWidth: '1150px', margin: '0 auto' }}>
       <div className="hero-banner" style={{ padding: '32px 36px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', background: 'rgba(217, 56, 56, 0.15)', border: '1px solid rgba(217, 56, 56, 0.3)', borderRadius: '20px', color: '#f87171', fontSize: '12px', fontWeight: 700, marginBottom: '12px' }}>
-          <Sparkles size={14} /> HỆ THỐNG GIÁO TRÌNH CHUẨN TÂN HSK 3.0 (FLTRP / CTI)
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '4px 12px', background: 'rgba(217, 56, 56, 0.15)', border: '1px solid rgba(217, 56, 56, 0.3)', borderRadius: '20px', color: '#f87171', fontSize: '12px', fontWeight: 700 }}>
+            <Sparkles size={14} /> HỆ THỐNG GIÁO TRÌNH CHUẨN TÂN HSK 3.0 (FLTRP / CTI)
+          </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '20px', color: '#10b981', fontSize: '12px', fontWeight: 800 }}>
+            <Gift size={14} /> 100% MIỄN PHÍ MỌI CẤP ĐỘ
+          </div>
         </div>
         <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '10px' }}>
           Xin chào, người học tiếng Trung thông minh! 👋

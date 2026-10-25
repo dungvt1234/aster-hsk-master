@@ -10,6 +10,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
+  Gift,
 } from 'lucide-react';
 import { authService, UserProfile } from '../services/authService';
 import { soundEffects } from '../services/audioSynthesizer';
@@ -147,9 +148,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           >
             汉
           </div>
-          <h3 style={{ margin: '0 0 6px', fontSize: '22px', fontWeight: 900, color: 'var(--text-heading)' }}>
+          <h3 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 900, color: 'var(--text-heading)' }}>
             {tab === 'register' ? 'Tạo Tài Khoản Học Viên' : 'Đăng Nhập Aster HSK'}
           </h3>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '3px 10px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '20px', color: '#10b981', fontSize: '11px', fontWeight: 800, margin: '4px 0 8px' }}>
+            🎁 100% MIỄN PHÍ TRỌN ĐỜI CHO MỌI HỌC VIÊN
+          </div>
           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
             Lưu giữ tiến độ vĩnh viễn, bảo vệ chuỗi ngày học 🔥 và đồng bộ trên mọi thiết bị
           </p>
@@ -390,12 +394,15 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         </button>
 
         {/* Trust Badges */}
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '11px', color: 'var(--text-dim)' }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <ShieldCheck size={14} color="#10b981" /> Mã hóa an toàn
+        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '14px', fontSize: '11px', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', color: '#10b981', fontWeight: 800 }}>
+            <Gift size={14} color="#10b981" /> 100% Miễn phí trọn đời
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            <Zap size={14} color="#0284c7" /> Không lo mất điểm học
+            <ShieldCheck size={14} color="#10b981" /> Không cần thẻ tín dụng
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <Zap size={14} color="#0284c7" /> Tự động sao lưu tiến độ
           </span>
         </div>
       </div>

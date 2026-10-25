@@ -7,6 +7,7 @@ import {
   Menu,
   Zap,
   Cloud,
+  Gift,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -169,6 +170,29 @@ export function TopBar({
               </option>
             ))}
           </select>
+        </div>
+
+        {/* 100% Free Forever Badge */}
+        <div
+          className="topbar-stat-pill"
+          style={{
+            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.22) 100%)',
+            border: '1.5px solid #10b981',
+            color: '#10b981',
+            fontSize: '11px',
+            fontWeight: 900,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '5px 11px',
+            borderRadius: '20px',
+            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.18)',
+            cursor: 'default',
+          }}
+          title="Nền tảng học Tân HSK 1 - 4 hoàn toàn miễn phí trọn đời cho mọi học viên!"
+        >
+          <Gift size={13} color="#10b981" />
+          <span>100% MIỄN PHÍ</span>
         </div>
 
         {/* Streak Flame */}

@@ -217,8 +217,8 @@ export function Sidebar({
                 <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.name}
                 </div>
-                <div style={{ fontSize: '11px', color: user.isGuest ? '#0284c7' : 'var(--text-muted)' }}>
-                  {user.isGuest ? 'Tạo tài khoản ➔' : `Cấp độ ${user.currentLevel} · ${user.xp} XP`}
+                <div style={{ fontSize: '11px', color: user.isGuest ? '#0284c7' : '#10b981', fontWeight: 700 }}>
+                  {user.isGuest ? 'Đăng ký (Miễn Phí 100%)' : `🎁 Miễn Phí Trọn Đời · ${user.xp} XP`}
                 </div>
               </div>
             </div>

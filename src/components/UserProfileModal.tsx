@@ -9,6 +9,8 @@ import {
   UserCheck,
   Calendar,
   Sparkles,
+  Gift,
+  CheckCircle2,
 } from 'lucide-react';
 import { authService, UserProfile, AVATAR_PRESETS } from '../services/authService';
 import { cloudSync } from '../services/cloudSyncService';
@@ -217,6 +219,35 @@ export function UserProfileModal({
             <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 600 }}>
               Từ Thuần Thục
             </div>
+          </div>
+        </div>
+
+        {/* 100% Free Forever Plan Card */}
+        <div
+          style={{
+            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.14) 100%)',
+            border: '1.5px solid rgba(16, 185, 129, 0.35)',
+            borderRadius: '16px',
+            padding: '12px 16px',
+            marginBottom: '16px',
+            textAlign: 'left',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 900, color: '#10b981' }}>
+              <Gift size={16} /> Gói Học Viên: Miễn Phí Trọn Đời
+            </span>
+            <span style={{ fontSize: '10px', background: '#10b981', color: '#fff', padding: '2px 8px', borderRadius: '12px', fontWeight: 900 }}>
+              100% FREE
+            </span>
+          </div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <CheckCircle2 size={12} color="#10b981" /> Mở khóa toàn bộ giáo trình & 1.200 từ vựng HSK 1 - 4
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <CheckCircle2 size={12} color="#10b981" /> 120 bài nghe Audio bản ngữ, Studio Tập viết & Gia sư AI 24/7
+            </span>
           </div>
         </div>
 

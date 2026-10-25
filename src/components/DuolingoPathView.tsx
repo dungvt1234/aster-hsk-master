@@ -45,11 +45,6 @@ export function DuolingoPathView({
   const units = ROADMAP_UNITS.filter((u) => u.level === currentLevel);
 
   const handleNodeClick = (node: RoadmapNode) => {
-    if (node.status === 'locked') {
-      soundEffects.playIncorrect();
-      alert('Vui lòng hoàn thành các bài học trước để mở khóa bài này!');
-      return;
-    }
     soundEffects.playTap();
     setSelectedNodeModal(node);
   };
@@ -397,7 +392,9 @@ export function DuolingoPathView({
         <div className="duo-node-popup-overlay" onClick={() => setSelectedNodeModal(null)}>
           <div className="duo-node-popup" onClick={(e) => e.stopPropagation()}>
             <div className="popup-header">
-              <span className="popup-badge">BÀI HỌC CỐT LÕI</span>
+              <span className="popup-badge" style={{ background: '#10b981', color: '#fff', fontWeight: 800 }}>
+                🎁 100% MIỄN PHÍ
+              </span>
               <h3 style={{ margin: '8px 0 4px', fontSize: '18px', fontWeight: 900 }}>
                 {selectedNodeModal.title}
               </h3>
@@ -416,7 +413,7 @@ export function DuolingoPathView({
               style={{ width: '100%', marginTop: '16px' }}
               onClick={() => handleStartLesson(selectedNodeModal)}
             >
-              BẮT ĐẦU (+{selectedNodeModal.xpReward} XP)
+              BẮT ĐẦU HỌC (+{selectedNodeModal.xpReward} XP)
             </button>
           </div>
         </div>
