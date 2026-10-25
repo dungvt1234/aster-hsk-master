@@ -29,6 +29,16 @@ interface DuolingoLessonModalProps {
   onAskAI?: (prompt: string, context: string) => void;
 }
 
+// Hàm xáo trộn mảng Fisher-Yates ngẫu nhiên bất quy tắc
+function shuffleArray<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 export function DuolingoLessonModal({
   title,
   challenges: initialChallenges,
@@ -40,7 +50,7 @@ export function DuolingoLessonModal({
   // Queue of challenges (failed challenges get pushed back to the end)
   const [challengeQueue, setChallengeQueue] = useState<DuolingoChallenge[]>(() => [...initialChallenges]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [hearts, setHearts] = useState(5);
+  const [hearts, setHearts] = useState(10); // Tăng giới hạn tim bài học lên 10
   const [combo, setCombo] = useState(0);
 
   // Challenge state
@@ -48,10 +58,12 @@ export function DuolingoLessonModal({
   const [availableTokens, setAvailableTokens] = useState<string[]>([]);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  // Match pairs state
+  // Match pairs state (được xáo trộn lộn xộn bất quy tắc hai bên độc lập)
   const [matchedIds, setMatchedIds] = useState<string[]>([]);
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
   const [selectedRight, setSelectedRight] = useState<string | null>(null);
+  const [shuffledLeft, setShuffledLeft] = useState<{ id: string; text: string }[]>([]);
+  const [shuffledRight, setShuffledRight] = useState<{ id: string; text: string }[]>([]);
 
   // Grading state
   const [status, setStatus] = useState<'answering' | 'correct' | 'incorrect'>('answering');
@@ -70,9 +82,31 @@ export function DuolingoLessonModal({
 
     if (currentChallenge.type === 'word_bank') {
       setSelectedTokens([]);
-      setAvailableTokens([...(currentChallenge.tokens || [])]);
+      // Xáo trộn toàn bộ token lộn xộn bất quy tắc để học viên tự suy nghĩ ghép câu
+      setAvailableTokens(shuffleArray([...(currentChallenge.tokens || [])]));
     } else if (currentChallenge.type === 'match_pairs') {
       setMatchedIds([]);
+      const pairs = currentChallenge.matchPairs || [];
+      // Xáo trộn cột trái độc lập hoàn toàn
+      const leftItems = shuffleArray(pairs.map((p) => ({ id: p.id, text: p.left })));
+      // Xáo trộn cột phải độc lập hoàn toàn
+      let rightItems = shuffleArray(pairs.map((p) => ({ id: p.id, text: p.right })));
+
+      // Đảm bảo tuyệt đối không bị trùng khớp vị trí hàng ngang (hàng 1 sang hàng 1, hàng 2 sang hàng 2)
+      if (pairs.length > 1) {
+        let attempts = 0;
+        while (attempts < 15 && rightItems.some((r, idx) => r.id === leftItems[idx]?.id)) {
+          rightItems = shuffleArray(rightItems);
+          attempts++;
+        }
+        // Nếu ngẫu nhiên vẫn trùng dòng, xoay vòng mảng cột phải để lệch hoàn toàn
+        if (rightItems.some((r, idx) => r.id === leftItems[idx]?.id)) {
+          rightItems = [...rightItems.slice(1), rightItems[0]];
+        }
+      }
+
+      setShuffledLeft(leftItems);
+      setShuffledRight(rightItems);
     }
 
     // Auto pronounce if prompt has audio text
@@ -230,7 +264,7 @@ export function DuolingoLessonModal({
             <div className="duo-stat-box">
               <span className="stat-label">TIM CÒN LẠI</span>
               <span className="stat-value" style={{ color: '#FF4B4B' }}>
-                {hearts} / 5
+                {hearts} / 10
               </span>
             </div>
           </div>
@@ -243,6 +277,42 @@ export function DuolingoLessonModal({
           >
             TIẾP TỤC HỌC TẬP <ArrowRight size={18} />
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Out of hearts modal - Cho phép học viên nạp đầy 10 tim ngay lập tức để tiếp tục bài học
+  if (hearts <= 0) {
+    return (
+      <div className="duo-modal-overlay">
+        <div className="duo-complete-card" style={{ maxWidth: '420px', textAlign: 'center' }}>
+          <div style={{ fontSize: '56px', marginBottom: '8px' }}>💔</div>
+          <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#FF4B4B' }}>Bạn Đã Dùng Hết Tim!</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px', lineHeight: 1.5 }}>
+            Đừng nản lòng! Chế độ Duolingo Không Giới Hạn cho phép bạn nạp đầy lại <strong>10 tim</strong> để tiếp tục thử thách mà không bị mất tiến trình.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '24px' }}>
+            <button
+              type="button"
+              className="duo-btn duo-btn-primary duo-btn-large"
+              onClick={() => {
+                soundEffects.playFanfare();
+                setHearts(10);
+              }}
+              style={{ width: '100%', background: '#58CC02', borderColor: '#46A302' }}
+            >
+              💖 NẠP ĐẦY 10 TIM & TIẾP TỤC
+            </button>
+            <button
+              type="button"
+              className="duo-btn duo-btn-secondary"
+              onClick={onClose}
+              style={{ width: '100%' }}
+            >
+              Quay lại lộ trình
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -385,40 +455,40 @@ export function DuolingoLessonModal({
                 </div>
               )}
 
-              {/* 2. MATCH PAIRS CHALLENGE */}
+              {/* 2. MATCH PAIRS CHALLENGE (Xáo trộn lộn xộn bất quy tắc hai bên độc lập) */}
               {currentChallenge.type === 'match_pairs' && (
                 <div className="duo-match-grid">
                   <div className="duo-match-col">
-                    {currentChallenge.matchPairs?.map((pair) => {
-                      const isMatched = matchedIds.includes(pair.id);
-                      const isSelected = selectedLeft === pair.id;
+                    {shuffledLeft.map((item) => {
+                      const isMatched = matchedIds.includes(item.id);
+                      const isSelected = selectedLeft === item.id;
                       return (
                         <button
-                          key={`left-${pair.id}`}
+                          key={`left-${item.id}`}
                           type="button"
                           className={`duo-match-btn ${isMatched ? 'matched' : ''} ${isSelected ? 'selected' : ''}`}
-                          onClick={() => handleMatchLeft(pair.id)}
+                          onClick={() => handleMatchLeft(item.id)}
                           disabled={isMatched}
                         >
-                          <span style={{ fontSize: '18px', fontWeight: 800 }}>{pair.left}</span>
+                          <span style={{ fontSize: '18px', fontWeight: 800 }}>{item.text}</span>
                         </button>
                       );
                     })}
                   </div>
 
                   <div className="duo-match-col">
-                    {currentChallenge.matchPairs?.map((pair) => {
-                      const isMatched = matchedIds.includes(pair.id);
-                      const isSelected = selectedRight === pair.id;
+                    {shuffledRight.map((item) => {
+                      const isMatched = matchedIds.includes(item.id);
+                      const isSelected = selectedRight === item.id;
                       return (
                         <button
-                          key={`right-${pair.id}`}
+                          key={`right-${item.id}`}
                           type="button"
                           className={`duo-match-btn ${isMatched ? 'matched' : ''} ${isSelected ? 'selected' : ''}`}
-                          onClick={() => handleMatchRight(pair.id)}
+                          onClick={() => handleMatchRight(item.id)}
                           disabled={isMatched}
                         >
-                          <span>{pair.right}</span>
+                          <span>{item.text}</span>
                         </button>
                       );
                     })}

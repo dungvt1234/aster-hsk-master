@@ -258,10 +258,10 @@ export function Header({
             background: 'rgba(255, 75, 75, 0.12)',
             border: '1px solid rgba(255, 75, 75, 0.25)',
           }}
-          title="Mạng sống còn lại: 5/5"
+          title="Mạng sống còn lại: 10/10"
         >
           <Heart size={15} fill="#FF4B4B" color="#FF4B4B" />
-          <span>5/5</span>
+          <span>10/10</span>
         </div>
 
         {/* Nút Mở Trợ Lý AI */}

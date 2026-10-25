@@ -217,9 +217,9 @@ export function TopBar({
         </div>
 
         {/* Hearts */}
-        <div className="topbar-stat-pill hearts" title="Trái tim còn lại trong ngày">
+        <div className="topbar-stat-pill hearts" title="Trái tim còn lại trong ngày (10/10)">
           <Heart size={16} fill="#FF4B4B" color="#FF4B4B" />
-          <span className="stat-number">5/5</span>
+          <span className="stat-number">10/10</span>
         </div>
 
         {/* Enterprise Cloud Sync Status */}
