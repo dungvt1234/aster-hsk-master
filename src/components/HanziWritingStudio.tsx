@@ -15,6 +15,10 @@ import {
   Lightbulb,
   Compass,
   Printer,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  ArrowLeft,
 } from 'lucide-react';
 import type { HSKLevel, VocabItem } from '../types';
 import { HSK_VOCABULARY } from '../data/hskData';
@@ -78,6 +82,13 @@ export function HanziWritingStudio({
   const [brushSize] = useState(14);
   const [strokeCountDrawn, setStrokeCountDrawn] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [autoAdvance, setAutoAdvance] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('aster_writing_auto_advance') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [practicedCharacters, setPracticedCharacters] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('aster_practiced_hanzi');
@@ -285,6 +296,43 @@ export function HanziWritingStudio({
     setIsCompleted(false);
   };
 
+  const handleNextCharacter = () => {
+    if (customInput) {
+      setCustomInput('');
+    }
+    if (filteredVocab.length > 0) {
+      setSelectedIndex((prev) => (prev + 1) % filteredVocab.length);
+    }
+    soundEffects.playTap();
+  };
+
+  const handlePrevCharacter = () => {
+    if (customInput) {
+      setCustomInput('');
+    }
+    if (filteredVocab.length > 0) {
+      setSelectedIndex((prev) => (prev - 1 + filteredVocab.length) % filteredVocab.length);
+    }
+    soundEffects.playTap();
+  };
+
+  // Keyboard navigation for ArrowLeft / ArrowRight
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        handleNextCharacter();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrevCharacter();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [filteredVocab.length, customInput]);
+
   const handleCompletePractice = () => {
     if (!currentItem) return;
     setIsCompleted(true);
@@ -296,6 +344,12 @@ export function HanziWritingStudio({
       try {
         localStorage.setItem('aster_practiced_hanzi', JSON.stringify(updated));
       } catch {}
+    }
+
+    if (autoAdvance) {
+      setTimeout(() => {
+        handleNextCharacter();
+      }, 1200);
     }
   };
 
@@ -853,31 +907,140 @@ export function HanziWritingStudio({
             />
           </div>
 
+          {/* Completion Celebration & Jump Banner */}
+          {isCompleted && (
+            <div
+              style={{
+                width: '100%',
+                marginTop: '14px',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)',
+                border: '1.5px solid #10b981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '22px' }}>🎉</span>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#059669' }}>
+                    Xuất sắc! Bạn đã viết xong chữ {currentItem?.hanzi}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    {autoAdvance ? 'Đang tự động chuyển chữ tiếp theo (1.2s)...' : 'Bấm nút bên phải hoặc phím ➔ để nhảy sang chữ mới'}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleNextCharacter}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '9px 18px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  border: 'none',
+                  color: '#fff',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Nhảy qua chữ tiếp theo <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
+
           {/* Canvas Bottom Action Controls */}
           <div
             style={{
               width: '100%',
               display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              flexDirection: 'column',
+              gap: '12px',
               marginTop: '16px',
               paddingTop: '12px',
               borderTop: '1px solid var(--border)',
             }}
           >
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-              Số nét đã vẽ: <strong style={{ color: 'var(--text-heading)' }}>{strokeCountDrawn}</strong> / {currentItem?.strokeCount || '—'} nét
+            {/* Top row: Counter, Index info, and Auto-Advance Toggle */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px',
+                fontSize: '12px',
+                color: 'var(--text-muted)',
+              }}
+            >
+              <div>
+                Số nét: <strong style={{ color: 'var(--text-heading)' }}>{strokeCountDrawn}</strong> / {currentItem?.strokeCount || '—'} nét
+                {filteredVocab.length > 0 && !customInput && (
+                  <span style={{ marginLeft: '8px', color: 'var(--text-dim)' }}>
+                    • Chữ <strong>{selectedIndex + 1}</strong> / {filteredVocab.length}
+                  </span>
+                )}
+              </div>
+
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  userSelect: 'none',
+                  color: autoAdvance ? '#10b981' : 'var(--text-dim)',
+                  fontWeight: autoAdvance ? 700 : 500,
+                }}
+                title="Tự động nhảy sang chữ tiếp theo sau khi bấm Hoàn thành"
+              >
+                <input
+                  type="checkbox"
+                  checked={autoAdvance}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setAutoAdvance(checked);
+                    try {
+                      localStorage.setItem('aster_writing_auto_advance', checked ? 'true' : 'false');
+                    } catch {}
+                  }}
+                  style={{ accentColor: '#10b981', cursor: 'pointer' }}
+                />
+                Tự động qua chữ mới (1.2s)
+              </label>
             </div>
 
-            <div style={{ display: 'flex', gap: '8px' }}>
+            {/* Bottom row: Action Buttons */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '8px',
+              }}
+            >
+              {/* Previous Character */}
               <button
                 type="button"
-                onClick={handleClearCanvas}
+                onClick={handlePrevCharacter}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '8px 14px',
+                  padding: '8px 12px',
                   borderRadius: '8px',
                   background: 'var(--surface-hover)',
                   border: '1px solid var(--border)',
@@ -886,54 +1049,116 @@ export function HanziWritingStudio({
                   fontWeight: 700,
                   cursor: 'pointer',
                 }}
-                title="Xóa viết lại từ đầu"
+                title="Chữ trước (Phím tắt: ← Mũi tên trái)"
               >
-                <RotateCcw size={14} /> Xóa vẽ lại
+                <ChevronLeft size={16} /> Chữ trước
               </button>
 
-              <button
-                type="button"
-                onClick={handlePrintWorksheet}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 14px',
-                  borderRadius: '8px',
-                  background: 'rgba(2, 132, 199, 0.12)',
-                  border: '1.5px solid rgba(2, 132, 199, 0.4)',
-                  color: '#0284c7',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-                title="In phiếu tập viết ô Mễ Tự Cách khổ A4 để luyện viết tay"
-              >
-                <Printer size={14} /> In Vở Tập Viết (A4)
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleClearCanvas}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: 'var(--surface-hover)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text)',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                  title="Xóa viết lại từ đầu"
+                >
+                  <RotateCcw size={14} /> Xóa vẽ lại
+                </button>
 
-              <button
-                type="button"
-                onClick={handleCompletePractice}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '8px 18px',
-                  borderRadius: '8px',
-                  background: isCompleted ? '#16a34a' : '#ec4899',
-                  border: 'none',
-                  color: '#fff',
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(236, 72, 153, 0.3)',
-                }}
-              >
-                {isCompleted ? <Check size={14} /> : <Sparkles size={14} />}
-                {isCompleted ? 'Đã Ghi Nhớ ✓' : 'Hoàn Thành!'}
-              </button>
+                <button
+                  type="button"
+                  onClick={handlePrintWorksheet}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: 'rgba(2, 132, 199, 0.12)',
+                    border: '1.5px solid rgba(2, 132, 199, 0.4)',
+                    color: '#0284c7',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                  title="In phiếu tập viết ô Mễ Tự Cách khổ A4 để luyện viết tay"
+                >
+                  <Printer size={14} /> In A4
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleCompletePractice}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    background: isCompleted ? '#16a34a' : 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    boxShadow: isCompleted ? '0 2px 8px rgba(22, 163, 74, 0.3)' : '0 2px 8px rgba(236, 72, 153, 0.3)',
+                  }}
+                >
+                  {isCompleted ? <Check size={14} /> : <Sparkles size={14} />}
+                  {isCompleted ? 'Đã Ghi Nhớ ✓' : 'Hoàn Thành!'}
+                </button>
+
+                {/* Next Character button - Extra prominent */}
+                <button
+                  type="button"
+                  onClick={handleNextCharacter}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: isCompleted ? '8px 18px' : '8px 14px',
+                    borderRadius: '8px',
+                    background: isCompleted
+                      ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
+                      : 'var(--brand)',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    boxShadow: isCompleted
+                      ? '0 4px 14px rgba(16, 185, 129, 0.4)'
+                      : '0 2px 8px rgba(59, 130, 246, 0.25)',
+                    transform: isCompleted ? 'scale(1.05)' : 'none',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                  title="Nhảy qua chữ tiếp theo (Phím tắt: → Mũi tên phải)"
+                >
+                  {isCompleted ? (
+                    <>
+                      <span>CHỮ TIẾP THEO</span>
+                      <ArrowRight size={16} />
+                    </>
+                  ) : (
+                    <>
+                      <span>Chữ tiếp</span>
+                      <ChevronRight size={16} />
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
