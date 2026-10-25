@@ -38,12 +38,35 @@ const STROKE_RULES = [
   { name: 'Giữa trước hai bên sau', cn: '先中间后两边', rule: 'Đối với chữ đối xứng, nét giữa viết trước, hai bên viết sau.' },
 ];
 
+export type VocabCategory = 'all' | 'numbers' | 'basic_strokes' | 'pronouns' | 'family';
+
+const NUMBER_HANZI = new Set([
+  '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '零', '两', '百', '千', '万', '几', '多少', '个', '块', '钱', '第一', '次', '元', '斤'
+]);
+
+const PRONOUN_GREETING_HANZI = new Set([
+  '我', '我们', '你', '他', '她', '好', '是', '有', '没', '叫', '去', '来', '回', '会', '能', '想', '看', '听', '说', '读', '写', '字', '吗', '呢', '很', '太', '都', '和', '在', '里', '前', '后', '坐', '请', '谢谢', '再见', '对不起', '没关系', '不客气'
+]);
+
+const FAMILY_LIFE_HANZI = new Set([
+  '家', '爸爸', '妈妈', '儿子', '女儿', '朋友', '老师', '学生', '学习', '学校', '同', '吃', '喝', '茶', '米饭', '菜', '苹果', '买', '狗', '猫', '爱', '喜欢', '工作', '年', '今天', '明天', '昨天', '点', '分钟', '现在', '冷', '热', '高兴', '漂亮', '电脑', '电视', '电影', '飞机', '出租车', '饭店'
+]);
+
+const CATEGORY_TABS: { id: VocabCategory; label: string; icon: string }[] = [
+  { id: 'all', label: 'Tất Cả', icon: '📚' },
+  { id: 'numbers', label: 'Số Đếm (1 - 10, Trăm, Nghìn)', icon: '🔢' },
+  { id: 'basic_strokes', label: 'Nét Cơ Bản (1 - 4 nét)', icon: '🌱' },
+  { id: 'pronouns', label: 'Đại Từ & Chào Hỏi', icon: '👋' },
+  { id: 'family', label: 'Gia Đình & Đời Sống', icon: '👨‍👩‍👧' },
+];
+
 export function HanziWritingStudio({
   currentLevel,
   onSelectLevel,
   onOpenChatAI,
 }: HanziWritingStudioProps) {
   const [selectedLevel, setSelectedLevel] = useState<HSKLevel>(currentLevel);
+  const [activeCategory, setActiveCategory] = useState<VocabCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [customInput, setCustomInput] = useState('');
@@ -68,18 +91,40 @@ export function HanziWritingStudio({
   const isDrawingRef = useRef(false);
   const lastPointRef = useRef<{ x: number; y: number } | null>(null);
 
-  // Filter vocabulary by level and search query
-  const levelVocab = HSK_VOCABULARY.filter(
-    (item) => item.level === selectedLevel
-  );
+  // Filter vocabulary by level and category
+  const levelVocab = useMemo(() => {
+    return HSK_VOCABULARY.filter((item) => item.level === selectedLevel);
+  }, [selectedLevel]);
 
-  const filteredVocab = levelVocab.filter(
-    (item) =>
-      item.hanzi.includes(searchQuery.trim()) ||
-      item.pinyin.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      item.meaning.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-      item.hanViet.toLowerCase().includes(searchQuery.toLowerCase().trim())
-  );
+  const categoryVocab = useMemo(() => {
+    return levelVocab.filter((item) => {
+      if (activeCategory === 'numbers') {
+        return item.partOfSpeech === 'Số từ' || NUMBER_HANZI.has(item.hanzi);
+      }
+      if (activeCategory === 'basic_strokes') {
+        return item.strokeCount <= 4;
+      }
+      if (activeCategory === 'pronouns') {
+        return item.partOfSpeech === 'Đại từ' || PRONOUN_GREETING_HANZI.has(item.hanzi);
+      }
+      if (activeCategory === 'family') {
+        return FAMILY_LIFE_HANZI.has(item.hanzi);
+      }
+      return true;
+    });
+  }, [levelVocab, activeCategory]);
+
+  const filteredVocab = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return categoryVocab;
+    return categoryVocab.filter(
+      (item) =>
+        item.hanzi.includes(q) ||
+        item.pinyin.toLowerCase().includes(q) ||
+        item.meaning.toLowerCase().includes(q) ||
+        item.hanViet.toLowerCase().includes(q)
+    );
+  }, [categoryVocab, searchQuery]);
 
   const customVocabItem: VocabItem | null = useMemo(() => {
     const trimmed = customInput.trim();
@@ -551,6 +596,57 @@ export function HanziWritingStudio({
             />
           </div>
         </div>
+      </div>
+
+      {/* 2b. Lộ Trình Sư Phạm Filter Bar (Số Đếm 1-10 -> Nét Tối Giản -> Đại Từ -> Gia Đình...) */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '20px',
+          flexWrap: 'wrap',
+          background: 'var(--surface)',
+          padding: '10px 16px',
+          borderRadius: '14px',
+          border: '1.5px solid var(--border)',
+          boxShadow: 'var(--card-shadow)',
+        }}
+      >
+        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          📑 Phân loại giáo án:
+        </span>
+        {CATEGORY_TABS.map((tab) => {
+          const isActive = activeCategory === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => {
+                setActiveCategory(tab.id);
+                setSelectedIndex(0);
+              }}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '8px',
+                fontSize: '12px',
+                fontWeight: isActive ? 800 : 600,
+                background: isActive ? '#ec4899' : 'var(--surface-card)',
+                color: isActive ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${isActive ? '#ec4899' : 'var(--border)'}`,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: isActive ? '0 2px 8px rgba(236, 72, 153, 0.3)' : 'none',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <span>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* 3. Main Workspace: Canvas Left + Info & Guide Right */}
@@ -1108,10 +1204,15 @@ export function HanziWritingStudio({
               padding: '16px 20px',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
-                Chọn Chữ Hán Để Tập Viết ({filteredVocab.length} từ)
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+              <div>
+                <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                  Chọn Chữ Hán Để Tập Viết ({filteredVocab.length} từ)
+                </span>
+                <span style={{ fontSize: '11px', color: '#ec4899', marginLeft: '8px', fontWeight: 700 }}>
+                  • {CATEGORY_TABS.find((t) => t.id === activeCategory)?.label}
+                </span>
+              </div>
               <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>Bấm chữ để tải vào canvas</span>
             </div>
 

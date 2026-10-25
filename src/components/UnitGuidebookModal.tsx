@@ -58,6 +58,111 @@ const UNIT_GUIDE_DATA: Record<
     dialogue: DialogueLine[];
   }
 > = {
+  'unit-hsk1-0': {
+    grammars: [
+      {
+        title: '1. Quy tắc ghép số từ 11 đến 99 trong tiếng Trung',
+        formula: '11 - 19: 十 + [Số đơn vị] | 20 - 99: [Số hàng chục] + 十 (+ [Số đơn vị])',
+        explanation:
+          'Quy tắc số học tiếng Trung hoàn toàn trực quan: 11 là 十一 (10 + 1), 20 là 二十 (2 x 10), 25 là 二十五 (2 x 10 + 5). Không có ngoại lệ phức tạp.',
+        examples: [
+          {
+            chinese: '十一，十五，十九。',
+            pinyin: 'Shíyī, shíwǔ, shíjiǔ.',
+            vietnamese: 'Mười một, mười lăm, mười chín.',
+            highlights: ['十'],
+          },
+          {
+            chinese: '二十，三十五，九十九。',
+            pinyin: 'Èrshí, sānshíwǔ, jiǔshíjiǔ.',
+            vietnamese: 'Hai mươi, ba mươi lăm, chín mươi chín.',
+            highlights: ['十'],
+          },
+        ],
+      },
+      {
+        title: '2. Phân biệt số 2: 二 (èr) và 两 (liǎng)',
+        formula: 'Đếm số thứ tự: dùng 二 | Đếm số lượng + Lượng từ: dùng 两',
+        explanation:
+          'Khi đếm số (1, 2, 3), số phòng, số điện thoại dùng 二 (èr). Khi đứng trước lượng từ chỉ số lượng người/vật (hai cái, hai người, hai vạn) bắt buộc dùng 两 (liǎng).',
+        examples: [
+          {
+            chinese: '我有两只猫。',
+            pinyin: 'Wǒ yǒu liǎng zhī māo.',
+            vietnamese: 'Tôi có hai con mèo (trước lượng từ 只 dùng 两).',
+            highlights: ['两'],
+          },
+          {
+            chinese: '一、二、三，开始！',
+            pinyin: 'Yī, èr, sān, kāishǐ!',
+            vietnamese: 'Một, hai, ba, bắt đầu! (Đếm số dùng 二).',
+            highlights: ['二'],
+          },
+        ],
+      },
+      {
+        title: '3. Cách hỏi và trả lời giá tiền với 多少钱',
+        formula: '[Đồ vật] + 多少钱？ -> ... 块 (tiền tệ)',
+        explanation:
+          '多少 (bao nhiêu) + 钱 (tiền). Trong văn nói hàng ngày, người Trung Quốc thường dùng 块 (kuài - đồng) thay cho 元 (yuán).',
+        examples: [
+          {
+            chinese: '这个苹果多少钱？',
+            pinyin: 'Zhège píngguǒ duōshao qián?',
+            vietnamese: 'Quả táo này bao nhiêu tiền?',
+            highlights: ['多少钱'],
+          },
+          {
+            chinese: '三块钱一个。',
+            pinyin: 'Sān kuài qián yí gè.',
+            vietnamese: 'Ba tệ một quả.',
+            highlights: ['块', '钱'],
+          },
+        ],
+      },
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Quy tắc biến điệu thần thánh của chữ "一" (Yī)',
+        desc: 'Chữ 一 nguyên bản đọc thanh 1 (yī) khi đếm lẻ. Nhưng đứng trước thanh 4 đổi thành thanh 2 (yí); đứng trước thanh 1, 2, 3 đổi thành thanh 4 (yì)!',
+        examples: [
+          { chinese: '一个 (yí gè)', pinyin: 'Yí gè', note: 'Đứng trước thanh 4 (个 - gè), 一 đổi thành thanh 2: yí' },
+          { chinese: '一天 (yì tiān)', pinyin: 'Yì tiān', note: 'Đứng trước thanh 1 (天 - tiān), 一 đổi thành thanh 4: yì' },
+          { chinese: '第一 (dì-yī)', pinyin: 'Dì-yī', note: 'Đứng một mình hoặc chỉ số thứ tự, giữ nguyên thanh 1: yī' },
+        ],
+      },
+    ],
+    dialogue: [
+      {
+        speaker: 'A (Khách mua)',
+        chinese: '你好！请问这个西瓜多少钱？',
+        pinyin: 'Nǐ hǎo! Qǐngwèn zhège xīguā duōshao qián?',
+        vietnamese: 'Xin chào! Xin hỏi quả dưa hấu này bao nhiêu tiền?',
+        highlights: ['多少钱'],
+      },
+      {
+        speaker: 'B (Người bán)',
+        chinese: '你好！十块钱一个。',
+        pinyin: 'Nǐ hǎo! Shí kuài qián yí gè.',
+        vietnamese: 'Chào bạn! Mười tệ một quả.',
+        highlights: ['十', '块'],
+      },
+      {
+        speaker: 'A (Khách mua)',
+        chinese: '我要两个，一共多少钱？',
+        pinyin: 'Wǒ yào liǎng gè, yígòng duōshao qián?',
+        vietnamese: 'Tôi lấy hai quả, tổng cộng bao nhiêu tiền?',
+        highlights: ['两', '多少钱'],
+      },
+      {
+        speaker: 'B (Người bán)',
+        chinese: '一共二十块钱。',
+        pinyin: 'Yígòng èrshí kuài qián.',
+        vietnamese: 'Tổng cộng hai mươi tệ.',
+        highlights: ['二十', '块'],
+      },
+    ],
+  },
   'unit-hsk1-1': {
     grammars: [
       {
