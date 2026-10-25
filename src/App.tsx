@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { HSKLevel, CardProgress, UserStats } from './types';
 import { HSK_VOCABULARY, LEVEL_COUNTS } from './data/hskData';
-import { QUIZ_QUESTIONS, MOCK_EXAM_HSK1 } from './data/cbtData';
+import { QUIZ_QUESTIONS, getMockExamByLevel } from './data/cbtData';
 import {
   loadAllProgress,
   saveAllProgress,
@@ -228,7 +228,7 @@ export function App() {
           )}
 
           {activeTab === 'cbt' && (
-            <CBTExamView exam={MOCK_EXAM_HSK1} />
+            <CBTExamView exam={getMockExamByLevel(currentLevel)} />
           )}
 
           {activeTab === 'dictionary' && (

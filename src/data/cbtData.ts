@@ -1,4 +1,4 @@
-import type { CBTExam, QuizQuestion } from '../types';
+import type { CBTExam, QuizQuestion, HSKLevel } from '../types';
 
 export const QUIZ_QUESTIONS: QuizQuestion[] = [
   // --- HSK 1 Quiz ---
@@ -236,3 +236,209 @@ export const MOCK_EXAM_HSK1: CBTExam = {
     },
   ],
 };
+
+// ==========================================
+// ĐỀ THI THỬ CBT HSK 2 CHUẨN QUỐC TẾ
+// ==========================================
+export const MOCK_EXAM_HSK2: CBTExam = {
+  id: 'hsk2-cbt-01',
+  level: 2,
+  title: 'Đề Thi Thử HSK 2 Chuẩn Quốc Tế CBT (Mã đề: H21001)',
+  durationMinutes: 50,
+  totalScore: 200,
+  passScore: 120,
+  questions: [
+    {
+      id: 1,
+      section: 'listening',
+      part: 1,
+      audioScript: '听录音：请问，去火车站怎么走？ — 一直往前走，到红绿灯右拐。',
+      prompt: '[Nghe hiểu HSK 2] Người phụ nữ đang hỏi đường đi đâu?',
+      options: ['A. Đến thư viện', 'B. Đến ga tàu hỏa (火车站)', 'C. Đến sân bay', 'D. Đến bệnh viện'],
+      correctAnswer: 'B',
+      explanation: 'Đoạn ghi âm nói rõ: "去火车站怎么走" (Đi ga tàu hỏa đi như thế nào). Đáp án B.',
+    },
+    {
+      id: 2,
+      section: 'listening',
+      part: 1,
+      audioScript: '听录音：外面下着大雨呢，你还是打车去吧。',
+      prompt: '[Nghe hiểu HSK 2] Người nói khuyên đối phương nên làm gì?',
+      options: ['A. Đi bộ dưới mưa', 'B. Đi xe đạp', 'C. Bắt taxi đi (打车去)', 'D. Ở nhà không đi'],
+      correctAnswer: 'C',
+      explanation: 'Khuyên "还是打车去吧" (Hay là bắt taxi đi đi). Đáp án C.',
+    },
+    {
+      id: 3,
+      section: 'listening',
+      part: 2,
+      audioScript: '对话：— 你今天买的新自行车真漂亮！ — 是我爸爸送给我的生日礼物。',
+      prompt: '[Nghe hiểu HSK 2] Chiếc xe đạp mới do ai tặng?',
+      options: ['A. Bạn cùng lớp', 'B. Mẹ', 'C. Bố (爸爸)', 'D. Tự mua'],
+      correctAnswer: 'C',
+      explanation: 'Là quà sinh nhật do bố tặng: "是我爸爸送给我的生日礼物". Đáp án C.',
+    },
+    {
+      id: 4,
+      section: 'listening',
+      part: 2,
+      audioScript: '对话：— 医生，我的感冒什么时候能好？ — 按时吃药，多喝热水，两天就好了。',
+      prompt: '[Nghe hiểu HSK 2] Bác sĩ dặn dò bệnh nhân điều gì?',
+      options: [
+        'A. Uống thuốc đúng giờ và uống nhiều nước ấm (多喝热水)',
+        'B. Đi chạy bộ ngoài trời',
+        'C. Nhịn ăn tối',
+        'D. Uống nước đá lạnh',
+      ],
+      correctAnswer: 'A',
+      explanation: 'Bác sĩ dặn: "按时吃药，多喝热水" (Uống thuốc đúng giờ, uống nhiều nước ấm).',
+    },
+    {
+      id: 5,
+      section: 'reading',
+      part: 1,
+      prompt: '[Đọc hiểu HSK 2] Điền từ thích hợp: "今天虽然很累，___我学到了很多新知识。"',
+      options: ['A. 但是 (Nhưng)', 'B. 因为 (Bởi vì)', 'C. 所以 (Cho nên)', 'D. 如果 (Nếu như)'],
+      correctAnswer: 'A',
+      explanation: 'Cặp liên từ tương phản: 虽然……但是…… (Tuy rằng... nhưng mà...). Đáp án A.',
+    },
+    {
+      id: 6,
+      section: 'reading',
+      part: 1,
+      prompt: '[Đọc hiểu HSK 2] "这件红色的衣服比那件黑色的___二十块。"',
+      options: ['A. 贵 (Đắt)', 'B. 长 (Dài)', 'C. 高 (Cao)', 'D. 远 (Xa)'],
+      correctAnswer: 'A',
+      explanation: 'So sánh về giá cả tiền nong dùng 贵 (đắt hơn 20 tệ). Đáp án A.',
+    },
+    {
+      id: 7,
+      section: 'reading',
+      part: 2,
+      passage: '昨天下午我和同事一起去吃了北京烤鸭，那是我们第一次吃，大家都觉得味道非常棒。',
+      prompt: '[Đọc hiểu HSK 2] Họ đánh giá hương vị món vịt quay như thế nào?',
+      options: ['A. Rất tệ', 'B. Quá mặn', 'C. Cực kỳ ngon, tuyệt vời (味道非常棒)', 'D. Không thích ăn'],
+      correctAnswer: 'C',
+      explanation: 'Đoạn văn viết: "大家都觉得味道非常棒" (Mọi người đều cảm thấy mùi vị tuyệt vời). Đáp án C.',
+    },
+    {
+      id: 8,
+      section: 'reading',
+      part: 3,
+      prompt: '[Đọc hiểu HSK 2] "服务员，买单！ — ___"',
+      options: ['A. 好的，一共是一百二十块。', 'B. 我不想去。', 'C. 没关系。', 'D. 再见。'],
+      correctAnswer: 'A',
+      explanation: 'Khi khách gọi thanh toán "买单", nhân viên đáp: "好的，一共是一百二十块" (Vâng, tổng cộng là 120 tệ). Đáp án A.',
+    },
+  ],
+};
+
+// ==========================================
+// ĐỀ THI THỬ CBT HSK 3 CHUẨN QUỐC TẾ
+// ==========================================
+export const MOCK_EXAM_HSK3: CBTExam = {
+  id: 'hsk3-cbt-01',
+  level: 3,
+  title: 'Đề Thi Thử HSK 3 Chuẩn Quốc Tế CBT (Mã đề: H31001)',
+  durationMinutes: 85,
+  totalScore: 300,
+  passScore: 180,
+  questions: [
+    {
+      id: 1,
+      section: 'listening',
+      part: 1,
+      audioScript: '听录音：请大家先把手机关了，会议马上就要开始了。',
+      prompt: '[Nghe hiểu HSK 3] Người nói yêu cầu mọi người làm việc gì trước?',
+      options: ['A. Đi ra ngoài', 'B. Tắt điện thoại di động (把手机关了)', 'C. Bật đèn phòng họp', 'D. Uống cà phê'],
+      correctAnswer: 'B',
+      explanation: 'Dùng câu chữ 把: "先把手机关了" (Trước tiên hãy tắt điện thoại). Đáp án B.',
+    },
+    {
+      id: 2,
+      section: 'listening',
+      part: 1,
+      audioScript: '听录音：虽然爬山很累，但是山顶的风景越来越漂亮了。',
+      prompt: '[Nghe hiểu HSK 3] Càng lên đỉnh núi thì điều gì xảy ra?',
+      options: ['A. Phong cảnh càng lúc càng đẹp (风景越来越漂亮)', 'B. Trời mưa to', 'C. Mất đường về', 'D. Gặp bạn cũ'],
+      correctAnswer: 'A',
+      explanation: 'Cấu trúc 越...越...: "风景越来越漂亮了" (Phong cảnh càng ngày càng đẹp). Đáp án A.',
+    },
+    {
+      id: 3,
+      section: 'reading',
+      part: 1,
+      prompt: '[Đọc hiểu HSK 3] "别着急，重要的工作我们已经___做完了。"',
+      options: ['A. 打算', 'B. 一直', 'C. 差不多 (Gần như / Hầu hết)', 'D. 刚刚'],
+      correctAnswer: 'C',
+      explanation: 'Đã hoàn thành phần lớn: 差不多做完了 (Hầu hết đều đã làm xong rồi). Đáp án C.',
+    },
+    {
+      id: 4,
+      section: 'reading',
+      part: 2,
+      passage: '他的汉语水平提高得真快，现在不仅能听懂中国人说话，而且还能流利地用汉语交流。',
+      prompt: '[Đọc hiểu HSK 3] Trình độ tiếng Hán của anh ấy hiện nay thế nào?',
+      options: ['A. Vẫn chưa biết nói', 'B. Tiến bộ rất nhanh, giao tiếp lưu loát', 'C. Đã quên hết từ vựng', 'D. Chỉ biết đọc chữ'],
+      correctAnswer: 'B',
+      explanation: 'Đoạn văn viết: "水平提高得真快... 能流利地用汉语交流" (Trình độ tiến bộ rất nhanh, giao tiếp lưu loát). Đáp án B.',
+    },
+  ],
+};
+
+// ==========================================
+// ĐỀ THI THỬ CBT HSK 4 CHUYÊN SÂU
+// ==========================================
+export const MOCK_EXAM_HSK4: CBTExam = {
+  id: 'hsk4-cbt-01',
+  level: 4,
+  title: 'Đề Thi Thử HSK 4 Chuyên Sâu CBT (Mã đề: H41001)',
+  durationMinutes: 100,
+  totalScore: 300,
+  passScore: 180,
+  questions: [
+    {
+      id: 1,
+      section: 'listening',
+      part: 1,
+      audioScript: '听录音：不仅李经理赞成这个方案，董事长也觉得非常具有可行性。',
+      prompt: '[Nghe hiểu HSK 4] Dự thảo phương án nhận được sự ủng hộ từ những ai?',
+      options: ['A. Chỉ có nhân viên', 'B. Cả Giám đốc Lý và Chủ tịch HĐQT (李经理和董事长)', 'C. Không ai đồng ý', 'D. Khách hàng'],
+      correctAnswer: 'B',
+      explanation: 'Cấu trúc 不仅……也……: Cả Giám đốc Lý và Chủ tịch đều đánh giá cao tính khả thi. Đáp án B.',
+    },
+    {
+      id: 2,
+      section: 'reading',
+      part: 1,
+      prompt: '[Đọc hiểu HSK 4] "无论遇到多么严峻的挑战，我们___保持积极乐观的心态。"',
+      options: ['A. 都 (Đều)', 'B. 却 (Lại)', 'C. 刚 (Vừa)', 'D. 偏 (Cố tình)'],
+      correctAnswer: 'A',
+      explanation: 'Cặp liên từ: 无论……都…… (Bất luận... đều...). Đáp án A.',
+    },
+    {
+      id: 3,
+      section: 'reading',
+      part: 2,
+      passage: '一个人是否能取得成功，关键在于他能否在逆境中坚持到底。积累经验需要时间，急于求成往往适得其反。',
+      prompt: '[Đọc hiểu HSK 4] Yếu tố then chốt để một người đạt được thành công là gì?',
+      options: ['A. Chỉ dựa vào vận may', 'B. Kiên trì tới cùng trong nghịch cảnh (在逆境中坚持到底)', 'C. Nóng vội muốn thành công ngay', 'D. Nhờ người khác làm hộ'],
+      correctAnswer: 'B',
+      explanation: 'Đoạn văn nhấn mạnh: "关键在于他能否在逆境中坚持到底" (Then chốt ở việc có kiên trì tới cùng trong nghịch cảnh hay không). Đáp án B.',
+    },
+  ],
+};
+
+export function getMockExamByLevel(level: HSKLevel): CBTExam {
+  switch (level) {
+    case 2:
+      return MOCK_EXAM_HSK2;
+    case 3:
+      return MOCK_EXAM_HSK3;
+    case 4:
+      return MOCK_EXAM_HSK4;
+    default:
+      return MOCK_EXAM_HSK1;
+  }
+}
+

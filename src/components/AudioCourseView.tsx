@@ -33,6 +33,7 @@ import type { HSKLevel } from '../types';
 import { HSK2_GRAMMAR_DETAILS, GrammarPoint } from '../data/grammarData';
 import { HSK1_GRAMMAR_DETAILS } from '../data/grammarDataHsk1';
 import { HSK3_GRAMMAR_DETAILS } from '../data/grammarDataHsk3';
+import { HSK4_GRAMMAR_DETAILS } from '../data/grammarDataHsk4';
 import {
   highlightGrammarInChinese,
   renderColoredPinyin,
@@ -350,12 +351,30 @@ const HSK3_LESSONS: Lesson[] = [
   { id: 'hsk3-15', number: '15', titleCn: '新年就要到了！', titlePinyin: 'Xīnnián jiù yào dào le!', titleVi: 'Năm mới sắp đến rồi! (Cấu trúc 如果...就... & Tổng kết HSK 3)', tracks: [] },
 ];
 
+const HSK4_LESSONS: Lesson[] = [
+  { id: 'hsk4-01', number: '01', titleCn: '爱情的模样', titlePinyin: 'Àiqíng de múyàng', titleVi: 'Dáng vẻ của tình yêu (Không chỉ... mà còn 不仅...而且...)', tracks: [] },
+  { id: 'hsk4-02', number: '02', titleCn: '真正的朋友', titlePinyin: 'Zhēnzhèng de péngyou', titleVi: 'Người bạn thực sự (Liên từ 即使...也...)', tracks: [] },
+  { id: 'hsk4-03', number: '03', titleCn: '经理对我印象很好', titlePinyin: 'Jīnglǐ duì wǒ yìnxiàng hěn hǎo', titleVi: 'Giám đốc có ấn tượng rất tốt về tôi (Động từ / Giới từ 对/对于)', tracks: [] },
+  { id: 'hsk4-04', number: '04', titleCn: '不要太在乎得失', titlePinyin: 'Bú yào tài zàihu déshī', titleVi: 'Đừng quá để tâm được mất (Dù thế nào cũng... 无论/不管...都...)', tracks: [] },
+  { id: 'hsk4-05', number: '05', titleCn: '买对的，不买贵的', titlePinyin: 'Mǎi duì de, bù mǎi guì de', titleVi: 'Mua đồ đúng, không mua đồ đắt (Phó từ ngữ khí 究竟 & 到底)', tracks: [] },
+  { id: 'hsk4-06', number: '06', titleCn: '一分钱一分货', titlePinyin: 'Yì fēn qián yì fēn huò', titleVi: 'Tiền nào của nấy (Trợ từ liên kết 从而 & Vì vậy)', tracks: [] },
+  { id: 'hsk4-07', number: '07', titleCn: '最好的医生是自己', titlePinyin: 'Zuì hǎo de yīshēng shì zìjǐ', titleVi: 'Bác sĩ tốt nhất là chính mình (Khẩu khí 反问: 难道...吗)', tracks: [] },
+  { id: 'hsk4-08', number: '08', titleCn: '生活中不缺少美', titlePinyin: 'Shēnghuó zhōng bù quēshǎo měi', titleVi: 'Cuộc sống không thiếu cái đẹp (Cấu trúc 哪怕...也...)', tracks: [] },
+  { id: 'hsk4-09', number: '09', titleCn: '阳光总在风雨后', titlePinyin: 'Yángguāng zǒng zài fēngyǔ hòu', titleVi: 'Sau cơn mưa trời lại sáng (Cấu trúc 通过 & 经过)', tracks: [] },
+  { id: 'hsk4-10', number: '10', titleCn: '幸福的标准', titlePinyin: 'Xìngfú de biāozhǔn', titleVi: 'Tiêu chuẩn của hạnh phúc (Phó từ 倒 & So sánh)', tracks: [] },
+  { id: 'hsk4-11', number: '11', titleCn: '读书好，读好书', titlePinyin: 'Dúshū hǎo, dú hǎo shū', titleVi: 'Đọc sách tốt, đọc sách hay (Cấu trúc 与其...不如...)', tracks: [] },
+  { id: 'hsk4-12', number: '12', titleCn: '用心发现世界', titlePinyin: 'Yòng xīn fāxiàn shìjiè', titleVi: 'Dùng tâm khám phá thế giới (Phó từ 甚至 & Càng thêm)', tracks: [] },
+  { id: 'hsk4-13', number: '13', titleCn: '喝着茶看京剧', titlePinyin: 'Hē zhe chá kàn jīngjù', titleVi: 'Uống trà xem kinh kịch (Trợ từ kết cấu 所 & Câu chữ 把 nâng cao)', tracks: [] },
+  { id: 'hsk4-14', number: '14', titleCn: '保护地球母亲', titlePinyin: 'Bǎohù Dìqiú mǔqīn', titleVi: 'Bảo vệ Mẹ Trái Đất (Cấu trúc 随着 & Theo như)', tracks: [] },
+  { id: 'hsk4-15', number: '15', titleCn: '教育的艺术', titlePinyin: 'Jiàoyù de yìshù', titleVi: 'Nghệ thuật giáo dục (Tổng kết ngữ pháp HSK 4 & Bẫy đề thi CBT)', tracks: [] },
+];
+
 const STORAGE_KEY_ACTIVE = 'aster_hsk_course_active_v1';
 const STORAGE_KEY_GRAMMAR = 'aster_hsk_grammar_completed_v1';
 const STORAGE_KEY_AUDIO = 'aster_hsk_audio_completed_v1';
 
 type LessonSubTab = 'context' | 'pinyin' | 'grammar' | 'audio' | 'vocab' | 'dialogue' | 'pdf';
-type CourseLevel = 'HSK1' | 'HSK2' | 'HSK3';
+type CourseLevel = 'HSK1' | 'HSK2' | 'HSK3' | 'HSK4';
 
 interface SearchResultItem {
   id: string;
@@ -753,6 +772,7 @@ export function AudioCourseView({
     if (externalLevel === 1) return 'HSK1';
     if (externalLevel === 2) return 'HSK2';
     if (externalLevel === 3) return 'HSK3';
+    if (externalLevel === 4) return 'HSK4';
     try {
       const saved = localStorage.getItem(STORAGE_KEY_ACTIVE);
       if (saved) return JSON.parse(saved).courseLevel || 'HSK2';
@@ -765,6 +785,7 @@ export function AudioCourseView({
     if (externalLevel === 1 && courseLevel !== 'HSK1') handleSelectCourseLevel('HSK1');
     else if (externalLevel === 2 && courseLevel !== 'HSK2') handleSelectCourseLevel('HSK2');
     else if (externalLevel === 3 && courseLevel !== 'HSK3') handleSelectCourseLevel('HSK3');
+    else if (externalLevel === 4 && courseLevel !== 'HSK4') handleSelectCourseLevel('HSK4');
   }, [externalLevel]);
 
   const activeLessons =
@@ -772,7 +793,9 @@ export function AudioCourseView({
       ? HSK1_LESSONS
       : courseLevel === 'HSK2'
       ? HSK2_LESSONS
-      : HSK3_LESSONS;
+      : courseLevel === 'HSK3'
+      ? HSK3_LESSONS
+      : HSK4_LESSONS;
 
   const [selectedLesson, setSelectedLesson] = useState<Lesson>(() => {
     try {
@@ -784,6 +807,8 @@ export function AudioCourseView({
             ? HSK1_LESSONS
             : parsed.courseLevel === 'HSK3'
             ? HSK3_LESSONS
+            : parsed.courseLevel === 'HSK4'
+            ? HSK4_LESSONS
             : HSK2_LESSONS;
         const found = list.find((l: Lesson) => l.id === parsed.lessonId);
         if (found) return found;
@@ -904,7 +929,9 @@ export function AudioCourseView({
       ? HSK1_GRAMMAR_DETAILS
       : courseLevel === 'HSK2'
       ? HSK2_GRAMMAR_DETAILS
-      : HSK3_GRAMMAR_DETAILS;
+      : courseLevel === 'HSK3'
+      ? HSK3_GRAMMAR_DETAILS
+      : HSK4_GRAMMAR_DETAILS;
 
   const grammarDetail = grammarDataMap[selectedLesson.number];
 
@@ -935,6 +962,8 @@ export function AudioCourseView({
         ? HSK1_LESSONS
         : level === 'HSK3'
         ? HSK3_LESSONS
+        : level === 'HSK4'
+        ? HSK4_LESSONS
         : HSK2_LESSONS;
     setSelectedLesson(newLessonList[0]);
     setCurrentTrackIndex(0);
@@ -945,6 +974,7 @@ export function AudioCourseView({
       if (level === 'HSK1') onLevelChange(1);
       else if (level === 'HSK2') onLevelChange(2);
       else if (level === 'HSK3') onLevelChange(3);
+      else if (level === 'HSK4') onLevelChange(4);
     }
   };
 
@@ -1169,6 +1199,7 @@ export function AudioCourseView({
     checkLessonsForLevel('HSK1', HSK1_LESSONS, HSK1_GRAMMAR_DETAILS);
     checkLessonsForLevel('HSK2', HSK2_LESSONS, HSK2_GRAMMAR_DETAILS);
     checkLessonsForLevel('HSK3', HSK3_LESSONS, HSK3_GRAMMAR_DETAILS);
+    checkLessonsForLevel('HSK4', HSK4_LESSONS, HSK4_GRAMMAR_DETAILS);
 
     return results.slice(0, 15);
   }, [searchQuery, searchFilter]);
@@ -1180,6 +1211,7 @@ export function AudioCourseView({
         if (item.courseLevel === 'HSK1') onLevelChange(1);
         else if (item.courseLevel === 'HSK2') onLevelChange(2);
         else if (item.courseLevel === 'HSK3') onLevelChange(3);
+        else if (item.courseLevel === 'HSK4') onLevelChange(4);
       }
     }
     setSelectedLesson(item.lesson);
@@ -1480,6 +1512,24 @@ export function AudioCourseView({
               onClick={() => handleSelectCourseLevel('HSK3')}
             >
               📗 HSK 3 (15 Bài · Câu chữ 把, 被...)
+            </button>
+
+            <button
+              type="button"
+              style={{
+                padding: '8px 16px',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: 700,
+                background: courseLevel === 'HSK4' ? '#8b5cf6' : 'var(--surface-card)',
+                color: courseLevel === 'HSK4' ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${courseLevel === 'HSK4' ? '#8b5cf6' : 'var(--border)'}`,
+                boxShadow: courseLevel === 'HSK4' ? '0 2px 8px rgba(139, 92, 246, 0.3)' : 'none',
+                cursor: 'pointer',
+              }}
+              onClick={() => handleSelectCourseLevel('HSK4')}
+            >
+              🔮 HSK 4 (15 Bài · 45 Ngữ Pháp Nâng Cao & Bẫy CBT)
             </button>
           </div>
         </div>
