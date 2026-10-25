@@ -33,7 +33,57 @@ interface SpeakingPhrase {
 }
 
 const SPEAKING_BANK: SpeakingPhrase[] = [
-  // HSK 1
+  // ==================== HSK 1 ====================
+  // Số đếm & Ngày giờ
+  {
+    id: 'sp-1-num1',
+    level: 1,
+    chinese: '一、二、三、四、五、六、七、八、九、十。',
+    pinyin: 'Yī, èr, sān, sì, wǔ, liù, qī, bā, jiǔ, shí.',
+    vietnamese: 'Một, hai, ba, bốn, năm, sáu, bảy, tám, chín, mười.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Luyện đếm số cơ bản từ 1 đến 10 chuẩn thanh điệu Bắc Kinh.',
+    tip: 'Luyện đọc thanh 1 cao đều (yī, sān, qī, bā), thanh 4 dứt khoát (èr, sì), thanh 3 xuống sâu (wǔ, jiǔ).',
+  },
+  {
+    id: 'sp-1-num2',
+    level: 1,
+    chinese: '今天几月几号？今天十月二十五号。',
+    pinyin: 'Jīntiān jǐ yuè jǐ hào? Jīntiān shí yuè èrshíwǔ hào.',
+    vietnamese: 'Hôm nay là ngày mấy tháng mấy? Hôm nay là ngày 25 tháng 10.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Hỏi và trả lời về ngày tháng trong giao tiếp thường nhật.',
+    tip: 'Trong khẩu ngữ tiếng Trung thường dùng "号" (hào) thay cho "日" (rì).',
+  },
+  {
+    id: 'sp-1-num3',
+    level: 1,
+    chinese: '现在几点？现在是下午三点整。',
+    pinyin: 'Xiànzài jǐ diǎn? Xiànzài shì xiàwǔ sān diǎn zhěng.',
+    vietnamese: 'Bây giờ là mấy giờ? Bây giờ là đúng 3 giờ chiều.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Hỏi giờ giấc khi hẹn gặp hoặc xem đồng hồ.',
+  },
+  {
+    id: 'sp-1-num4',
+    level: 1,
+    chinese: '请问，你的电话号码是多少？',
+    pinyin: 'Qǐngwèn, nǐ de diànhuà hàomǎ shì duōshao?',
+    vietnamese: 'Xin hỏi, số điện thoại của bạn là bao nhiêu?',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Hỏi xin số điện thoại để liên lạc, kết bạn.',
+    tip: 'Khi đọc dãy số điện thoại hoặc phòng, số 1 đọc là "yāo" để tránh nhầm với số 7 (qī).',
+  },
+  {
+    id: 'sp-1-num5',
+    level: 1,
+    chinese: '一个苹果三块钱，五个十五块。',
+    pinyin: 'Yí gè píngguǒ sān kuài qián, wǔ gè shíwǔ kuài.',
+    vietnamese: 'Một quả táo ba tệ, năm quả mười lăm tệ.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Tính tiền mua hoa quả, đồ ăn vặt hàng ngày.',
+  },
+  // Giao tiếp hàng ngày
   {
     id: 'sp-1-1',
     level: 1,
@@ -44,6 +94,34 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     situationContext: 'Chào hỏi làm quen lần đầu tiên gặp gỡ đối tác hoặc bạn bè mới.',
     tip: 'Nhớ biến âm hai thanh 3 "Nǐ hǎo" -> đọc thành "Ní hǎo".',
   },
+  {
+    id: 'sp-1-6',
+    level: 1,
+    chinese: '你叫什么名字？我叫大卫。',
+    pinyin: 'Nǐ jiào shénme míngzi? Wǒ jiào Dàwèi.',
+    vietnamese: 'Bạn tên là gì? Tôi tên là David.',
+    category: 'Giao tiếp hàng ngày',
+    situationContext: 'Giới thiệu bản thân và hỏi tên đối phương.',
+  },
+  {
+    id: 'sp-1-7',
+    level: 1,
+    chinese: '对不起，没关系。',
+    pinyin: 'Duìbuqǐ, méi guānxi.',
+    vietnamese: 'Xin lỗi, không có chi / không sao đâu.',
+    category: 'Giao tiếp hàng ngày',
+    situationContext: 'Xin lỗi lịch sự và đáp lại lời xin lỗi.',
+  },
+  {
+    id: 'sp-1-5',
+    level: 1,
+    chinese: '太漂亮了，谢谢你！',
+    pinyin: 'Tài piàoliang le, xièxie nǐ!',
+    vietnamese: 'Đẹp quá đi mất, cảm ơn bạn nhé!',
+    category: 'Giao tiếp hàng ngày',
+    situationContext: 'Khen ngợi trang phục, phong cảnh hoặc món quà được tặng.',
+  },
+  // Mua sắm & Ăn uống
   {
     id: 'sp-1-2',
     level: 1,
@@ -65,6 +143,16 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     tip: '"热" (rè) là thanh 4, rơi giọng dứt khoát từ cao xuống thấp.',
   },
   {
+    id: 'sp-1-8',
+    level: 1,
+    chinese: '老板，我要一碗热米饭和一杯水。',
+    pinyin: 'Lǎobǎn, wǒ yào yì wǎn rè mǐfàn hé yì bēi shuǐ.',
+    vietnamese: 'Chủ quán ơi, tôi muốn một bát cơm nóng và một cốc nước.',
+    category: 'Mua sắm & Ăn uống',
+    situationContext: 'Gọi món ăn giản dị tại quán cơm bình dân.',
+  },
+  // Hỏi đường & Du lịch
+  {
     id: 'sp-1-4',
     level: 1,
     chinese: '请问，洗手间在哪儿？',
@@ -74,36 +162,37 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     situationContext: 'Cứu cánh khi đi du lịch, tại nhà hàng hoặc trung tâm thương mại.',
     tip: '"哪儿" (nǎr) có âm uốn lưỡi "r" ở cuối câu.',
   },
-  {
-    id: 'sp-1-5',
-    level: 1,
-    chinese: '太漂亮了，谢谢你！',
-    pinyin: 'Tài piàoliang le, xièxie nǐ!',
-    vietnamese: 'Đẹp quá đi mất, cảm ơn bạn nhé!',
-    category: 'Cảm xúc & Khen ngợi',
-    situationContext: 'Khen ngợi trang phục, phong cảnh hoặc món quà được tặng.',
-  },
 
-  // HSK 2
+  // ==================== HSK 2 ====================
+  // Số đếm & Ngày giờ
   {
-    id: 'sp-2-1',
+    id: 'sp-2-num1',
     level: 2,
-    chinese: '师傅，我去火车站，请开快点儿。',
-    pinyin: 'Shīfu, wǒ qù huǒchēzhàn, qǐng kāi kuài diǎnr.',
-    vietnamese: 'Bác tài ơi, tôi đi ga tàu hỏa, xin lái nhanh một chút nhé.',
-    category: 'Hỏi đường & Du lịch',
-    situationContext: 'Bắt taxi di chuyển đến bến xe hoặc nhà ga.',
-    tip: 'Gọi tài xế taxi là "师傅" (shīfu - sư phụ) nghe rất bản xứ và thân thiện.',
+    chinese: '这件衣服一百八十块，太贵了，便宜点儿吧。',
+    pinyin: 'Zhè jiàn yīfu yì bǎi bāshí kuài, tài guì le, piányi diǎnr ba.',
+    vietnamese: 'Chiếc áo này 180 tệ, đắt quá rồi, bớt một chút đi mà.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Mặc cả giá tiền khi mua sắm ngoài chợ hoặc cửa hàng thời trang.',
   },
   {
-    id: 'sp-2-2',
+    id: 'sp-2-num2',
     level: 2,
-    chinese: '这件衣服有点儿贵，便宜一点儿吧。',
-    pinyin: 'Zhè jiàn yīfu yǒudiǎnr guì, piányi yìdiǎnr ba.',
-    vietnamese: 'Bộ quần áo này hơi đắt, giảm giá một chút được không ạ?',
-    category: 'Mua sắm & Mặc cả',
-    situationContext: 'Trả giá mua sắm quần áo tại chợ đêm hoặc khu mua sắm.',
+    chinese: '我每天早上七点半起床，晚上十一点睡觉。',
+    pinyin: 'Wǒ měitiān zǎoshang qī diǎn bàn qǐchuáng, wǎnshang shíyī diǎn shuìjiào.',
+    vietnamese: 'Mỗi ngày tôi thức dậy lúc 7 giờ rưỡi sáng, 11 giờ đêm đi ngủ.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Miêu tả thói quen sinh hoạt và thời gian biểu trong ngày.',
   },
+  {
+    id: 'sp-2-num3',
+    level: 2,
+    chinese: '从这里到火车站大概需要四十五分钟。',
+    pinyin: 'Cóng zhèlǐ dào huǒchēzhàn dàgài xūyào sìshíwǔ fēnzhōng.',
+    vietnamese: 'Từ đây tới ga tàu hỏa mất khoảng chừng 45 phút.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Ước lượng thời gian di chuyển khi đi đường hoặc đón xe.',
+  },
+  // Giao tiếp hàng ngày
   {
     id: 'sp-2-3',
     level: 2,
@@ -119,20 +208,110 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     chinese: '你身体好点儿了吗？记得按时吃药。',
     pinyin: 'Nǐ shēntǐ hǎo diǎnr le ma? Jìde ànshí chīyào.',
     vietnamese: 'Sức khỏe của bạn đã đỡ hơn chưa? Nhớ uống thuốc đúng giờ nhé.',
-    category: 'Sức khỏe & Quan tâm',
+    category: 'Giao tiếp hàng ngày',
     situationContext: 'Hỏi thăm bạn bè hoặc đồng nghiệp đang bị ốm.',
   },
-
-  // HSK 3
+  // Mua sắm & Ăn uống
   {
-    id: 'sp-3-1',
-    level: 3,
-    chinese: '对于这个问题，我的看法有点儿不一样。',
-    pinyin: 'Duìyú zhè gè wèntí, wǒ de kànfǎ yǒudiǎnr bù yíyàng.',
-    vietnamese: 'Đối với vấn đề này, quan điểm của tôi có đôi chút khác biệt.',
-    category: 'Môi trường công sở',
-    situationContext: 'Đóng góp ý kiến chuyên nghiệp, khéo léo trong cuộc họp công ty.',
+    id: 'sp-2-2',
+    level: 2,
+    chinese: '这件衣服有点儿贵，便宜一点儿吧。',
+    pinyin: 'Zhè jiàn yīfu yǒudiǎnr guì, piányi yìdiǎnr ba.',
+    vietnamese: 'Bộ quần áo này hơi đắt, giảm giá một chút được không ạ?',
+    category: 'Mua sắm & Ăn uống',
+    situationContext: 'Trả giá mua sắm quần áo tại chợ đêm hoặc khu mua sắm.',
   },
+  {
+    id: 'sp-2-5',
+    level: 2,
+    chinese: '服务员，买单，可以微信支付吗？',
+    pinyin: 'Fúwùyuán, mǎidān, kěyǐ wēixìn zhīfù ma?',
+    vietnamese: 'Phục vụ ơi tính tiền, tôi có thể thanh toán bằng WeChat được không?',
+    category: 'Mua sắm & Ăn uống',
+    situationContext: 'Thanh toán tiền bữa ăn bằng ví điện tử phổ biến tại Trung Quốc.',
+  },
+  {
+    id: 'sp-2-6',
+    level: 2,
+    chinese: '请少放点儿辣，我不太能吃辣。',
+    pinyin: 'Qǐng shǎo fàng diǎnr là, wǒ bú tài néng chī là.',
+    vietnamese: 'Xin cho ít cay thôi, tôi không ăn được cay lắm.',
+    category: 'Mua sắm & Ăn uống',
+    situationContext: 'Yêu cầu khẩu vị khi gọi các món ăn Trung Hoa nhiều ớt cay.',
+  },
+  // Hỏi đường & Du lịch
+  {
+    id: 'sp-2-1',
+    level: 2,
+    chinese: '师傅，我去火车站，请开快点儿。',
+    pinyin: 'Shīfu, wǒ qù huǒchēzhàn, qǐng kāi kuài diǎnr.',
+    vietnamese: 'Bác tài ơi, tôi đi ga tàu hỏa, xin lái nhanh một chút nhé.',
+    category: 'Hỏi đường & Du lịch',
+    situationContext: 'Bắt taxi di chuyển đến bến xe hoặc nhà ga.',
+    tip: 'Gọi tài xế taxi là "师傅" (shīfu - sư phụ) nghe rất bản xứ và thân thiện.',
+  },
+  {
+    id: 'sp-2-7',
+    level: 2,
+    chinese: '请问去故宫博物院坐地铁几号线？',
+    pinyin: 'Qǐngwèn qù Gùgōng Bówùyuàn zuò dìtiě jǐ hào xiàn?',
+    vietnamese: 'Xin hỏi đi Bảo tàng Cố Cung thì ngồi tàu điện ngầm tuyến số mấy?',
+    category: 'Hỏi đường & Du lịch',
+    situationContext: 'Hỏi đường di chuyển bằng hệ thống tàu điện ngầm ngầm đô thị.',
+  },
+  // Môi trường công sở
+  {
+    id: 'sp-2-8',
+    level: 2,
+    chinese: '别担心，大家一起努力，一定能完成工作。',
+    pinyin: 'Bié dānxīn, dàjiā yìqǐ nǔlì, yídìng néng wánchéng gōngzuò.',
+    vietnamese: 'Đừng lo lắng, mọi người cùng nỗ lực thì nhất định hoàn thành công việc.',
+    category: 'Môi trường công sở',
+    situationContext: 'Động viên tinh thần đồng đội trong nhóm làm việc.',
+  },
+
+  // ==================== HSK 3 ====================
+  // Số đếm & Ngày giờ
+  {
+    id: 'sp-3-num1',
+    level: 3,
+    chinese: '商场正在搞周年庆活动，全场商品打七折。',
+    pinyin: 'Shāngchǎng zhèngzài gǎo zhōuniánqìng huódòng, quán chǎng shāngpǐn dǎ qī zhé.',
+    vietnamese: 'Trung tâm thương mại đang tổ chức lễ kỷ niệm năm, toàn bộ hàng hóa giảm 30%.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Mua sắm săn ưu đãi giảm giá lớn trong các dịp lễ hội.',
+    tip: 'Lưu ý: "打七折" trong tiếng Trung nghĩa là bán 70% giá gốc (tương đương giảm giá 30%).',
+  },
+  {
+    id: 'sp-3-num2',
+    level: 3,
+    chinese: '这次考试的总分是一百二十分，他考了一百一十五分。',
+    pinyin: 'Zhè cì kǎoshì de zǒngfēn shì yì bǎi èrshí fēn, tā kǎo le yì bǎi yīshíwǔ fēn.',
+    vietnamese: 'Tổng điểm bài thi lần này là 120 điểm, cậu ấy đạt 115 điểm.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Trao đổi về điểm số và kết quả học tập, thi cử.',
+  },
+  // Giao tiếp hàng ngày
+  {
+    id: 'sp-3-7',
+    level: 3,
+    chinese: '虽然汉语的发音很难，但是我越学越感兴趣。',
+    pinyin: 'Suīrán Hànyǔ de fāyīn hěn nán, dànshì wǒ yuè xué yuè gǎn xìngqù.',
+    vietnamese: 'Tuy phát âm tiếng Hán rất khó, nhưng tôi càng học lại càng cảm thấy hứng thú.',
+    category: 'Giao tiếp hàng ngày',
+    situationContext: 'Chia sẻ đam mê và kinh nghiệm học ngoại ngữ với mọi người.',
+  },
+  // Mua sắm & Ăn uống
+  {
+    id: 'sp-3-3',
+    level: 3,
+    chinese: '这家饭馆的特色菜味道非常地道！',
+    pinyin: 'Zhè jiā fànguǎn de tèsècài wèidao fēicháng dìdao!',
+    vietnamese: 'Món đặc sản của quán này hương vị cực kỳ chuẩn vị bản xứ!',
+    category: 'Mua sắm & Ăn uống',
+    situationContext: 'Khen ngợi tài nấu nướng hoặc giới thiệu quán ăn ngon cho bạn bè.',
+  },
+  // Hỏi đường & Du lịch
   {
     id: 'sp-3-2',
     level: 3,
@@ -144,13 +323,23 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     tip: 'Chú ý cấu trúc câu chữ "把" (bǎ): Chủ ngữ + 把 + Tân ngữ + Động từ + Kết quả.',
   },
   {
-    id: 'sp-3-3',
+    id: 'sp-3-6',
     level: 3,
-    chinese: '这家饭馆的特色菜味道非常地道！',
-    pinyin: 'Zhè jiā fànguǎn de tèsècài wèidao fēicháng dìdao!',
-    vietnamese: 'Món đặc sản của quán này hương vị cực kỳ chuẩn vị bản xứ!',
-    category: 'Mua sắm & Ăn uống',
-    situationContext: 'Khen ngợi tài nấu nướng hoặc giới thiệu quán ăn ngon cho bạn bè.',
+    chinese: '路上有点儿堵车，我大概迟到十分钟，真是不好意思！',
+    pinyin: 'Lùshang yǒudiǎnr dǔchē, wǒ dàgài chídào shí fēnzhōng, zhēn shì bù hǎoyìsi!',
+    vietnamese: 'Trên đường hơi tắc xe, tôi có thể đến muộn khoảng 10 phút, thật lòng xin lỗi!',
+    category: 'Hỏi đường & Du lịch',
+    situationContext: 'Gọi điện thông báo khi bị kẹt xe trên đường đến cuộc hẹn.',
+  },
+  // Môi trường công sở
+  {
+    id: 'sp-3-1',
+    level: 3,
+    chinese: '对于这个问题，我的看法有点儿不一样。',
+    pinyin: 'Duìyú zhè gè wèntí, wǒ de kànfǎ yǒudiǎnr bù yíyàng.',
+    vietnamese: 'Đối với vấn đề này, quan điểm của tôi có đôi chút khác biệt.',
+    category: 'Môi trường công sở',
+    situationContext: 'Đóng góp ý kiến chuyên nghiệp, khéo léo trong cuộc họp công ty.',
   },
   {
     id: 'sp-3-4',
@@ -161,8 +350,56 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     category: 'Môi trường công sở',
     situationContext: 'Phát biểu khi kết thúc buổi gặp gỡ đàm phán hoặc nâng ly chúc mừng đối tác.',
   },
+  {
+    id: 'sp-3-5',
+    level: 3,
+    chinese: '我已经把本周的工作总结发到您的邮箱了，请查收。',
+    pinyin: 'Wǒ yǐjīng bǎ běn zhōu de gōngzuò zǒngjié fā dào nín de yóuxiāng le, qǐng cháchōu.',
+    vietnamese: 'Tôi đã gửi tổng kết công việc tuần này vào hòm thư điện tử của bạn, xin hãy kiểm tra.',
+    category: 'Môi trường công sở',
+    situationContext: 'Báo cáo tiến độ công việc hàng tuần với cấp trên qua email.',
+  },
 
-  // HSK 4
+  // ==================== HSK 4 ====================
+  // Số đếm & Kinh tế nâng cao
+  {
+    id: 'sp-4-num1',
+    level: 4,
+    chinese: '这套公寓的建筑面积是一百三十五平方米，月租金五千元。',
+    pinyin: 'Zhè tào gōngyù de jiànzhù miànjī shì yì bǎi sānshíwǔ píngfāngmǐ, yuè zūjīn wǔqiān yuán.',
+    vietnamese: 'Diện tích xây dựng của căn hộ này là 135 mét vuông, tiền thuê hàng tháng là 5000 tệ.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Thảo luận về thuê nhà, giá trị bất động sản và các thông số diện tích.',
+  },
+  {
+    id: 'sp-4-num2',
+    level: 4,
+    chinese: '今年我们公司的年营业额成功突破了两千五百万美元。',
+    pinyin: 'Jīnnián wǒmen gōngsī de nián yíngyè’é chénggōng tūpò le liǎngqiān wǔbǎi wàn měiyuán.',
+    vietnamese: 'Năm nay doanh thu hàng năm của công ty chúng tôi đã đột phá thành công mốc 25 triệu USD.',
+    category: 'Số đếm & Ngày giờ',
+    situationContext: 'Báo cáo tài chính doanh nghiệp và số liệu kinh tế vĩ mô trong đại hội thường niên.',
+  },
+  // Môi trường công sở & Kinh tế
+  {
+    id: 'sp-4-3',
+    level: 4,
+    chinese: '随着人工智能的发展，未来的工作模式将发生巨大变化。',
+    pinyin: 'Suízhe réngōng zhìnéng de fāzhǎn, wèilái de gōngzuò móshì jiāng fāshēng jùdà biànhuà.',
+    vietnamese: 'Cùng với sự phát triển của trí tuệ nhân tạo, phương thức làm việc tương lai sẽ có sự thay đổi to lớn.',
+    category: 'Môi trường công sở',
+    situationContext: 'Thảo luận về công nghệ, xu hướng việc làm và chuyển đổi số.',
+  },
+  {
+    id: 'sp-4-5',
+    level: 4,
+    chinese: '在商务谈判中，建立互信与互利共赢才是最核心的原则。',
+    pinyin: 'Zài shāngwù tánpàn zhōng, jiànlì hùxìn yǔ hùlì gòngyíng cái shì zuì héxīn de yuánzé.',
+    vietnamese: 'Trong đàm phán thương mại, việc tạo dựng lòng tin và đôi bên cùng có lợi mới là nguyên tắc cốt lõi nhất.',
+    category: 'Môi trường công sở',
+    situationContext: 'Khẳng định lập trường trong giao dịch đối tác chiến lược.',
+  },
+  // Triết lý & Thành ngữ
   {
     id: 'sp-4-1',
     level: 4,
@@ -182,13 +419,22 @@ const SPEAKING_BANK: SpeakingPhrase[] = [
     situationContext: 'Sử dụng thành ngữ bốn chữ để chia sẻ kinh nghiệm sống hoặc hội nhập văn hóa.',
   },
   {
-    id: 'sp-4-3',
+    id: 'sp-4-4',
     level: 4,
-    chinese: '随着人工智能的发展，未来的工作模式将发生巨大变化。',
-    pinyin: 'Suízhe réngōng zhìnéng de fāzhǎn, wèilái de gōngzuò móshì jiāng fāshēng jùdà biànhuà.',
-    vietnamese: 'Cùng với sự phát triển của trí tuệ nhân tạo, phương thức làm việc tương lai sẽ có sự thay đổi to lớn.',
-    category: 'Khoa học & Đời sống số',
-    situationContext: 'Thảo luận về công nghệ, xu hướng việc làm và chuyển đổi số.',
+    chinese: '千里之行，始于足下。只要坚持不懈，就一定能成功。',
+    pinyin: 'Qiān lǐ zhī xíng, shǐ yú zú xià. Zhǐyào jiānchí bú xiè, jiù yídìng néng chénggōng.',
+    vietnamese: 'Hành trình ngàn dặm khởi đầu từ một bước chân. Chỉ cần kiên trì không nản chí thì nhất định thành công.',
+    category: 'Triết lý & Thành ngữ',
+    situationContext: 'Thành ngữ kinh điển của Lão Tử cổ vũ sự kiên trì từng bước một.',
+  },
+  {
+    id: 'sp-4-6',
+    level: 4,
+    chinese: '阅读不仅能够丰富知识，更能开阔我们的眼界与胸怀。',
+    pinyin: 'Yuèdú bùjǐn nénggòu fēngfù zhīshi, gèng néng kāikuò wǒmen de yǎnjiè yǔ xiōnghuái.',
+    vietnamese: 'Đọc sách không chỉ bồi dưỡng kiến thức, mà càng mở rộng tầm mắt và tấm lòng của chúng ta.',
+    category: 'Triết lý & Thành ngữ',
+    situationContext: 'Nói về lợi ích của việc đọc sách và phát triển bản thân.',
   },
 ];
 
@@ -239,6 +485,7 @@ export function AISpeakingStudio({
 
   const categories = [
     'Tất cả',
+    'Số đếm & Ngày giờ',
     'Giao tiếp hàng ngày',
     'Mua sắm & Ăn uống',
     'Hỏi đường & Du lịch',
@@ -583,14 +830,14 @@ export function AISpeakingStudio({
               Ngân Hàng Câu Khẩu Ngữ ({filteredPhrases.length})
             </h3>
             {/* Category Filter Pills */}
-            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
-              {categories.slice(0, 4).map((cat) => (
+            <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '6px' }}>
+              {categories.map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(cat)}
                   style={{
-                    padding: '4px 10px',
+                    padding: '5px 12px',
                     borderRadius: '20px',
                     fontSize: '11px',
                     fontWeight: 700,
@@ -599,6 +846,7 @@ export function AISpeakingStudio({
                     background: activeCategory === cat ? 'rgba(16, 185, 129, 0.15)' : 'var(--surface-card)',
                     color: activeCategory === cat ? '#10b981' : 'var(--text-muted)',
                     border: `1px solid ${activeCategory === cat ? '#10b981' : 'var(--border)'}`,
+                    transition: 'all 0.15s ease',
                   }}
                 >
                   {cat}
