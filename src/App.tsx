@@ -24,6 +24,7 @@ import { DuolingoPathView } from './components/DuolingoPathView';
 import { AITutorChatbot } from './components/AITutorChatbot';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { HanziWritingStudio } from './components/HanziWritingStudio';
+import { PinyinMasterStudio } from './components/PinyinMasterStudio';
 import { MemorySprintModal } from './components/MemorySprintModal';
 
 export function App() {
@@ -135,6 +136,13 @@ export function App() {
               streak={stats.streak}
               onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               onOpenSprint={() => setIsSprintOpen(true)}
+              onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
+            />
+          )}
+
+          {activeTab === 'pinyin' && (
+            <PinyinMasterStudio
+              onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
             />
           )}

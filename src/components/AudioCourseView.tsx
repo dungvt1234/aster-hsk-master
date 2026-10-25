@@ -41,6 +41,7 @@ import {
   ToneLegend,
 } from '../services/highlightUtils';
 import { GrammarEasyHelper } from './GrammarEasyHelper';
+import { PinyinMasterStudio } from './PinyinMasterStudio';
 
 interface Lesson {
   id: string;
@@ -353,7 +354,7 @@ const STORAGE_KEY_ACTIVE = 'aster_hsk_course_active_v1';
 const STORAGE_KEY_GRAMMAR = 'aster_hsk_grammar_completed_v1';
 const STORAGE_KEY_AUDIO = 'aster_hsk_audio_completed_v1';
 
-type LessonSubTab = 'context' | 'grammar' | 'audio' | 'vocab' | 'dialogue' | 'pdf';
+type LessonSubTab = 'context' | 'pinyin' | 'grammar' | 'audio' | 'vocab' | 'dialogue' | 'pdf';
 type CourseLevel = 'HSK1' | 'HSK2' | 'HSK3';
 
 interface SearchResultItem {
@@ -1959,6 +1960,23 @@ export function AudioCourseView({
               </button>
               <button
                 type="button"
+                onClick={() => setActiveSubTab('pinyin')}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  background: activeSubTab === 'pinyin' ? '#f97316' : 'var(--surface-card)',
+                  color: activeSubTab === 'pinyin' ? '#fff' : 'var(--text-heading)',
+                  border: `1.5px solid ${activeSubTab === 'pinyin' ? '#f97316' : 'var(--border)'}`,
+                  boxShadow: activeSubTab === 'pinyin' ? '0 2px 8px rgba(249, 115, 22, 0.3)' : 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                🗣️ Ngữ Âm & Phát Âm Pinyin
+              </button>
+              <button
+                type="button"
                 onClick={() => setActiveSubTab('grammar')}
                 style={{
                   padding: '8px 16px',
@@ -2186,6 +2204,16 @@ export function AudioCourseView({
               </div>
             );
           })()}
+
+          {/* SUBTAB PINYIN: HÁN NGỮ NGỮ ÂM & PHÁT ÂM */}
+          {activeSubTab === 'pinyin' && (
+            <div style={{ marginBottom: '20px' }}>
+              <PinyinMasterStudio
+                onOpenChatAI={onOpenChatAI}
+                onNavigateTab={onNavigateTab}
+              />
+            </div>
+          )}
 
           {/* SUBTAB 1: NGỮ PHÁP TIỂU NGỮ (小语讲堂) */}
           {activeSubTab === 'grammar' && (

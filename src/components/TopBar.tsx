@@ -43,6 +43,11 @@ export function TopBar({
           title: `Lộ Trình HSK ${currentLevel}`,
           subtitle: 'Bản đồ bài học tương tác, rèn phản xạ và nuôi chuỗi ngày học 🔥',
         };
+      case 'pinyin':
+        return {
+          title: 'Hán Ngữ Ngữ Âm & Phát Âm Pinyin 🗣️',
+          subtitle: 'Bảng 23 thanh mẫu, 36 vận mẫu, 5 thanh điệu, quy tắc biến âm và phòng luyện nghe chuẩn Bắc Kinh',
+        };
       case 'writing':
         return {
           title: 'Studio Tập Viết Chữ Hán 🖌️',
