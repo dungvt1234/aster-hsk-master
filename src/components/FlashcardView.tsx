@@ -161,14 +161,15 @@ export function FlashcardView({
             <div style={{ margin: 'auto 0' }}>
               <div className="hanzi-display">{currentCard.hanzi}</div>
               <div className="pinyin-display">{currentCard.pinyin}</div>
-              <div style={{ marginTop: '8px' }}>
-                <span className="han-viet-badge">Âm Hán-Việt: {currentCard.hanViet}</span>
+              <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <span className="han-viet-badge" style={{ fontSize: '12px' }}>Âm đọc Hán-Việt: {currentCard.hanViet}</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>💡 Lật mặt sau để xem định nghĩa & ví dụ tiếng Việt</span>
               </div>
             </div>
 
             <div style={{ color: 'var(--text-dim)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <RotateCw size={13} />
-              <span>Chạm hoặc nhấn <strong>Phím Cách (Space)</strong> để lật xem nghĩa & câu ví dụ</span>
+              <span>Chạm hoặc nhấn <strong>Phím Cách (Space)</strong> để lật thẻ</span>
             </div>
           </div>
 
@@ -193,21 +194,30 @@ export function FlashcardView({
                 </button>
               </div>
 
-              <div className="meaning-text">{currentCard.meaning}</div>
-              <div style={{ fontSize: '13px', color: '#cbd5e1' }}>
-                Gốc từ Hán-Việt: <strong>{currentCard.hanViet}</strong> · Bộ thủ: {currentCard.radical} ({currentCard.strokeCount} nét)
+              <div style={{ marginTop: '10px', marginBottom: '4px' }}>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--primary)', fontWeight: 800 }}>
+                  NGHĨA TIẾNG VIỆT CHUẨN XÁC
+                </span>
+              </div>
+              <div className="meaning-text" style={{ fontSize: '22px', fontWeight: 800, color: '#f8fafc', lineHeight: 1.35, marginBottom: '8px' }}>
+                {currentCard.meaning}
+              </div>
+              <div style={{ fontSize: '12px', color: '#94a3b8', background: 'rgba(255,255,255,0.06)', padding: '5px 10px', borderRadius: '8px', display: 'inline-block' }}>
+                Âm Hán-Việt: <strong style={{ color: '#fff' }}>{currentCard.hanViet}</strong> · Bộ thủ: {currentCard.radical} ({currentCard.strokeCount} nét)
               </div>
             </div>
 
-            <div className="example-box">
-              <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 700, marginBottom: '4px' }}>
-                CÂU VÍ DỤ MINH HỌA
+            <div className="example-box" style={{ marginTop: '12px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 800, marginBottom: '6px', letterSpacing: '0.5px' }}>
+                CÂU VÍ DỤ THỰC TẾ & BẢN DỊCH
               </div>
-              <div className="example-cn">{currentCard.exampleCn}</div>
+              <div className="example-cn" style={{ fontSize: '16px', fontWeight: 600 }}>{currentCard.exampleCn}</div>
               <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '2px', fontStyle: 'italic' }}>
                 {currentCard.examplePinyin}
               </div>
-              <div className="example-vi">{currentCard.exampleVi}</div>
+              <div className="example-vi" style={{ fontSize: '14px', color: '#4ade80', fontWeight: 600, marginTop: '6px', lineHeight: 1.4 }}>
+                👉 {currentCard.exampleVi}
+              </div>
             </div>
 
             <div style={{ color: 'var(--text-dim)', fontSize: '11px', textAlign: 'center' }}>
