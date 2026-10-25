@@ -1,28 +1,52 @@
 import type { CardProgress, UserStats, HSKLevel } from '../types';
 
-const STORAGE_KEY = 'aster_hsk_progress_v1';
-const STATS_KEY = 'aster_hsk_stats_v1';
+const GLOBAL_PROGRESS_KEY = 'aster_hsk_progress_v1';
+const GLOBAL_STATS_KEY = 'aster_hsk_stats_v1';
 
-export function loadAllProgress(): Record<string, CardProgress> {
+function getUserKeys(userId?: string) {
+  const uid = userId || localStorage.getItem('aster_user_id');
+  if (!uid || uid.startsWith('guest')) {
+    return {
+      progressKey: GLOBAL_PROGRESS_KEY,
+      statsKey: GLOBAL_STATS_KEY,
+    };
+  }
+  return {
+    progressKey: `aster_hsk_user_${uid}_progress`,
+    statsKey: `aster_hsk_user_${uid}_stats`,
+  };
+}
+
+export function loadAllProgress(userId?: string): Record<string, CardProgress> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const { progressKey } = getUserKeys(userId);
+    let raw = localStorage.getItem(progressKey);
+    if (!raw && progressKey !== GLOBAL_PROGRESS_KEY) {
+      // Kế thừa tiến độ khách nếu chưa có bản ghi riêng
+      raw = localStorage.getItem(GLOBAL_PROGRESS_KEY);
+    }
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
   }
 }
 
-export function saveAllProgress(progress: Record<string, CardProgress>) {
+export function saveAllProgress(progress: Record<string, CardProgress>, userId?: string) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    const { progressKey } = getUserKeys(userId);
+    localStorage.setItem(progressKey, JSON.stringify(progress));
   } catch (err) {
     console.error('Lỗi lưu tiến độ SRS:', err);
   }
 }
 
-export function loadUserStats(totalCounts: Record<HSKLevel, number>): UserStats {
+export function loadUserStats(totalCounts: Record<HSKLevel, number>, userId?: string): UserStats {
   try {
-    const raw = localStorage.getItem(STATS_KEY);
+    const { statsKey } = getUserKeys(userId);
+    let raw = localStorage.getItem(statsKey);
+    if (!raw && statsKey !== GLOBAL_STATS_KEY) {
+      raw = localStorage.getItem(GLOBAL_STATS_KEY);
+    }
     const today = new Date().toISOString().slice(0, 10);
     if (raw) {
       const stats = JSON.parse(raw) as UserStats;
@@ -54,9 +78,10 @@ export function loadUserStats(totalCounts: Record<HSKLevel, number>): UserStats 
   };
 }
 
-export function saveUserStats(stats: UserStats) {
+export function saveUserStats(stats: UserStats, userId?: string) {
   try {
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    const { statsKey } = getUserKeys(userId);
+    localStorage.setItem(statsKey, JSON.stringify(stats));
   } catch (err) {
     console.error('Lỗi lưu thống kê:', err);
   }

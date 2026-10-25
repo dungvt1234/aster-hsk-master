@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
+import type { UserProfile } from '../services/authService';
 
 interface SidebarProps {
   activeTab: ActiveTab;
@@ -23,6 +24,9 @@ interface SidebarProps {
   currentLevel: HSKLevel;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
+  user?: UserProfile;
+  onOpenProfile?: () => void;
+  onOpenAuth?: () => void;
   onOpenAI?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
@@ -34,6 +38,9 @@ export function Sidebar({
   currentLevel,
   theme,
   onToggleTheme,
+  user,
+  onOpenProfile,
+  onOpenAuth,
   onOpenAI,
   isOpenMobile,
   onCloseMobile,
@@ -182,8 +189,41 @@ export function Sidebar({
           })}
         </nav>
 
-        {/* Bottom Footer Actions: AI Tutor & Theme Toggle */}
+        {/* Bottom Footer Actions: User Profile, AI Tutor & Theme Toggle */}
         <div className="sidebar-footer">
+          {user && (
+            <div
+              onClick={() => {
+                if (user.isGuest && onOpenAuth) onOpenAuth();
+                else if (onOpenProfile) onOpenProfile();
+                if (onCloseMobile) onCloseMobile();
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                padding: '10px 12px',
+                borderRadius: '12px',
+                background: user.isGuest ? 'rgba(2, 132, 199, 0.08)' : 'var(--surface-card)',
+                border: `1.5px solid ${user.isGuest ? '#0284c7' : 'var(--border)'}`,
+                cursor: 'pointer',
+                marginBottom: '10px',
+                transition: 'transform 0.15s ease',
+              }}
+              title={user.isGuest ? 'Bấm để đăng nhập hoặc tạo tài khoản' : 'Xem thông tin hồ sơ của bạn'}
+            >
+              <span style={{ fontSize: '24px' }}>{user.avatar || '🐼'}</span>
+              <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.name}
+                </div>
+                <div style={{ fontSize: '11px', color: user.isGuest ? '#0284c7' : 'var(--text-muted)' }}>
+                  {user.isGuest ? 'Tạo tài khoản ➔' : `Cấp độ ${user.currentLevel} · ${user.xp} XP`}
+                </div>
+              </div>
+            </div>
+          )}
+
           {onOpenAI && (
             <button
               type="button"

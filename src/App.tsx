@@ -27,14 +27,21 @@ import { HanziWritingStudio } from './components/HanziWritingStudio';
 import { PinyinMasterStudio } from './components/PinyinMasterStudio';
 import { MemorySprintModal } from './components/MemorySprintModal';
 import { cloudSync } from './services/cloudSyncService';
+import { authService, UserProfile } from './services/authService';
+import { AuthModal } from './components/AuthModal';
+import { UserProfileModal } from './components/UserProfileModal';
 
 export function App() {
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() => authService.getCurrentUser());
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
   const [activeTab, setActiveTab] = useState<ActiveTab>('duo_path'); // Mặc định vào thẳng Lộ Trình Duolingo
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isSprintOpen, setIsSprintOpen] = useState(false);
   const [progress, setProgress] = useState<Record<string, CardProgress>>({});
-  const [stats, setStats] = useState<UserStats>(() => loadUserStats(LEVEL_COUNTS));
+  const [stats, setStats] = useState<UserStats>(() => loadUserStats(LEVEL_COUNTS, authService.getCurrentUser().id));
   const [aiPrompt, setAiPrompt] = useState<string | undefined>();
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -50,10 +57,16 @@ export function App() {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
-  // Tải dữ liệu ban đầu
+  // Đồng bộ tiến độ theo tài khoản người dùng
   useEffect(() => {
-    const loaded = loadAllProgress();
-    setProgress(loaded);
+    const unsubscribe = authService.subscribe((user) => {
+      setCurrentUser(user);
+      const loadedProg = loadAllProgress(user.id);
+      const loadedStat = loadUserStats(LEVEL_COUNTS, user.id);
+      setProgress(loadedProg);
+      setStats(loadedStat);
+    });
+    return unsubscribe;
   }, []);
 
   // Xử lý khi người dùng đánh giá thẻ trong Flashcard (SM-2)
@@ -64,7 +77,7 @@ export function App() {
       [vocabId]: updatedCard,
     };
     setProgress(nextProgress);
-    saveAllProgress(nextProgress);
+    saveAllProgress(nextProgress, currentUser.id);
 
     // Cập nhật thống kê người học
     setStats((prev) => {
@@ -96,7 +109,8 @@ export function App() {
         },
       };
 
-      saveUserStats(nextStats);
+      saveUserStats(nextStats, currentUser.id);
+      authService.updateProfile({ streak: newStreak, xp: (currentUser.xp || 0) + (quality > 0 ? 15 : 5) });
       cloudSync.triggerSync({ progress: nextProgress, stats: nextStats });
       return nextStats;
     });
@@ -117,6 +131,9 @@ export function App() {
         onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
+        user={currentUser}
+        onOpenProfile={() => setIsProfileOpen(true)}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       {/* 2. Main Right Area (Top Bar + Main Content) */}
@@ -129,6 +146,9 @@ export function App() {
           onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
           onOpenSprint={() => setIsSprintOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
+          user={currentUser}
+          onOpenProfile={() => setIsProfileOpen(true)}
+          onOpenAuth={() => setIsAuthOpen(true)}
         />
 
         <main className="app-content">
@@ -249,6 +269,31 @@ export function App() {
             ...prev,
             todayReviews: prev.todayReviews + 1,
           }));
+        }}
+      />
+
+      {/* 6. Auth Modal (Đăng Ký, Đăng Nhập & Khách VIP) */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onSuccess={() => {
+          setIsAuthOpen(false);
+        }}
+      />
+
+      {/* 7. User Profile & Cloud Progress Modal */}
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={currentUser}
+        streak={stats.streak}
+        totalMastered={stats.totalMastered}
+        onOpenAuth={() => {
+          setIsProfileOpen(false);
+          setIsAuthOpen(true);
+        }}
+        onLogout={() => {
+          authService.logout();
         }}
       />
     </div>

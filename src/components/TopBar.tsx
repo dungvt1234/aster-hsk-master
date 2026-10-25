@@ -11,12 +11,16 @@ import {
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
 import { cloudSync, SyncStatus } from '../services/cloudSyncService';
+import type { UserProfile } from '../services/authService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
   onSelectLevel: (lvl: HSKLevel) => void;
   activeTab: ActiveTab;
   streak: number;
+  user?: UserProfile;
+  onOpenProfile?: () => void;
+  onOpenAuth?: () => void;
   onOpenAI?: () => void;
   onOpenSprint?: () => void;
   onToggleMobileMenu?: () => void;
@@ -27,6 +31,9 @@ export function TopBar({
   onSelectLevel,
   activeTab,
   streak,
+  user,
+  onOpenProfile,
+  onOpenAuth,
   onOpenAI,
   onOpenSprint,
   onToggleMobileMenu,
@@ -242,6 +249,34 @@ export function TopBar({
             <Sparkles size={15} /> Hỏi AI
           </button>
         )}
+
+        {/* User Account / Profile Button */}
+        {user ? (
+          <button
+            type="button"
+            onClick={user.isGuest && onOpenAuth ? onOpenAuth : onOpenProfile}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '5px 12px',
+              borderRadius: '20px',
+              background: user.isGuest ? 'rgba(2, 132, 199, 0.1)' : 'var(--surface-card)',
+              border: `1.5px solid ${user.isGuest ? '#0284c7' : 'var(--border)'}`,
+              cursor: 'pointer',
+              color: user.isGuest ? '#0284c7' : 'var(--text-heading)',
+              fontSize: '12px',
+              fontWeight: 800,
+              boxShadow: 'var(--card-shadow)',
+            }}
+            title={user.isGuest ? 'Bấm để tạo tài khoản hoặc đăng nhập' : `Tài khoản của ${user.name}`}
+          >
+            <span style={{ fontSize: '16px' }}>{user.avatar || '🐼'}</span>
+            <span>
+              {user.isGuest ? 'Đăng nhập' : user.name.split(' ').slice(-1)[0]}
+            </span>
+          </button>
+        ) : null}
       </div>
     </header>
   );
