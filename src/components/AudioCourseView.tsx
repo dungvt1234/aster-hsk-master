@@ -1435,9 +1435,10 @@ export function AudioCourseView({
                 fontSize: '13px',
                 fontWeight: 700,
                 background: courseLevel === 'HSK1' ? '#0284c7' : 'var(--surface-card)',
-                color: '#fff',
-                border: `1px solid ${courseLevel === 'HSK1' ? '#38bdf8' : 'var(--border)'}`,
-                boxShadow: courseLevel === 'HSK1' ? '0 0 12px rgba(56, 189, 248, 0.4)' : 'none',
+                color: courseLevel === 'HSK1' ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${courseLevel === 'HSK1' ? '#0284c7' : 'var(--border)'}`,
+                boxShadow: courseLevel === 'HSK1' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
+                cursor: 'pointer',
               }}
               onClick={() => handleSelectCourseLevel('HSK1')}
             >
@@ -1452,9 +1453,10 @@ export function AudioCourseView({
                 fontSize: '13px',
                 fontWeight: 700,
                 background: courseLevel === 'HSK2' ? 'var(--primary)' : 'var(--surface-card)',
-                color: '#fff',
-                border: `1px solid ${courseLevel === 'HSK2' ? 'var(--primary)' : 'var(--border)'}`,
-                boxShadow: courseLevel === 'HSK2' ? '0 0 12px rgba(217, 56, 56, 0.4)' : 'none',
+                color: courseLevel === 'HSK2' ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${courseLevel === 'HSK2' ? 'var(--primary)' : 'var(--border)'}`,
+                boxShadow: courseLevel === 'HSK2' ? '0 2px 8px rgba(217, 56, 56, 0.3)' : 'none',
+                cursor: 'pointer',
               }}
               onClick={() => handleSelectCourseLevel('HSK2')}
             >
@@ -1469,9 +1471,10 @@ export function AudioCourseView({
                 fontSize: '13px',
                 fontWeight: 700,
                 background: courseLevel === 'HSK3' ? '#10b981' : 'var(--surface-card)',
-                color: '#fff',
-                border: `1px solid ${courseLevel === 'HSK3' ? '#34d399' : 'var(--border)'}`,
-                boxShadow: courseLevel === 'HSK3' ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
+                color: courseLevel === 'HSK3' ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${courseLevel === 'HSK3' ? '#10b981' : 'var(--border)'}`,
+                boxShadow: courseLevel === 'HSK3' ? '0 2px 8px rgba(16, 185, 129, 0.3)' : 'none',
+                cursor: 'pointer',
               }}
               onClick={() => handleSelectCourseLevel('HSK3')}
             >
@@ -1493,12 +1496,13 @@ export function AudioCourseView({
                 gap: '6px',
                 padding: '7px 14px',
                 borderRadius: '8px',
-                background: 'rgba(255, 255, 255, 0.06)',
-                color: '#fff',
+                background: 'var(--surface-hover)',
+                color: 'var(--text-heading)',
                 fontSize: '12px',
-                fontWeight: 600,
-                border: '1px solid var(--border)',
+                fontWeight: 700,
+                border: '1.5px solid var(--border)',
                 textDecoration: 'none',
+                cursor: 'pointer',
               }}
             >
               <FileText size={14} /> Xem Sách Scan PDF Gốc ({courseLevel === 'HSK1' ? '144 trang' : '162 trang'}) <ExternalLink size={12} />
@@ -1766,7 +1770,7 @@ export function AudioCourseView({
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', paddingBottom: '10px', borderBottom: '1px solid var(--border)' }}>
                       <div>
-                        <h4 style={{ fontSize: '14px', fontWeight: 800, color: '#fff', margin: 0 }}>
+                        <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-heading)', margin: 0 }}>
                           MỤC LỤC 15 BÀI HỌC
                         </h4>
                         <span style={{ fontSize: '11px', color: 'var(--text-dim)' }}>
@@ -1888,10 +1892,11 @@ export function AudioCourseView({
                     gap: '6px',
                     padding: '8px 14px',
                     borderRadius: '8px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid var(--border)',
-                    color: '#fff',
+                    background: 'var(--surface-hover)',
+                    border: '1.5px solid var(--border)',
+                    color: 'var(--text-heading)',
                     fontSize: '13px',
+                    fontWeight: 700,
                     cursor: 'pointer',
                   }}
                   title="Phát âm tiêu đề bài học"
@@ -1909,11 +1914,11 @@ export function AudioCourseView({
                       gap: '6px',
                       padding: '8px 14px',
                       borderRadius: '8px',
-                      background: activeSubTab === 'pdf' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                      border: `1px solid ${activeSubTab === 'pdf' ? '#38bdf8' : 'var(--border)'}`,
-                      color: activeSubTab === 'pdf' ? '#38bdf8' : '#fff',
+                      background: activeSubTab === 'pdf' ? 'rgba(2, 132, 199, 0.15)' : 'var(--surface-hover)',
+                      border: `1.5px solid ${activeSubTab === 'pdf' ? '#0284c7' : 'var(--border)'}`,
+                      color: activeSubTab === 'pdf' ? '#0284c7' : 'var(--text-heading)',
                       fontSize: '13px',
-                      fontWeight: 600,
+                      fontWeight: 700,
                       cursor: 'pointer',
                     }}
                   >
@@ -1944,9 +1949,10 @@ export function AudioCourseView({
                   fontSize: '13px',
                   fontWeight: 700,
                   background: activeSubTab === 'context' ? '#0284c7' : 'var(--surface-card)',
-                  color: activeSubTab === 'context' ? '#fff' : 'var(--text)',
+                  color: activeSubTab === 'context' ? '#fff' : 'var(--text-heading)',
                   border: `1.5px solid ${activeSubTab === 'context' ? '#0284c7' : 'var(--border)'}`,
                   boxShadow: activeSubTab === 'context' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
+                  cursor: 'pointer',
                 }}
               >
                 🖼️ Ngữ Cảnh Giao Tiếp (Tranh Minh Họa)
@@ -1959,9 +1965,11 @@ export function AudioCourseView({
                   borderRadius: '8px',
                   fontSize: '13px',
                   fontWeight: 700,
-                  background: activeSubTab === 'grammar' ? '#d93838' : 'rgba(255, 255, 255, 0.04)',
-                  color: '#fff',
-                  border: `1px solid ${activeSubTab === 'grammar' ? '#d93838' : 'var(--border)'}`,
+                  background: activeSubTab === 'grammar' ? '#d93838' : 'var(--surface-card)',
+                  color: activeSubTab === 'grammar' ? '#fff' : 'var(--text-heading)',
+                  border: `1.5px solid ${activeSubTab === 'grammar' ? '#d93838' : 'var(--border)'}`,
+                  boxShadow: activeSubTab === 'grammar' ? '0 2px 8px rgba(217, 56, 56, 0.3)' : 'none',
+                  cursor: 'pointer',
                 }}
               >
                 🎓 Tiểu Ngữ Giảng Đường (小语讲堂)
@@ -1976,9 +1984,11 @@ export function AudioCourseView({
                     borderRadius: '8px',
                     fontSize: '13px',
                     fontWeight: 700,
-                    background: activeSubTab === 'audio' ? '#0284c7' : 'rgba(255, 255, 255, 0.04)',
-                    color: '#fff',
-                    border: `1px solid ${activeSubTab === 'audio' ? '#0284c7' : 'var(--border)'}`,
+                    background: activeSubTab === 'audio' ? '#0284c7' : 'var(--surface-card)',
+                    color: activeSubTab === 'audio' ? '#fff' : 'var(--text-heading)',
+                    border: `1.5px solid ${activeSubTab === 'audio' ? '#0284c7' : 'var(--border)'}`,
+                    boxShadow: activeSubTab === 'audio' ? '0 2px 8px rgba(2, 132, 199, 0.3)' : 'none',
+                    cursor: 'pointer',
                   }}
                 >
                   🎧 120 File Audio Bản Xứ ({selectedLesson.tracks?.length || 0} bài)
@@ -1993,9 +2003,11 @@ export function AudioCourseView({
                   borderRadius: '8px',
                   fontSize: '13px',
                   fontWeight: 700,
-                  background: activeSubTab === 'vocab' ? '#10b981' : 'rgba(255, 255, 255, 0.04)',
-                  color: '#fff',
-                  border: `1px solid ${activeSubTab === 'vocab' ? '#10b981' : 'var(--border)'}`,
+                  background: activeSubTab === 'vocab' ? '#10b981' : 'var(--surface-card)',
+                  color: activeSubTab === 'vocab' ? '#fff' : 'var(--text-heading)',
+                  border: `1.5px solid ${activeSubTab === 'vocab' ? '#10b981' : 'var(--border)'}`,
+                  boxShadow: activeSubTab === 'vocab' ? '0 2px 8px rgba(16, 185, 129, 0.3)' : 'none',
+                  cursor: 'pointer',
                 }}
               >
                 📖 Sinh Từ (生词)
@@ -2009,9 +2021,11 @@ export function AudioCourseView({
                   borderRadius: '8px',
                   fontSize: '13px',
                   fontWeight: 700,
-                  background: activeSubTab === 'dialogue' ? '#8b5cf6' : 'rgba(255, 255, 255, 0.04)',
-                  color: '#fff',
-                  border: `1px solid ${activeSubTab === 'dialogue' ? '#8b5cf6' : 'var(--border)'}`,
+                  background: activeSubTab === 'dialogue' ? '#8b5cf6' : 'var(--surface-card)',
+                  color: activeSubTab === 'dialogue' ? '#fff' : 'var(--text-heading)',
+                  border: `1.5px solid ${activeSubTab === 'dialogue' ? '#8b5cf6' : 'var(--border)'}`,
+                  boxShadow: activeSubTab === 'dialogue' ? '0 2px 8px rgba(139, 92, 246, 0.3)' : 'none',
+                  cursor: 'pointer',
                 }}
               >
                 💬 Bài Khóa & Hội Thoại (课文)
@@ -2026,9 +2040,11 @@ export function AudioCourseView({
                     borderRadius: '8px',
                     fontSize: '13px',
                     fontWeight: 700,
-                    background: activeSubTab === 'pdf' ? '#f59e0b' : 'rgba(255, 255, 255, 0.04)',
-                    color: '#fff',
-                    border: `1px solid ${activeSubTab === 'pdf' ? '#f59e0b' : 'var(--border)'}`,
+                    background: activeSubTab === 'pdf' ? '#f59e0b' : 'var(--surface-card)',
+                    color: activeSubTab === 'pdf' ? '#fff' : 'var(--text-heading)',
+                    border: `1.5px solid ${activeSubTab === 'pdf' ? '#f59e0b' : 'var(--border)'}`,
+                    boxShadow: activeSubTab === 'pdf' ? '0 2px 8px rgba(245, 158, 11, 0.3)' : 'none',
+                    cursor: 'pointer',
                   }}
                 >
                   📑 Sách Giáo Khoa Gốc PDF
@@ -2700,7 +2716,7 @@ export function AudioCourseView({
                           fontFamily: 'var(--font-hanzi)',
                           fontSize: '22px',
                           fontWeight: 700,
-                          color: '#fff',
+                          color: 'var(--text-heading)',
                           minWidth: '70px',
                         }}
                       >
@@ -2726,11 +2742,13 @@ export function AudioCourseView({
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        background: 'rgba(255, 255, 255, 0.08)',
+                        background: 'var(--surface-hover)',
+                        border: '1px solid var(--border)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#fff',
+                        color: 'var(--text-heading)',
+                        cursor: 'pointer',
                       }}
                       title="Phát âm từ này"
                     >
@@ -3130,7 +3148,7 @@ export function AudioCourseView({
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <BookOpen size={16} color="#38bdf8" />
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-heading)' }}>
                     Sách Giáo Khoa Gốc: {courseLevel === 'HSK1' ? 'New HSK Course 1 (144 trang)' : 'New HSK Course 2 (162 trang)'}
                   </span>
                 </div>
