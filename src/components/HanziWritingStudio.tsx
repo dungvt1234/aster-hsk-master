@@ -14,6 +14,7 @@ import {
   Play,
   Lightbulb,
   Compass,
+  Printer,
 } from 'lucide-react';
 import type { HSKLevel, VocabItem } from '../types';
 import { HSK_VOCABULARY } from '../data/hskData';
@@ -230,6 +231,80 @@ export function HanziWritingStudio({
         localStorage.setItem('aster_practiced_hanzi', JSON.stringify(updated));
       } catch {}
     }
+  };
+
+  const handlePrintWorksheet = () => {
+    if (!currentItem) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Vui lòng cho phép mở popup trên trình duyệt để in phiếu bài tập tập viết!');
+      return;
+    }
+
+    const hz = currentItem.hanzi;
+    const lvl = currentItem.level;
+    const py = currentItem.pinyin;
+    const hv = currentItem.hanViet || '—';
+    const sc = currentItem.strokeCount || '—';
+    const mn = currentItem.meaning;
+    const rad = currentItem.radical ? '<div><strong>Bộ thủ:</strong> ' + currentItem.radical + '</div>' : '';
+
+    let guideRows = '';
+    for (let r = 0; r < 2; r++) {
+      guideRows += '<div class="grid-row"><div class="grid-cell solid">' + hz + '</div>';
+      for (let c = 0; c < 11; c++) {
+        guideRows += '<div class="grid-cell guide">' + hz + '</div>';
+      }
+      guideRows += '</div>';
+    }
+
+    let blankRows = '';
+    for (let r = 0; r < 4; r++) {
+      blankRows += '<div class="grid-row"><div class="grid-cell guide">' + hz + '</div>';
+      for (let c = 0; c < 11; c++) {
+        blankRows += '<div class="grid-cell blank"></div>';
+      }
+      blankRows += '</div>';
+    }
+
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8" /><title>Vở Tập Viết Chữ Hán - ' + hz + '</title>' +
+      '<style>' +
+      '@page { size: A4 portrait; margin: 12mm 15mm; }' +
+      'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; color: #1e293b; margin: 0; padding: 10px; }' +
+      '.header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 16px; }' +
+      '.title { font-size: 20px; font-weight: 800; color: #dc2626; margin: 0; }' +
+      '.meta { font-size: 12px; color: #64748b; margin-top: 4px; }' +
+      '.char-info { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; padding: 12px 16px; background: #fffbeb; border-radius: 8px; border: 1.5px solid #fef3c7; }' +
+      '.char-main { font-size: 52px; font-weight: 900; color: #0f172a; line-height: 1; font-family: "Kaiti", "STKaiti", "SimSun", "KaiTi_GB2312", serif; }' +
+      '.info-detail { font-size: 13.5px; line-height: 1.6; }' +
+      '.grid-row { display: flex; gap: 6px; margin-bottom: 8px; }' +
+      '.grid-cell { width: 44px; height: 44px; border: 1.5px solid #d97706; position: relative; display: flex; align-items: center; justify-content: center; font-family: "Kaiti", "STKaiti", "SimSun", "KaiTi_GB2312", serif; font-size: 30px; box-sizing: border-box; }' +
+      '.grid-cell::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 0; border-top: 1px dashed rgba(217, 119, 6, 0.35); }' +
+      '.grid-cell::after { content: ""; position: absolute; top: 0; left: 50%; width: 0; height: 100%; border-left: 1px dashed rgba(217, 119, 6, 0.35); }' +
+      '.grid-cell.guide { color: rgba(15, 23, 42, 0.28); }' +
+      '.grid-cell.solid { color: #0f172a; font-weight: bold; background: rgba(217, 119, 6, 0.06); }' +
+      '.grid-cell.blank { color: transparent; }' +
+      '.footer { margin-top: 24px; font-size: 11px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 8px; }' +
+      '@media print { body { padding: 0; } .no-print { display: none; } }' +
+      '</style></head><body>' +
+      '<div class="header"><div><h1 class="title">ASTER HSK MASTER · PHIẾU TẬP VIẾT CHỮ HÁN</h1>' +
+      '<div class="meta">Cấp độ: HSK ' + lvl + ' · Chuẩn Bút Thuận Khung Tân HSK 3.0</div></div>' +
+      '<div style="text-align: right;"><div style="font-size: 13px; font-weight: bold;">Họ và tên: .......................................</div>' +
+      '<div style="font-size: 12px; color: #64748b; margin-top: 4px;">Ngày luyện tập: ....../...... / 202...</div></div></div>' +
+      '<div class="char-info"><div class="char-main">' + hz + '</div>' +
+      '<div class="info-detail"><div><strong>Phiên âm Pinyin:</strong> ' + py + ' &nbsp;|&nbsp; <strong>Số nét:</strong> ' + sc + ' nét</div>' +
+      '<div><strong>Âm Hán Việt:</strong> ' + hv + ' &nbsp;|&nbsp; <strong>Nghĩa:</strong> ' + mn + '</div>' +
+      rad + '</div></div>' +
+      '<h4 style="font-size: 13px; margin: 12px 0 6px; color: #334155;">Dòng 1 - 2: Tô theo chữ mẫu mờ chuẩn bút thuận</h4>' +
+      guideRows +
+      '<h4 style="font-size: 13px; margin: 16px 0 6px; color: #334155;">Dòng 3 - 6: Tự viết vào ô Điền Tự Cách / Mễ Tự Cách</h4>' +
+      blankRows +
+      '<div class="footer">Nền tảng Tự học Tiếng Trung Toàn Diện Aster HSK Master · https://aster-hsk-master.vercel.app</div>' +
+      '<script>window.onload = function() { setTimeout(function() { window.print(); }, 300); };<\/script>' +
+      '</body></html>';
+
+    printWindow.document.write(html);
+    printWindow.document.close();
   };
 
   const handleSpeak = () => {
@@ -646,6 +721,28 @@ export function HanziWritingStudio({
                 title="Xóa viết lại từ đầu"
               >
                 <RotateCcw size={14} /> Xóa vẽ lại
+              </button>
+
+              <button
+                type="button"
+                onClick={handlePrintWorksheet}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(2, 132, 199, 0.12)',
+                  border: '1.5px solid rgba(2, 132, 199, 0.4)',
+                  color: '#0284c7',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+                title="In phiếu tập viết ô Mễ Tự Cách khổ A4 để luyện viết tay"
+              >
+                <Printer size={14} /> In Vở Tập Viết (A4)
               </button>
 
               <button
