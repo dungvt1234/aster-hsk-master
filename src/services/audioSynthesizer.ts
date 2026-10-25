@@ -161,6 +161,60 @@ class SoundEffectsManager {
 
     window.speechSynthesis.speak(utterance);
   }
+
+  // Pure mathematical pitch contour glide (Zhao Yuanren 5-degree Chao scale)
+  playTonePitchGlide(tone: 1 | 2 | 3 | 4 | 5) {
+    try {
+      const ctx = this.getContext();
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.2, now);
+
+      if (tone === 1) {
+        // Tone 1: 5-5 (High level ~440Hz, 0.45s)
+        osc.frequency.setValueAtTime(440, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now);
+        osc.stop(now + 0.45);
+      } else if (tone === 2) {
+        // Tone 2: 3-5 (Rising 300Hz -> 440Hz, 0.38s)
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(440, now + 0.38);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+        osc.start(now);
+        osc.stop(now + 0.42);
+      } else if (tone === 3) {
+        // Tone 3: 2-1-4 (Dipping 250Hz -> 190Hz -> 370Hz, 0.5s)
+        osc.frequency.setValueAtTime(250, now);
+        osc.frequency.exponentialRampToValueAtTime(190, now + 0.22);
+        osc.frequency.exponentialRampToValueAtTime(370, now + 0.5);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.52);
+        osc.start(now);
+        osc.stop(now + 0.52);
+      } else if (tone === 4) {
+        // Tone 4: 5-1 (Falling fast 440Hz -> 190Hz, 0.28s)
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(190, now + 0.28);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+        osc.start(now);
+        osc.stop(now + 0.32);
+      } else {
+        // Tone 5: Neutral dot (~280Hz, 0.12s short)
+        osc.frequency.setValueAtTime(280, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+    } catch {
+      // AudioContext unavailable
+    }
+  }
 }
 
 export const soundEffects = new SoundEffectsManager();

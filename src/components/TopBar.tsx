@@ -72,6 +72,11 @@ export function TopBar({
           title: 'Studio Tập Viết Chữ Hán 🖌️',
           subtitle: 'Bàn vẽ cảm ứng Mễ Tự Cách (米字格) rèn trí nhớ cơ bắp và bút thuận chuẩn',
         };
+      case 'speaking':
+        return {
+          title: 'Studio Luyện Nói & Khẩu Ngữ AI 🎙️',
+          subtitle: 'Chấm điểm phát âm thời gian thực, rèn ngữ điệu Bắc Kinh và phản xạ khẩu ngữ HSK 1 - 4',
+        };
       case 'course':
         return {
           title: `Giáo Trình HSK ${currentLevel}`,

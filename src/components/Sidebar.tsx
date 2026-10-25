@@ -14,6 +14,7 @@ import {
   PenTool,
   Volume2,
   Gamepad2,
+  Mic,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -79,6 +80,13 @@ export function Sidebar({
       icon: <PenTool size={20} />,
       color: '#ec4899',
       badge: 'Mới 2.0',
+    },
+    {
+      id: 'speaking',
+      label: 'Luyện Nói AI',
+      icon: <Mic size={20} />,
+      color: '#10b981',
+      badge: 'Speech 🎙️',
     },
     {
       id: 'course',

@@ -1775,6 +1775,32 @@ button {
   background: rgba(255, 255, 255, 0.35);
 }
 
+.duo-fasttrack-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+}
+
+.duo-fasttrack-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
+  filter: brightness(1.1);
+}
+
+.duo-fasttrack-btn:active {
+  transform: translateY(0);
+}
+
 /* Track of Nodes with Stepping Stones Trail */
 .duo-nodes-track {
   display: flex;
@@ -2977,5 +3003,13 @@ button {
     max-height: 340px !important;
   }
 }
+
+/* Responsive AI Speaking Studio */
+@media (max-width: 860px) {
+  .speaking-studio-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 
 

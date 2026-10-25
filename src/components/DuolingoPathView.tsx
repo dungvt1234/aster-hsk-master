@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Star,
   Lock,
+  Unlock,
   Check,
   Trophy,
   Flame,
@@ -12,11 +13,13 @@ import {
   ArrowRight,
   ShieldCheck,
   Target,
+  RotateCcw,
 } from 'lucide-react';
 import type { HSKLevel, RoadmapNode, RoadmapUnit } from '../types';
 import { ROADMAP_UNITS } from '../data/roadmapData';
 import { DuolingoLessonModal } from './DuolingoLessonModal';
 import { UnitGuidebookModal } from './UnitGuidebookModal';
+import { FastTrackModal } from './FastTrackModal';
 import { soundEffects } from '../services/audioSynthesizer';
 
 interface DuolingoPathViewProps {
@@ -26,6 +29,7 @@ interface DuolingoPathViewProps {
   onOpenChatAI?: (prompt: string) => void;
   onOpenSprint?: () => void;
   onNavigateTab?: (tab: string) => void;
+  onSelectLevel?: (lvl: HSKLevel) => void;
 }
 
 export function DuolingoPathView({
@@ -35,18 +39,63 @@ export function DuolingoPathView({
   onOpenChatAI,
   onOpenSprint,
   onNavigateTab,
+  onSelectLevel,
 }: DuolingoPathViewProps) {
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
   const [selectedNodeModal, setSelectedNodeModal] = useState<RoadmapNode | null>(null);
   const [selectedGuidebookUnit, setSelectedGuidebookUnit] = useState<RoadmapUnit | null>(null);
   const [userXp, setUserXp] = useState(120);
 
+  // Chế độ học vượt: Lưu trong localStorage
+  const [fastTrackMode, setFastTrackMode] = useState<boolean>(() => {
+    return localStorage.getItem('aster_fast_track_mode') === 'true';
+  });
+
+  // Danh sách các Node & Unit đã mở khóa / hoàn thành học vượt
+  const [completedNodeIds, setCompletedNodeIds] = useState<Set<string>>(() => {
+    try {
+      const saved = localStorage.getItem('aster_completed_nodes');
+      return saved ? new Set(JSON.parse(saved)) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  });
+
+  // Modal thử thách học vượt
+  const [fastTrackModal, setFastTrackModal] = useState<{
+    isOpen: boolean;
+    unit?: RoadmapUnit;
+    mode: 'unit' | 'level';
+  } | null>(null);
+
   // Filter units for current HSK Level
   const units = ROADMAP_UNITS.filter((u) => u.level === currentLevel);
 
+  // Toggle chế độ học vượt tự do
+  const handleToggleFastTrackMode = () => {
+    soundEffects.playTap();
+    const nextVal = !fastTrackMode;
+    setFastTrackMode(nextVal);
+    localStorage.setItem('aster_fast_track_mode', String(nextVal));
+  };
+
+  const getNodeEffectiveStatus = (node: RoadmapNode): 'completed' | 'active' | 'locked' => {
+    if (completedNodeIds.has(node.id) || node.status === 'completed') {
+      return 'completed';
+    }
+    if (fastTrackMode) {
+      return 'active';
+    }
+    return node.status;
+  };
+
   const handleNodeClick = (node: RoadmapNode) => {
     soundEffects.playTap();
-    setSelectedNodeModal(node);
+    const effectiveStatus = getNodeEffectiveStatus(node);
+    setSelectedNodeModal({
+      ...node,
+      status: effectiveStatus,
+    });
   };
 
   const handleStartLesson = (node: RoadmapNode) => {
@@ -59,10 +108,47 @@ export function DuolingoPathView({
     if (onAddXp) onAddXp(earnedXp);
 
     if (activeNode) {
+      const nextCompleted = new Set(completedNodeIds);
+      nextCompleted.add(activeNode.id);
+      setCompletedNodeIds(nextCompleted);
+      localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
       activeNode.status = 'completed';
       activeNode.stars = 3;
     }
     setActiveNode(null);
+  };
+
+  // Xử lý khi vượt qua thử thách học vượt
+  const handleFastTrackSuccess = (earnedXp: number, unitId?: string) => {
+    setUserXp((prev) => prev + earnedXp);
+    if (onAddXp) onAddXp(earnedXp);
+
+    if (unitId) {
+      // Mở khóa và hoàn thành toàn bộ các bài trong unit đó
+      const targetUnit = units.find((u) => u.id === unitId);
+      if (targetUnit) {
+        const nextCompleted = new Set(completedNodeIds);
+        targetUnit.nodes.forEach((n) => {
+          nextCompleted.add(n.id);
+          n.status = 'completed';
+          n.stars = 3;
+        });
+        setCompletedNodeIds(nextCompleted);
+        localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
+      }
+    } else {
+      // Học vượt cấp độ: Hoàn thành toàn bộ các unit hiện tại
+      const nextCompleted = new Set(completedNodeIds);
+      units.forEach((u) => {
+        u.nodes.forEach((n) => {
+          nextCompleted.add(n.id);
+          n.status = 'completed';
+          n.stars = 3;
+        });
+      });
+      setCompletedNodeIds(nextCompleted);
+      localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
+    }
   };
 
   // Zigzag offsets for the nodes (Duolingo winding path)
@@ -82,7 +168,7 @@ export function DuolingoPathView({
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
             gap: '12px',
-            marginBottom: '20px',
+            marginBottom: '16px',
           }}
         >
           {/* Action 1: 3-Min Memory Sprint */}
@@ -131,7 +217,53 @@ export function DuolingoPathView({
             </div>
           )}
 
-          {/* Action 2: Hanzi Writing Studio */}
+          {/* Action 2: Hanzi Arena Speed Match */}
+          {onNavigateTab && (
+            <div
+              onClick={() => onNavigateTab('arena')}
+              style={{
+                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(249, 115, 22, 0.1))',
+                border: '1.5px solid rgba(239, 68, 68, 0.4)',
+                borderRadius: '16px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 10px rgba(239, 68, 68, 0.15)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: '#ef4444',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Flame size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                    Đấu Trường 60s 🎮
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Ghép thẻ tốc độ & rương báu
+                  </div>
+                </div>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#ef4444' }}>Chiến ➔</span>
+            </div>
+          )}
+
+          {/* Action 3: Hanzi Writing Studio */}
           {onNavigateTab && (
             <div
               onClick={() => onNavigateTab('writing')}
@@ -169,13 +301,197 @@ export function DuolingoPathView({
                     Tập Viết Chữ Hán 🖌️
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Bàn vẽ Mễ Tự Cách & bút thuận
+                    Mễ Tự Cách & Bút thuận 3P
                   </div>
                 </div>
               </div>
               <span style={{ fontSize: '12px', fontWeight: 800, color: '#ec4899' }}>Vẽ Ngay ➔</span>
             </div>
           )}
+
+          {/* Action 4: AI Voice & Speaking Studio */}
+          {onNavigateTab && (
+            <div
+              onClick={() => onNavigateTab('speaking')}
+              style={{
+                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1))',
+                border: '1.5px solid rgba(16, 185, 129, 0.4)',
+                borderRadius: '16px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 10px rgba(16, 185, 129, 0.15)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: '#10b981',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Target size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                    Luyện Nói AI 🎙️
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Chấm điểm phát âm & Khẩu ngữ
+                  </div>
+                </div>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#10b981' }}>Luyện ➔</span>
+            </div>
+          )}
+        </div>
+
+        {/* =========================================================================
+            CHẾ ĐỘ HỌC VƯỢT (FAST-TRACK MASTER STRIP)
+           ========================================================================= */}
+        <div
+          style={{
+            background: fastTrackMode
+              ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.15))'
+              : 'var(--surface-card)',
+            border: `1.5px solid ${fastTrackMode ? '#f59e0b' : 'var(--border)'}`,
+            borderRadius: '18px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
+            marginBottom: '10px',
+            boxShadow: fastTrackMode ? '0 0 20px rgba(245, 158, 11, 0.25)' : 'var(--card-shadow)',
+            transition: 'all 0.25s ease',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '12px',
+                background: fastTrackMode ? '#f59e0b' : 'rgba(245, 158, 11, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: fastTrackMode ? '#ffffff' : '#f59e0b',
+                flexShrink: 0,
+                boxShadow: fastTrackMode ? '0 4px 12px rgba(245, 158, 11, 0.4)' : 'none',
+              }}
+            >
+              <Zap size={22} fill={fastTrackMode ? '#fff' : '#f59e0b'} />
+            </div>
+            <div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 900,
+                  color: 'var(--text-heading)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}
+              >
+                Chế Độ Học Vượt & Nhảy Cóc
+                {fastTrackMode ? (
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      background: '#10b981',
+                      color: '#fff',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 800,
+                      letterSpacing: '0.5px',
+                    }}
+                  >
+                    ĐANG BẬT
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      background: 'var(--border)',
+                      color: 'var(--text-muted)',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 700,
+                    }}
+                  >
+                    MẶC ĐỊNH
+                  </span>
+                )}
+              </div>
+              <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
+                {fastTrackMode
+                  ? 'Toàn bộ bài học đã được mở khóa tự do. Bạn có thể nhảy cóc đến bất kỳ bài nào!'
+                  : 'Bật chế độ học vượt để tự do mở khóa mọi bài học hoặc làm bài kiểm tra vượt cấp.'}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              type="button"
+              onClick={handleToggleFastTrackMode}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                borderRadius: '12px',
+                fontWeight: 800,
+                fontSize: '12px',
+                cursor: 'pointer',
+                background: fastTrackMode ? '#f59e0b' : 'var(--surface)',
+                color: fastTrackMode ? '#fff' : 'var(--text-heading)',
+                border: `1.5px solid ${fastTrackMode ? '#d97706' : 'var(--border)'}`,
+                boxShadow: fastTrackMode ? '0 2px 8px rgba(245, 158, 11, 0.35)' : 'none',
+                transition: 'all 0.15s ease',
+              }}
+              title="Bật/Tắt chế độ tự do mở khóa toàn bộ bài học"
+            >
+              {fastTrackMode ? <Unlock size={15} /> : <Lock size={15} />}
+              <span>{fastTrackMode ? 'TẮT HỌC VƯỢT' : 'MỞ KHÓA TỰ DO'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setFastTrackModal({ isOpen: true, mode: 'level' })}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                borderRadius: '12px',
+                fontWeight: 800,
+                fontSize: '12px',
+                cursor: 'pointer',
+                background: 'linear-gradient(135deg, #10b981, #059669)',
+                color: '#fff',
+                border: 'none',
+                boxShadow: '0 2px 8px rgba(16, 185, 129, 0.35)',
+                transition: 'all 0.15s ease',
+              }}
+              title={`Kiểm tra năng lực vượt cấp HSK ${currentLevel}`}
+            >
+              <Award size={15} />
+              <span>Thi Vượt Cấp HSK {currentLevel}</span>
+            </button>
+          </div>
         </div>
 
         {units.length === 0 ? (
@@ -198,22 +514,34 @@ export function DuolingoPathView({
                   <h2 className="unit-title">{unit.title}</h2>
                   <p className="unit-desc">{unit.description}</p>
                 </div>
-                <button
-                  type="button"
-                  className="duo-guidebook-btn"
-                  onClick={() => setSelectedGuidebookUnit(unit)}
-                  title="Xem sổ tay ngữ pháp, 5 thanh điệu & đàm thoại"
-                >
-                  <BookOpen size={16} /> HƯỚNG DẪN
-                </button>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {/* Nút Học Vượt Unit (Jump-Ahead) */}
+                  <button
+                    type="button"
+                    className="duo-fasttrack-btn"
+                    onClick={() => setFastTrackModal({ isOpen: true, unit, mode: 'unit' })}
+                    title="Làm bài kiểm tra ngắn 5 câu để học vượt và mở khóa toàn bộ Unit này"
+                  >
+                    <Zap size={15} fill="#fff" /> HỌC VƯỢT
+                  </button>
+                  <button
+                    type="button"
+                    className="duo-guidebook-btn"
+                    onClick={() => setSelectedGuidebookUnit(unit)}
+                    title="Xem sổ tay ngữ pháp, 5 thanh điệu & đàm thoại"
+                  >
+                    <BookOpen size={16} /> HƯỚNG DẪN
+                  </button>
+                </div>
               </div>
 
               {/* Path Nodes with Stepping Stones Trail */}
               <div className="duo-nodes-track">
                 {unit.nodes.map((node, idx) => {
-                  const isCompleted = node.status === 'completed';
-                  const isActive = node.status === 'active';
-                  const isLocked = node.status === 'locked';
+                  const effectiveStatus = getNodeEffectiveStatus(node);
+                  const isCompleted = effectiveStatus === 'completed';
+                  const isActive = effectiveStatus === 'active';
+                  const isLocked = effectiveStatus === 'locked';
 
                   return (
                     <React.Fragment key={node.id}>
@@ -245,7 +573,7 @@ export function DuolingoPathView({
 
                         <button
                           type="button"
-                          className={`duo-node-btn ${node.type} ${node.status}`}
+                          className={`duo-node-btn ${node.type} ${effectiveStatus}`}
                           onClick={() => handleNodeClick(node)}
                           title={`${node.title} - ${node.subtitle}`}
                         >
@@ -308,53 +636,40 @@ export function DuolingoPathView({
 
           <div className="quest-item">
             <div className="quest-text">
-              <span>Hoàn thành 1 bài luyện Word Bank</span>
+              <span>Luyện 1 bài học vượt</span>
               <span className="quest-count">1/1</span>
             </div>
             <div className="quest-bar">
-              <div className="quest-fill" style={{ width: '100%' }} />
-            </div>
-          </div>
-
-          <div className="quest-item">
-            <div className="quest-text">
-              <span>Đạt chuỗi Combo 5 câu đúng</span>
-              <span className="quest-count">Đã mở</span>
-            </div>
-            <div className="quest-bar">
-              <div className="quest-fill" style={{ width: '100%', background: '#FFC800' }} />
+              <div className="quest-fill" style={{ width: '100%', background: '#f59e0b' }} />
             </div>
           </div>
         </div>
 
-        {/* Weekly Leaderboard League */}
+        {/* Bronze League Leaderboard Box */}
         <div className="duo-sidebar-card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div className="card-header">
             <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Trophy size={18} color="#FFC800" /> Giải Đấu Đồng
+              <Award size={18} color="#FFC800" /> Bảng Xếp Hạng Đồng
             </h4>
-            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 800, background: 'rgba(16, 185, 129, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>
-              Top 3 Thăng Hạng
-            </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'var(--surface-card)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'rgba(255, 200, 0, 0.12)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontWeight: 900, color: '#FFC800', fontSize: '13px', width: '16px' }}>1</span>
-                <span style={{ fontSize: '18px' }}>👑</span>
-                <span style={{ fontSize: '13px', fontWeight: 800 }}>Lý Văn (Li Wen)</span>
+                <span style={{ fontWeight: 900, color: '#eab308', fontSize: '14px', width: '16px' }}>1</span>
+                <span style={{ fontSize: '18px' }}>⚡</span>
+                <span style={{ fontSize: '13px', fontWeight: 800 }}>Bạn (Học Vượt)</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b' }}>480 XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#eab308' }}>{userXp} XP</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'rgba(88, 204, 2, 0.12)', border: '1.5px solid #58CC02' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'var(--surface-card)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontWeight: 900, color: '#58CC02', fontSize: '13px', width: '16px' }}>2</span>
-                <span style={{ fontSize: '18px' }}>🌟</span>
-                <span style={{ fontSize: '13px', fontWeight: 900, color: '#58CC02' }}>Bạn (Học viên)</span>
+                <span style={{ fontWeight: 900, color: '#94a3b8', fontSize: '13px', width: '16px' }}>2</span>
+                <span style={{ fontSize: '18px' }}>🦊</span>
+                <span style={{ fontSize: '13px', fontWeight: 700 }}>Lan Anh (蓝英)</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 900, color: '#58CC02' }}>{userXp} XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>135 XP</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'var(--surface-card)' }}>
@@ -392,8 +707,15 @@ export function DuolingoPathView({
         <div className="duo-node-popup-overlay" onClick={() => setSelectedNodeModal(null)}>
           <div className="duo-node-popup" onClick={(e) => e.stopPropagation()}>
             <div className="popup-header">
-              <span className="popup-badge" style={{ background: '#10b981', color: '#fff', fontWeight: 800 }}>
-                🎁 100% MIỄN PHÍ
+              <span
+                className="popup-badge"
+                style={{
+                  background: selectedNodeModal.status === 'locked' ? '#64748b' : '#10b981',
+                  color: '#fff',
+                  fontWeight: 800,
+                }}
+              >
+                {selectedNodeModal.status === 'locked' ? '🔒 ĐANG KHÓA' : '🎁 100% MIỄN PHÍ'}
               </span>
               <h3 style={{ margin: '8px 0 4px', fontSize: '18px', fontWeight: 900 }}>
                 {selectedNodeModal.title}
@@ -407,14 +729,44 @@ export function DuolingoPathView({
               <Zap size={16} color="#FFC800" /> Phần thưởng: +{selectedNodeModal.xpReward} XP
             </div>
 
-            <button
-              type="button"
-              className="duo-btn duo-btn-primary duo-btn-large"
-              style={{ width: '100%', marginTop: '16px' }}
-              onClick={() => handleStartLesson(selectedNodeModal)}
-            >
-              BẮT ĐẦU HỌC (+{selectedNodeModal.xpReward} XP)
-            </button>
+            {selectedNodeModal.status === 'locked' ? (
+              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+                  Bài học này đang bị khóa theo lộ trình tuần tự. Bạn có thể mở khóa ngay bằng cách:
+                </p>
+                <button
+                  type="button"
+                  className="duo-btn duo-btn-primary"
+                  style={{ width: '100%', background: '#f59e0b', borderColor: '#d97706' }}
+                  onClick={() => {
+                    setSelectedNodeModal(null);
+                    setFastTrackModal({ isOpen: true, mode: 'level' });
+                  }}
+                >
+                  <Zap size={16} fill="#fff" /> LÀM THỬ THÁCH HỌC VƯỢT
+                </button>
+                <button
+                  type="button"
+                  className="duo-btn duo-btn-skip"
+                  style={{ width: '100%', border: '1px solid var(--border)' }}
+                  onClick={() => {
+                    handleToggleFastTrackMode();
+                    setSelectedNodeModal(null);
+                  }}
+                >
+                  <Unlock size={14} /> BẬT MỞ KHÓA TỰ DO
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="duo-btn duo-btn-primary duo-btn-large"
+                style={{ width: '100%', marginTop: '16px' }}
+                onClick={() => handleStartLesson(selectedNodeModal)}
+              >
+                BẮT ĐẦU HỌC (+{selectedNodeModal.xpReward} XP)
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -427,7 +779,7 @@ export function DuolingoPathView({
           xpReward={activeNode.xpReward}
           onClose={() => setActiveNode(null)}
           onComplete={handleLessonCompleted}
-          onAskAI={(prompt, context) => {
+          onAskAI={(prompt) => {
             setActiveNode(null);
             if (onOpenChatAI) onOpenChatAI(prompt);
           }}
@@ -440,6 +792,20 @@ export function DuolingoPathView({
           unit={selectedGuidebookUnit}
           onClose={() => setSelectedGuidebookUnit(null)}
           onAskAI={onOpenChatAI}
+        />
+      )}
+
+      {/* Fast-Track Modal (Thử thách học vượt cấp / vượt unit) */}
+      {fastTrackModal && fastTrackModal.isOpen && (
+        <FastTrackModal
+          unit={fastTrackModal.unit}
+          level={currentLevel}
+          mode={fastTrackModal.mode}
+          onClose={() => setFastTrackModal(null)}
+          onSuccess={handleFastTrackSuccess}
+          onJumpToLevel={(newLevel) => {
+            if (onSelectLevel) onSelectLevel(newLevel);
+          }}
         />
       )}
     </div>

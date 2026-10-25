@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Volume2,
   Sparkles,
@@ -13,6 +13,14 @@ import {
   Flame,
   VolumeX,
   HelpCircle,
+  Mic,
+  MicOff,
+  Radio,
+  Play,
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Target,
 } from 'lucide-react';
 import { soundEffects } from '../services/audioSynthesizer';
 import { TONE_COLORS } from '../services/highlightUtils';
@@ -20,9 +28,10 @@ import { TONE_COLORS } from '../services/highlightUtils';
 interface PinyinMasterStudioProps {
   onOpenChatAI?: (prompt: string) => void;
   onNavigateTab?: (tab: string) => void;
+  onAddXp?: (xp: number) => void;
 }
 
-type StudioTab = 'initials' | 'finals' | 'tones' | 'rules' | 'trainer';
+type StudioTab = 'initials' | 'finals' | 'tones' | 'rules' | 'trainer' | 'coach';
 
 // 1. DATA: 23 THANH MẪU (INITIALS)
 interface InitialItem {

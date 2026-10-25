@@ -26,6 +26,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { HanziWritingStudio } from './components/HanziWritingStudio';
 import { HanziArenaGame } from './components/HanziArenaGame';
 import { PinyinMasterStudio } from './components/PinyinMasterStudio';
+import { AISpeakingStudio } from './components/AISpeakingStudio';
 import { MemorySprintModal } from './components/MemorySprintModal';
 import { cloudSync } from './services/cloudSyncService';
 import { authService, UserProfile } from './services/authService';
@@ -156,7 +157,12 @@ export function App() {
           {activeTab === 'duo_path' && (
             <DuolingoPathView
               currentLevel={currentLevel}
+              onSelectLevel={setCurrentLevel}
               streak={stats.streak}
+              onAddXp={(earnedXp) => {
+                authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
+                setCurrentUser(authService.getCurrentUser());
+              }}
               onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               onOpenSprint={() => setIsSprintOpen(true)}
               onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
@@ -186,6 +192,18 @@ export function App() {
             <HanziWritingStudio
               currentLevel={currentLevel}
               onSelectLevel={setCurrentLevel}
+              onOpenChatAI={(prompt) => setAiPrompt(prompt)}
+            />
+          )}
+
+          {activeTab === 'speaking' && (
+            <AISpeakingStudio
+              currentLevel={currentLevel}
+              onSelectLevel={setCurrentLevel}
+              onAddXp={(earnedXp) => {
+                authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
+                setCurrentUser(authService.getCurrentUser());
+              }}
               onOpenChatAI={(prompt) => setAiPrompt(prompt)}
             />
           )}
