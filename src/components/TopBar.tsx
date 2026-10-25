@@ -12,6 +12,7 @@ import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
 import { cloudSync, SyncStatus } from '../services/cloudSyncService';
 import type { UserProfile } from '../services/authService';
+import { gamificationService, type GamificationState } from '../services/gamificationService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -23,6 +24,8 @@ interface TopBarProps {
   onOpenAuth?: () => void;
   onOpenAI?: () => void;
   onOpenSprint?: () => void;
+  onOpenStore?: () => void;
+  onOpenQuests?: () => void;
   onToggleMobileMenu?: () => void;
 }
 
@@ -36,12 +39,20 @@ export function TopBar({
   onOpenAuth,
   onOpenAI,
   onOpenSprint,
+  onOpenStore,
+  onOpenQuests,
   onToggleMobileMenu,
 }: TopBarProps) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: 'synced', lastSyncedAt: null, pendingChanges: 0 });
+  const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
 
   useEffect(() => {
-    return cloudSync.subscribe((s) => setSyncStatus(s));
+    const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
+    const unsubGame = gamificationService.subscribe((g) => setGameState({ ...g }));
+    return () => {
+      unsubSync();
+      unsubGame();
+    };
   }, []);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
     { level: 1, label: 'HSK 1', color: '#0284c7' },
@@ -204,22 +215,84 @@ export function TopBar({
           <span>100% MIỄN PHÍ</span>
         </div>
 
-        {/* Streak Flame */}
-        <div className="topbar-stat-pill streak" title="Chuỗi ngày học liên tục">
+        {/* Streak Flame & Shield */}
+        <div
+          className="topbar-stat-pill streak"
+          onClick={onOpenQuests}
+          style={{ cursor: onOpenQuests ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '5px' }}
+          title="Chuỗi ngày học liên tục. Nhấp để xem Nhiệm Vụ & Rương Bí Mật"
+        >
           <Flame size={16} fill="#FF9600" color="#FF9600" />
           <span className="stat-number">{streak}</span>
+          {gameState.streakFreezes > 0 && (
+            <span
+              style={{
+                fontSize: '10px',
+                background: 'rgba(56, 189, 248, 0.2)',
+                color: '#0284c7',
+                padding: '1px 5px',
+                borderRadius: '8px',
+                fontWeight: 900,
+              }}
+              title={`Đang có ${gameState.streakFreezes} Băng bảo vệ Streak!`}
+            >
+              🧊{gameState.streakFreezes}
+            </span>
+          )}
         </div>
 
-        {/* Gems (Desktop/Tablet) */}
-        <div className="topbar-stat-pill gems desktop-xl-only" title="Điểm kim cương tích lũy">
+        {/* Gems & Store Trigger */}
+        <div
+          className="topbar-stat-pill gems"
+          onClick={onOpenStore}
+          style={{
+            cursor: onOpenStore ? 'pointer' : 'default',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            background: 'rgba(14, 165, 233, 0.1)',
+            border: '1px solid rgba(14, 165, 233, 0.25)',
+          }}
+          title="Kim Cương 💎 tích lũy. Nhấp để mở Cửa Hàng Vật Phẩm"
+        >
           <Gem size={15} fill="#1CB0F6" color="#1CB0F6" />
-          <span className="stat-number">450</span>
+          <span className="stat-number">{gameState.gems}</span>
+          {gamificationService.isDoubleXpActive() && (
+            <span
+              style={{
+                fontSize: '9px',
+                background: '#f59e0b',
+                color: '#ffffff',
+                padding: '1px 4px',
+                borderRadius: '6px',
+                fontWeight: 900,
+              }}
+              title={`Đang kích hoạt Double XP (${gamificationService.getDoubleXpMinutesRemaining()}m)`}
+            >
+              2X
+            </span>
+          )}
         </div>
 
         {/* Hearts */}
-        <div className="topbar-stat-pill hearts" title="Trái tim còn lại trong ngày (10/10)">
-          <Heart size={16} fill="#FF4B4B" color="#FF4B4B" />
-          <span className="stat-number">10/10</span>
+        <div
+          className="topbar-stat-pill hearts"
+          onClick={onOpenStore}
+          style={{ cursor: onOpenStore ? 'pointer' : 'default' }}
+          title={
+            gamificationService.isInfiniteHeartsActive()
+              ? `Bất tử tim đang bật (${gamificationService.getInfiniteHeartsMinutesRemaining()}m)`
+              : 'Trái tim học tập (10/10). Nhấp để nạp thêm'
+          }
+        >
+          <Heart
+            size={16}
+            fill={gamificationService.isInfiniteHeartsActive() ? '#fbbf24' : '#FF4B4B'}
+            color={gamificationService.isInfiniteHeartsActive() ? '#d97706' : '#FF4B4B'}
+          />
+          <span className="stat-number">
+            {gamificationService.isInfiniteHeartsActive() ? '∞' : '10/10'}
+          </span>
         </div>
 
         {/* Enterprise Cloud Sync Status */}

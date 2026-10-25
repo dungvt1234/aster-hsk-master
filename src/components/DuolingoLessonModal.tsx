@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { DuolingoChallenge } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
+import { gamificationService } from '../services/gamificationService';
 import {
   renderColoredPinyin,
   ToneLegend,
@@ -213,7 +214,9 @@ export function DuolingoLessonModal({
       soundEffects.playIncorrect();
       setStatus('incorrect');
       setCombo(0);
-      setHearts((prev) => Math.max(0, prev - 1));
+      if (!gamificationService.isInfiniteHeartsActive()) {
+        setHearts((prev) => Math.max(0, prev - 1));
+      }
 
       // Duolingo Smart Re-queue: push failed challenge to the end of the queue
       setChallengeQueue((prev) => [...prev, currentChallenge]);
@@ -340,9 +343,20 @@ export function DuolingoLessonModal({
           </div>
 
           {/* Hearts / Lives */}
-          <div className="duo-heart-badge">
-            <Heart size={22} fill="#FF4B4B" color="#FF4B4B" />
-            <span>{hearts}</span>
+          <div
+            className="duo-heart-badge"
+            title={
+              gamificationService.isInfiniteHeartsActive()
+                ? 'Trái tim bất tử đang bật!'
+                : 'Trái tim còn lại trong bài học'
+            }
+          >
+            <Heart
+              size={22}
+              fill={gamificationService.isInfiniteHeartsActive() ? '#fbbf24' : '#FF4B4B'}
+              color={gamificationService.isInfiniteHeartsActive() ? '#d97706' : '#FF4B4B'}
+            />
+            <span>{gamificationService.isInfiniteHeartsActive() ? '∞' : hearts}</span>
           </div>
 
           {/* Combo indicator */}

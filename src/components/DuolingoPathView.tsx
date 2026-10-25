@@ -14,6 +14,8 @@ import {
   ShieldCheck,
   Target,
   RotateCcw,
+  Gem,
+  Gift,
 } from 'lucide-react';
 import type { HSKLevel, RoadmapNode, RoadmapUnit } from '../types';
 import { ROADMAP_UNITS } from '../data/roadmapData';
@@ -21,6 +23,8 @@ import { DuolingoLessonModal } from './DuolingoLessonModal';
 import { UnitGuidebookModal } from './UnitGuidebookModal';
 import { FastTrackModal } from './FastTrackModal';
 import { soundEffects } from '../services/audioSynthesizer';
+import { gamificationService, type GamificationState } from '../services/gamificationService';
+import { fireConfetti } from '../utils/confetti';
 
 interface DuolingoPathViewProps {
   currentLevel: HSKLevel;
@@ -30,6 +34,8 @@ interface DuolingoPathViewProps {
   onOpenSprint?: () => void;
   onNavigateTab?: (tab: string) => void;
   onSelectLevel?: (lvl: HSKLevel) => void;
+  onOpenStore?: () => void;
+  onOpenQuests?: () => void;
 }
 
 export function DuolingoPathView({
@@ -40,11 +46,19 @@ export function DuolingoPathView({
   onOpenSprint,
   onNavigateTab,
   onSelectLevel,
+  onOpenStore,
+  onOpenQuests,
 }: DuolingoPathViewProps) {
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
   const [selectedNodeModal, setSelectedNodeModal] = useState<RoadmapNode | null>(null);
   const [selectedGuidebookUnit, setSelectedGuidebookUnit] = useState<RoadmapUnit | null>(null);
   const [userXp, setUserXp] = useState(120);
+
+  const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
+
+  useEffect(() => {
+    return gamificationService.subscribe((g) => setGameState({ ...g }));
+  }, []);
 
   // Chế độ học vượt: Lưu trong localStorage
   const [fastTrackMode, setFastTrackMode] = useState<boolean>(() => {
@@ -104,8 +118,22 @@ export function DuolingoPathView({
   };
 
   const handleLessonCompleted = (earnedXp: number) => {
-    setUserXp((prev) => prev + earnedXp);
-    if (onAddXp) onAddXp(earnedXp);
+    // Áp dụng Double XP nếu còn hiệu lực
+    const isDouble = gamificationService.isDoubleXpActive();
+    const finalXp = isDouble ? earnedXp * 2 : earnedXp;
+
+    setUserXp((prev) => prev + finalXp);
+    if (onAddXp) onAddXp(finalXp);
+
+    // Thưởng 10 Kim Cương 💎
+    gamificationService.addGems(10);
+
+    // Cập nhật nhiệm vụ ngày
+    gamificationService.updateQuestProgress('lesson', 1);
+    gamificationService.updateQuestProgress('xp', finalXp);
+
+    // Hiệu ứng pháo hoa chúc mừng
+    fireConfetti({ particleCount: 75, spread: 200 });
 
     if (activeNode) {
       const nextCompleted = new Set(completedNodeIds);
@@ -614,34 +642,112 @@ export function DuolingoPathView({
 
       {/* Right Sidebar: Gamification, Daily Quests, Leaderboard & Streak */}
       <aside className="duo-path-sidebar">
+        {/* Daily Mystery Chest (Rương Bí Mật Hàng Ngày) */}
+        {gamificationService.canOpenMysteryChest() ? (
+          <div
+            className="duo-sidebar-card"
+            onClick={onOpenQuests}
+            style={{
+              cursor: 'pointer',
+              background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
+              border: '2px solid #fde68a',
+              boxShadow: '0 4px 15px rgba(245, 158, 11, 0.2)',
+              animation: 'pulse 2s infinite',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '30px' }}>🎁</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 900, color: '#92400e' }}>
+                    Rương May Mắn!
+                  </h4>
+                  <span style={{ fontSize: '9px', background: '#f59e0b', color: '#fff', padding: '2px 6px', borderRadius: '6px', fontWeight: 900 }}>
+                    MỞ NGAY
+                  </span>
+                </div>
+                <p style={{ margin: '2px 0 0', fontSize: '11px', color: '#b45309' }}>
+                  Nhấp để nhận 20 ~ 50 💎 & XP miễn phí
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div
+            className="duo-sidebar-card"
+            onClick={onOpenStore}
+            style={{
+              cursor: 'pointer',
+              background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(2, 132, 199, 0.05))',
+              border: '1.5px solid rgba(14, 165, 233, 0.25)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Gem size={22} fill="#0284c7" color="#0284c7" />
+                <div>
+                  <span style={{ fontSize: '14px', fontWeight: 900, color: 'var(--text-main)' }}>
+                    Cửa Hàng Kim Cương
+                  </span>
+                  <p style={{ margin: '2px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Đang có {gameState.gems} 💎 • Mua vật phẩm
+                  </p>
+                </div>
+              </div>
+              <ArrowRight size={16} color="#0284c7" />
+            </div>
+          </div>
+        )}
+
         {/* Daily Quests Box */}
         <div className="duo-sidebar-card">
-          <div className="card-header">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Target size={18} color="#58CC02" /> Nhiệm Vụ Hàng Ngày
             </h4>
-          </div>
-          <div className="quest-item">
-            <div className="quest-text">
-              <span>Đạt 30 XP hôm nay</span>
-              <span className="quest-count">{userXp}/30 XP</span>
-            </div>
-            <div className="quest-bar">
-              <div
-                className="quest-fill"
-                style={{ width: `${Math.min(100, Math.round((userXp / 30) * 100))}%` }}
-              />
-            </div>
+            {onOpenQuests && (
+              <button
+                onClick={onOpenQuests}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  color: '#0284c7',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+              >
+                Xem tất cả
+              </button>
+            )}
           </div>
 
-          <div className="quest-item">
-            <div className="quest-text">
-              <span>Luyện 1 bài học vượt</span>
-              <span className="quest-count">1/1</span>
-            </div>
-            <div className="quest-bar">
-              <div className="quest-fill" style={{ width: '100%', background: '#f59e0b' }} />
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+            {gameState.quests.slice(0, 2).map((q) => {
+              const percent = Math.min(100, Math.round((q.current / q.target) * 100));
+              return (
+                <div key={q.id} className="quest-item" onClick={onOpenQuests} style={{ cursor: 'pointer' }}>
+                  <div className="quest-text">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>{q.icon}</span> {q.title}
+                    </span>
+                    <span className="quest-count" style={{ color: q.claimed ? '#10b981' : undefined }}>
+                      {q.claimed ? 'Đã nhận' : `${q.current}/${q.target}`}
+                    </span>
+                  </div>
+                  <div className="quest-bar">
+                    <div
+                      className="quest-fill"
+                      style={{
+                        width: `${percent}%`,
+                        background: q.claimed ? '#10b981' : percent >= 100 ? '#10b981' : '#f59e0b',
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -691,13 +797,33 @@ export function DuolingoPathView({
               <div>
                 <span style={{ fontSize: '16px', fontWeight: 900 }}>{streak} Ngày Liên Tiếp</span>
                 <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Học mỗi ngày để không làm tắt ngọn lửa!
+                  {gameState.streakFreezes > 0
+                    ? `Băng bảo vệ: ${gameState.streakFreezes}/3 chiếc`
+                    : 'Chưa có Băng bảo vệ!'}
                 </p>
               </div>
             </div>
-            <span title="Bảo vệ chuỗi Streak đang bật">
-              <ShieldCheck size={24} color="#1CB0F6" />
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+              <span title="Bảo vệ chuỗi Streak đang bật">
+                <ShieldCheck size={24} color={gameState.streakFreezes > 0 ? '#1CB0F6' : '#94a3b8'} />
+              </span>
+              {onOpenStore && (
+                <button
+                  onClick={onOpenStore}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    color: '#0284c7',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  Nạp thêm 💎
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </aside>

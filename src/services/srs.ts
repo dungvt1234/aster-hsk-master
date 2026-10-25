@@ -1,4 +1,5 @@
 import type { CardProgress, UserStats, HSKLevel } from '../types';
+import { gamificationService } from './gamificationService';
 
 const GLOBAL_PROGRESS_KEY = 'aster_hsk_progress_v1';
 const GLOBAL_STATS_KEY = 'aster_hsk_stats_v1';
@@ -55,7 +56,11 @@ export function loadUserStats(totalCounts: Record<HSKLevel, number>, userId?: st
         const last = new Date(stats.lastStudyDate);
         const diffDays = Math.floor((new Date(today).getTime() - last.getTime()) / (1000 * 3600 * 24));
         if (diffDays > 1) {
-          stats.streak = 1; // đứt streak
+          // Kiểm tra xem có Băng Bảo Vệ Streak để cứu không
+          const savedByFreeze = gamificationService.consumeStreakFreeze();
+          if (!savedByFreeze) {
+            stats.streak = 1; // đứt streak nếu không có băng bảo vệ
+          }
         }
       }
       return stats;

@@ -30,6 +30,8 @@ interface SidebarProps {
   onOpenProfile?: () => void;
   onOpenAuth?: () => void;
   onOpenAI?: () => void;
+  onOpenStore?: () => void;
+  onOpenQuests?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -44,6 +46,8 @@ export function Sidebar({
   onOpenProfile,
   onOpenAuth,
   onOpenAI,
+  onOpenStore,
+  onOpenQuests,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -207,6 +211,62 @@ export function Sidebar({
 
         {/* Bottom Footer Actions: User Profile, AI Tutor & Theme Toggle */}
         <div className="sidebar-footer">
+          {/* Quick Access: Quests 🎁 & Diamond Shop 💎 */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+            {onOpenQuests && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenQuests();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08))',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  color: '#d97706',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mở Nhiệm Vụ Ngày & Rương May Mắn"
+              >
+                <span>🎁</span> <span>Rương Báu</span>
+              </button>
+            )}
+
+            {onOpenStore && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenStore();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(2, 132, 199, 0.08))',
+                  border: '1px solid rgba(14, 165, 233, 0.3)',
+                  color: '#0284c7',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mở Cửa Hàng Kim Cương 💎"
+              >
+                <span>💎</span> <span>Cửa Hàng</span>
+              </button>
+            )}
+          </div>
           {user && (
             <div
               onClick={() => {
