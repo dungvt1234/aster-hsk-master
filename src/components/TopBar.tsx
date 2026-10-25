@@ -7,12 +7,14 @@ import {
   Zap,
   Cloud,
   Gift,
+  Music,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
 import { cloudSync, SyncStatus } from '../services/cloudSyncService';
 import type { UserProfile } from '../services/authService';
 import { gamificationService, type GamificationState } from '../services/gamificationService';
+import { soundEffects } from '../services/audioSynthesizer';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -45,6 +47,7 @@ export function TopBar({
 }: TopBarProps) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: 'synced', lastSyncedAt: null, pendingChanges: 0 });
   const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
+  const [isLofi, setIsLofi] = useState(soundEffects.isLofiActive());
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -318,6 +321,36 @@ export function TopBar({
           <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
           <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Cloud Safe'}</span>
         </div>
+
+        {/* Lo-Fi Ambient Study Beats Player Toggle */}
+        <button
+          type="button"
+          onClick={() => {
+            const next = soundEffects.toggleLofiBeats();
+            setIsLofi(next);
+          }}
+          className="desktop-only"
+          style={{
+            background: isLofi ? 'linear-gradient(135deg, #ec4899, #8b5cf6)' : 'var(--surface)',
+            color: isLofi ? '#ffffff' : 'var(--text-muted)',
+            border: `1.5px solid ${isLofi ? '#ec4899' : 'var(--border)'}`,
+            borderRadius: '20px',
+            padding: '5px 11px',
+            fontSize: '11px',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            cursor: 'pointer',
+            boxShadow: isLofi ? '0 2px 10px rgba(236, 72, 153, 0.35)' : 'none',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+          }}
+          title={isLofi ? 'Đang phát nhạc Lo-Fi Cổ Phong thư giãn (Bấm để tắt)' : 'Bật nhạc nền Lo-Fi Cổ Phong 432Hz tập trung học'}
+        >
+          <Music size={13} color={isLofi ? '#ffffff' : '#ec4899'} />
+          <span>{isLofi ? 'Lo-Fi 🎵' : 'Lo-Fi'}</span>
+        </button>
 
         {/* 3-Minute FSRS Memory Sprint Trigger (Desktop XL only) */}
         {onOpenSprint && (

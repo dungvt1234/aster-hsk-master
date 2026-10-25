@@ -14,10 +14,13 @@ import {
   Clock,
   Play,
   CheckCircle2,
+  Gem,
 } from 'lucide-react';
 import type { HSKLevel, VocabItem } from '../types';
 import { HSK_VOCABULARY } from '../data/hskData';
 import { soundEffects } from '../services/audioSynthesizer';
+import { gamificationService } from '../services/gamificationService';
+import { fireConfetti } from '../utils/confetti';
 
 interface HanziArenaGameProps {
   currentLevel: HSKLevel;
@@ -26,7 +29,7 @@ interface HanziArenaGameProps {
   onNavigateTab?: (tab: string) => void;
 }
 
-type GameMode = 'speed_match' | 'reflex_blitz';
+type GameMode = 'speed_match' | 'reflex_blitz' | 'word_drop';
 
 interface MatchCard {
   id: string;
@@ -74,6 +77,14 @@ export function HanziArenaGame({
   const [blitzHearts, setBlitzHearts] = useState(3);
   const [blitzRound, setBlitzRound] = useState(1);
   const [blitzTimer, setBlitzTimer] = useState(10);
+
+  // Word Drop Mode States
+  const [dropWord, setDropWord] = useState<VocabItem | null>(null);
+  const [dropProgress, setDropProgress] = useState(0); // 0 to 92%
+  const [dropOptions, setDropOptions] = useState<string[]>([]);
+  const [dropHearts, setDropHearts] = useState(3);
+  const [dropX, setDropX] = useState(50); // 20% to 80%
+  const [dropFeedback, setDropFeedback] = useState<'correct' | 'wrong' | null>(null);
 
   // Chest Reward modal
   const [showChestModal, setShowChestModal] = useState(false);
@@ -133,6 +144,24 @@ export function HanziArenaGame({
     setBlitzTimer(10);
   };
 
+  // 3. Initialize Word Drop
+  const generateWordDrop = () => {
+    if (levelWords.length < 4) return;
+    const target = levelWords[Math.floor(Math.random() * levelWords.length)];
+    const distractors = levelWords
+      .filter((w) => w.id !== target.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map((w) => w.meaning);
+    const allOpts = [target.meaning, ...distractors].sort(() => Math.random() - 0.5);
+
+    setDropWord(target);
+    setDropOptions(allOpts);
+    setDropProgress(0);
+    setDropX(20 + Math.floor(Math.random() * 60)); // 20% to 80%
+    setDropFeedback(null);
+  };
+
   // Start Game
   const handleStartGame = () => {
     soundEffects.playTap();
@@ -148,14 +177,17 @@ export function HanziArenaGame({
     if (gameMode === 'speed_match') {
       setTimeLeft(60);
       generateSpeedMatchBoard();
-    } else {
+    } else if (gameMode === 'reflex_blitz') {
       setBlitzHearts(3);
       setBlitzRound(1);
       generateBlitzQuestion();
+    } else if (gameMode === 'word_drop') {
+      setDropHearts(3);
+      generateWordDrop();
     }
   };
 
-  // Timer loop for Speed Match
+  // Timer loop for Speed Match, Reflex Blitz and Word Drop
   useEffect(() => {
     if (!isPlaying || isGameOver) return;
 
@@ -180,12 +212,34 @@ export function HanziArenaGame({
           return prev - 1;
         });
       }, 1000);
+    } else if (gameMode === 'word_drop') {
+      timerRef.current = setInterval(() => {
+        setDropProgress((prev) => {
+          const speed = 1.0 + Math.min(2.0, (score / 1500) * 0.8);
+          const next = prev + speed;
+          if (next >= 92) {
+            soundEffects.playIncorrect();
+            setCombo(1);
+            setDropHearts((h) => {
+              const nextH = h - 1;
+              if (nextH <= 0) {
+                handleEndGame();
+              } else {
+                generateWordDrop();
+              }
+              return nextH;
+            });
+            return 0;
+          }
+          return next;
+        });
+      }, 60);
     }
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPlaying, isGameOver, gameMode]);
+  }, [isPlaying, isGameOver, gameMode, dropWord, score]);
 
   // End Game & Rewards
   const handleEndGame = () => {
@@ -193,12 +247,49 @@ export function HanziArenaGame({
     setIsPlaying(false);
     soundEffects.playFanfare();
 
-    const xpEarned = Math.max(20, Math.floor(score / 20));
+    const isDouble = gamificationService.isDoubleXpActive();
+    const rawXp = Math.max(20, Math.floor(score / 20));
+    const xpEarned = isDouble ? rawXp * 2 : rawXp;
     if (onAddXp) onAddXp(xpEarned);
+
+    // Thưởng Kim Cương 💎 theo điểm
+    const gemsAward = Math.max(5, Math.floor(score / 50));
+    gamificationService.addGems(gemsAward);
+    gamificationService.updateQuestProgress('practice', 1);
+    gamificationService.updateQuestProgress('xp', xpEarned);
+
+    fireConfetti({ particleCount: 75, spread: 180 });
 
     // Determine unlocked title
     const achieved = [...TITLES].reverse().find((t) => score >= t.minScore) || TITLES[0];
     setUnlockedTitle(achieved.title);
+  };
+
+  // Word Drop Answer Click
+  const handleDropAnswer = (chosen: string) => {
+    if (!dropWord) return;
+
+    if (chosen === dropWord.meaning) {
+      soundEffects.playCorrect();
+      soundEffects.speakChinese(dropWord.hanzi, 0.95);
+      const newCombo = combo + 1;
+      setCombo(newCombo);
+      if (newCombo > maxCombo) setMaxCombo(newCombo);
+      setScore((prev) => prev + 100 * newCombo);
+      setDropFeedback('correct');
+      setTimeout(generateWordDrop, 250);
+    } else {
+      soundEffects.playIncorrect();
+      setCombo(1);
+      setDropFeedback('wrong');
+      const nextH = dropHearts - 1;
+      setDropHearts(nextH);
+      if (nextH <= 0) {
+        handleEndGame();
+      } else {
+        setTimeout(generateWordDrop, 350);
+      }
+    }
   };
 
   // Speed Match Card Click
@@ -422,6 +513,31 @@ export function HanziArenaGame({
         >
           <Flame size={18} /> 🎯 Nhanh Tay Bắt Chữ (3 Mạng)
         </button>
+
+        <button
+          type="button"
+          disabled={isPlaying}
+          onClick={() => setGameMode('word_drop')}
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            padding: '12px 16px',
+            borderRadius: '14px',
+            background: gameMode === 'word_drop' ? '#0ea5e9' : 'var(--surface)',
+            color: gameMode === 'word_drop' ? '#fff' : 'var(--text-heading)',
+            border: `1.5px solid ${gameMode === 'word_drop' ? '#0ea5e9' : 'var(--border)'}`,
+            fontWeight: 800,
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            cursor: isPlaying ? 'not-allowed' : 'pointer',
+            boxShadow: gameMode === 'word_drop' ? '0 4px 14px rgba(14, 165, 233, 0.35)' : 'none',
+          }}
+        >
+          <span>🌧️</span> Mưa Chữ Rơi (Arcade)
+        </button>
       </div>
 
       {/* 3. Live Stats Header Bar (During Game) */}
@@ -518,15 +634,21 @@ export function HanziArenaGame({
         {!isPlaying && !isGameOver && (
           <div style={{ textAlign: 'center', maxWidth: '420px', padding: '20px 0' }}>
             <div style={{ fontSize: '54px', marginBottom: '12px' }}>
-              {gameMode === 'speed_match' ? '⚡' : '🎯'}
+              {gameMode === 'speed_match' ? '⚡' : gameMode === 'reflex_blitz' ? '🎯' : '🌧️'}
             </div>
             <h3 style={{ margin: '0 0 8px', fontSize: '22px', fontWeight: 900, color: 'var(--text-heading)' }}>
-              {gameMode === 'speed_match' ? 'Ghép Thẻ Thần Tốc' : 'Nhanh Tay Bắt Chữ'}
+              {gameMode === 'speed_match'
+                ? 'Ghép Thẻ Thần Tốc'
+                : gameMode === 'reflex_blitz'
+                ? 'Nhanh Tay Bắt Chữ'
+                : 'Mưa Chữ Hán Rơi (Word Drop)'}
             </h3>
             <p style={{ margin: '0 0 24px', fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
               {gameMode === 'speed_match'
                 ? 'Tìm các cặp Chữ Hán & Nghĩa tương ứng trong 60 giây. Càng ghép nhanh chuỗi Combo càng lớn!'
-                : 'Đọc chữ Hán và bấm đáp án đúng trước khi thanh năng lượng cạn kiệt. Sai 3 lần trò chơi kết thúc!'}
+                : gameMode === 'reflex_blitz'
+                ? 'Đọc chữ Hán và bấm đáp án đúng trước khi thanh năng lượng cạn kiệt. Sai 3 lần trò chơi kết thúc!'
+                : 'Bong bóng chữ Hán rơi từ trên xuống. Bấm nhanh nghĩa tiếng Việt trước khi chữ chạm vạch đáy nguy hiểm!'}
             </p>
 
             <button
@@ -735,9 +857,125 @@ export function HanziArenaGame({
           </div>
         )}
 
-        {/* State D: Game Over Results & Trophy Screen */}
+        {/* State D: Word Drop Arcade Arena */}
+        {isPlaying && gameMode === 'word_drop' && dropWord && (
+          <div style={{ width: '100%', maxWidth: '540px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {/* Top HUD: Hearts, Combo, and Score */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 4px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {[1, 2, 3].map((h) => (
+                  <Heart
+                    key={h}
+                    size={20}
+                    fill={h <= dropHearts ? '#ef4444' : 'none'}
+                    color={h <= dropHearts ? '#ef4444' : 'var(--text-muted)'}
+                  />
+                ))}
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 800, color: '#f59e0b' }}>
+                Combo: x{combo} 🔥
+              </div>
+              <div style={{ fontSize: '14px', fontWeight: 900, color: 'var(--text-heading)' }}>
+                {score} Điểm
+              </div>
+            </div>
+
+            {/* Arcade Drop Well (Giếng Rơi Chữ Hán) */}
+            <div
+              style={{
+                width: '100%',
+                height: '240px',
+                background: 'linear-gradient(180deg, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.18) 100%)',
+                border: '2px solid rgba(14, 165, 233, 0.3)',
+                borderRadius: '20px',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: 'inset 0 4px 20px rgba(0, 0, 0, 0.06)',
+              }}
+            >
+              {/* Warning Danger Zone bottom line */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '0',
+                  left: '0',
+                  right: '0',
+                  height: '24px',
+                  background: 'linear-gradient(0deg, rgba(239, 68, 68, 0.25), transparent)',
+                  borderTop: '1.5px dashed rgba(239, 68, 68, 0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  fontWeight: 800,
+                  color: '#ef4444',
+                  letterSpacing: '1px',
+                }}
+              >
+                VẠCH ĐÁY NGUY HIỂM
+              </div>
+
+              {/* Falling Hanzi Bubble */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: `${dropProgress}%`,
+                  left: `${dropX}%`,
+                  transform: 'translate(-50%, -20%)',
+                  transition: 'top 0.06s linear',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '90px',
+                  height: '90px',
+                  borderRadius: '50%',
+                  background:
+                    dropFeedback === 'correct'
+                      ? 'radial-gradient(circle, #34d399, #059669)'
+                      : dropFeedback === 'wrong'
+                      ? 'radial-gradient(circle, #f87171, #dc2626)'
+                      : 'radial-gradient(circle, #38bdf8, #0284c7)',
+                  boxShadow: '0 8px 25px rgba(2, 132, 199, 0.45), inset 0 -3px 8px rgba(0, 0, 0, 0.2)',
+                  color: '#ffffff',
+                  cursor: 'default',
+                }}
+              >
+                <span style={{ fontSize: '30px', fontWeight: 900, lineHeight: 1 }}>{dropWord.hanzi}</span>
+                <span style={{ fontSize: '11px', fontWeight: 700, opacity: 0.95, marginTop: '2px' }}>{dropWord.pinyin}</span>
+              </div>
+            </div>
+
+            {/* 4 Answer Choice Buttons */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              {dropOptions.map((opt, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleDropAnswer(opt)}
+                  style={{
+                    padding: '14px 12px',
+                    borderRadius: '14px',
+                    background: 'var(--surface-card)',
+                    border: '1.5px solid var(--border)',
+                    color: 'var(--text-heading)',
+                    fontSize: '14px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    boxShadow: '0 3px 8px rgba(0, 0, 0, 0.05)',
+                    transition: 'transform 0.1s ease, border-color 0.1s ease',
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* State E: Game Over Results & Trophy Screen */}
         {isGameOver && (
-          <div style={{ textAlign: 'center', maxWidth: '440px', padding: '10px 0' }}>
+          <div style={{ textAlign: 'center', maxWidth: '460px', padding: '10px 0' }}>
             <div style={{ fontSize: '48px', marginBottom: '8px' }}>🏆</div>
             <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: 'var(--text-heading)' }}>
               CHIẾN THẮNG ĐẤU TRƯỜNG!
@@ -750,21 +988,21 @@ export function HanziArenaGame({
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr',
-                gap: '10px',
+                gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                gap: '8px',
                 marginBottom: '20px',
               }}
             >
               <div
                 style={{
                   background: 'var(--surface-card)',
-                  padding: '12px',
+                  padding: '10px 6px',
                   borderRadius: '12px',
                   border: '1px solid var(--border)',
                 }}
               >
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>ĐIỂM SỐ</div>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#eab308', marginTop: '2px' }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>ĐIỂM SỐ</div>
+                <div style={{ fontSize: '18px', fontWeight: 900, color: '#eab308', marginTop: '2px' }}>
                   {score}
                 </div>
               </div>
@@ -772,13 +1010,13 @@ export function HanziArenaGame({
               <div
                 style={{
                   background: 'var(--surface-card)',
-                  padding: '12px',
+                  padding: '10px 6px',
                   borderRadius: '12px',
                   border: '1px solid var(--border)',
                 }}
               >
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>MAX COMBO</div>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#ef4444', marginTop: '2px' }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>MAX COMBO</div>
+                <div style={{ fontSize: '18px', fontWeight: 900, color: '#ef4444', marginTop: '2px' }}>
                   x{maxCombo} 🔥
                 </div>
               </div>
@@ -786,14 +1024,28 @@ export function HanziArenaGame({
               <div
                 style={{
                   background: 'var(--surface-card)',
-                  padding: '12px',
+                  padding: '10px 6px',
                   borderRadius: '12px',
                   border: '1px solid var(--border)',
                 }}
               >
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700 }}>PHẦN THƯỞNG</div>
-                <div style={{ fontSize: '16px', fontWeight: 900, color: '#10b981', marginTop: '4px' }}>
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>KINH NGHIỆM</div>
+                <div style={{ fontSize: '15px', fontWeight: 900, color: '#10b981', marginTop: '4px' }}>
                   +{Math.max(20, Math.floor(score / 20))} XP
+                </div>
+              </div>
+
+              <div
+                style={{
+                  background: 'var(--surface-card)',
+                  padding: '10px 6px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>KIM CƯƠNG</div>
+                <div style={{ fontSize: '15px', fontWeight: 900, color: '#0284c7', marginTop: '4px' }}>
+                  +{Math.max(5, Math.floor(score / 50))} 💎
                 </div>
               </div>
             </div>

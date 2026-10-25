@@ -215,6 +215,82 @@ class SoundEffectsManager {
       // AudioContext unavailable
     }
   }
+
+  // --- Lo-Fi Ambient Study Beats Procedural Generator ---
+  private lofiInterval: ReturnType<typeof setInterval> | null = null;
+  private lofiPlaying: boolean = false;
+
+  isLofiActive(): boolean {
+    return this.lofiPlaying;
+  }
+
+  toggleLofiBeats(): boolean {
+    if (this.lofiPlaying) {
+      this.stopLofiBeats();
+      return false;
+    } else {
+      this.startLofiBeats();
+      return true;
+    }
+  }
+
+  startLofiBeats() {
+    try {
+      this.stopLofiBeats();
+      const ctx = this.getContext();
+      this.lofiPlaying = true;
+
+      // Relaxing Chinese traditional pentatonic scale notes (Gong, Shang, Jue, Zhi, Yu)
+      // C4 (261.63Hz), D4 (293.66Hz), E4 (329.63Hz), G4 (392.00Hz), A4 (440.00Hz), C5 (523.25Hz)
+      const pentatonic = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63];
+      let step = 0;
+
+      const playChord = () => {
+        if (!this.lofiPlaying) return;
+        const now = ctx.currentTime;
+        const freq = pentatonic[step % pentatonic.length];
+        step++;
+
+        // Warm ambient sine bell
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+
+        // Low-pass filter for vintage lo-fi warmth
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(800, now);
+
+        // Soft attack, gentle sustained tail
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.045, now + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 1.8);
+      };
+
+      playChord();
+      this.lofiInterval = setInterval(playChord, 1600); // Gentle 75 BPM rhythm
+    } catch {
+      this.lofiPlaying = false;
+    }
+  }
+
+  stopLofiBeats() {
+    this.lofiPlaying = false;
+    if (this.lofiInterval) {
+      clearInterval(this.lofiInterval);
+      this.lofiInterval = null;
+    }
+  }
 }
 
 export const soundEffects = new SoundEffectsManager();
+
