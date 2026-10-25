@@ -5,6 +5,7 @@ import {
   Heart,
   Sparkles,
   Menu,
+  Zap,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -15,6 +16,7 @@ interface TopBarProps {
   activeTab: ActiveTab;
   streak: number;
   onOpenAI?: () => void;
+  onOpenSprint?: () => void;
   onToggleMobileMenu?: () => void;
 }
 
@@ -24,6 +26,7 @@ export function TopBar({
   activeTab,
   streak,
   onOpenAI,
+  onOpenSprint,
   onToggleMobileMenu,
 }: TopBarProps) {
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -39,6 +42,11 @@ export function TopBar({
         return {
           title: `Lộ Trình HSK ${currentLevel}`,
           subtitle: 'Bản đồ bài học tương tác, rèn phản xạ và nuôi chuỗi ngày học 🔥',
+        };
+      case 'writing':
+        return {
+          title: 'Studio Tập Viết Chữ Hán 🖌️',
+          subtitle: 'Bàn vẽ cảm ứng Mễ Tự Cách (米字格) rèn trí nhớ cơ bắp và bút thuận chuẩn',
         };
       case 'course':
         return {
@@ -161,6 +169,32 @@ export function TopBar({
           <Heart size={16} fill="#FF4B4B" color="#FF4B4B" />
           <span className="stat-number">5/5</span>
         </div>
+
+        {/* 3-Minute FSRS Memory Sprint Trigger */}
+        {onOpenSprint && (
+          <button
+            type="button"
+            onClick={onOpenSprint}
+            style={{
+              background: '#f59e0b',
+              color: '#ffffff',
+              border: 'none',
+              borderRadius: '20px',
+              padding: '6px 14px',
+              fontWeight: 800,
+              fontSize: '12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(245, 158, 11, 0.35)',
+              transition: 'transform 0.15s ease',
+            }}
+            title="Kích hoạt Bữa Sáng Trí Nhớ FSRS 3 phút"
+          >
+            <Zap size={14} fill="#ffffff" /> Sprint 3p
+          </button>
+        )}
 
         {/* Quick AI Trigger */}
         {onOpenAI && (

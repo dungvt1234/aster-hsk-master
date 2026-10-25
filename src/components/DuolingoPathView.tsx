@@ -24,6 +24,8 @@ interface DuolingoPathViewProps {
   streak: number;
   onAddXp?: (xp: number) => void;
   onOpenChatAI?: (prompt: string) => void;
+  onOpenSprint?: () => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export function DuolingoPathView({
@@ -31,6 +33,8 @@ export function DuolingoPathView({
   streak,
   onAddXp,
   onOpenChatAI,
+  onOpenSprint,
+  onNavigateTab,
 }: DuolingoPathViewProps) {
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
   const [selectedNodeModal, setSelectedNodeModal] = useState<RoadmapNode | null>(null);
@@ -77,6 +81,108 @@ export function DuolingoPathView({
     <div className="duo-path-layout">
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
+        {/* Next-Gen Interactive Action Strip */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '12px',
+            marginBottom: '20px',
+          }}
+        >
+          {/* Action 1: 3-Min Memory Sprint */}
+          {onOpenSprint && (
+            <div
+              onClick={onOpenSprint}
+              style={{
+                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1))',
+                border: '1.5px solid rgba(245, 158, 11, 0.4)',
+                borderRadius: '16px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.15)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: '#f59e0b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Zap size={20} fill="#fff" />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                    Bữa Sáng Trí Nhớ 3p ⚡
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    10 câu FSRS chống quên nhanh
+                  </div>
+                </div>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b' }}>Bắt Đầu ➔</span>
+            </div>
+          )}
+
+          {/* Action 2: Hanzi Writing Studio */}
+          {onNavigateTab && (
+            <div
+              onClick={() => onNavigateTab('writing')}
+              style={{
+                background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(217, 70, 239, 0.1))',
+                border: '1.5px solid rgba(236, 72, 153, 0.4)',
+                borderRadius: '16px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 2px 10px rgba(236, 72, 153, 0.15)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: '#ec4899',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                    Tập Viết Chữ Hán 🖌️
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Bàn vẽ Mễ Tự Cách & bút thuận
+                  </div>
+                </div>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#ec4899' }}>Vẽ Ngay ➔</span>
+            </div>
+          )}
+        </div>
+
         {units.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
             <h3>Đang đồng bộ lộ trình HSK {currentLevel}...</h3>

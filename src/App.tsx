@@ -23,11 +23,14 @@ import { DriveBooksView } from './components/DriveBooksView';
 import { DuolingoPathView } from './components/DuolingoPathView';
 import { AITutorChatbot } from './components/AITutorChatbot';
 import { MobileBottomNav } from './components/MobileBottomNav';
+import { HanziWritingStudio } from './components/HanziWritingStudio';
+import { MemorySprintModal } from './components/MemorySprintModal';
 
 export function App() {
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
   const [activeTab, setActiveTab] = useState<ActiveTab>('duo_path'); // Mặc định vào thẳng Lộ Trình Duolingo
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [isSprintOpen, setIsSprintOpen] = useState(false);
   const [progress, setProgress] = useState<Record<string, CardProgress>>({});
   const [stats, setStats] = useState<UserStats>(() => loadUserStats(LEVEL_COUNTS));
   const [aiPrompt, setAiPrompt] = useState<string | undefined>();
@@ -121,6 +124,7 @@ export function App() {
           activeTab={activeTab}
           streak={stats.streak}
           onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
+          onOpenSprint={() => setIsSprintOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
         />
 
@@ -129,6 +133,16 @@ export function App() {
             <DuolingoPathView
               currentLevel={currentLevel}
               streak={stats.streak}
+              onOpenChatAI={(prompt) => setAiPrompt(prompt)}
+              onOpenSprint={() => setIsSprintOpen(true)}
+              onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
+            />
+          )}
+
+          {activeTab === 'writing' && (
+            <HanziWritingStudio
+              currentLevel={currentLevel}
+              onSelectLevel={setCurrentLevel}
               onOpenChatAI={(prompt) => setAiPrompt(prompt)}
             />
           )}
@@ -213,6 +227,19 @@ export function App() {
           setMobileDrawerOpen(false);
         }}
         onOpenMenu={() => setMobileDrawerOpen(true)}
+      />
+
+      {/* 5. 3-Minute FSRS Memory Sprint Modal */}
+      <MemorySprintModal
+        isOpen={isSprintOpen}
+        onClose={() => setIsSprintOpen(false)}
+        currentLevel={currentLevel}
+        onAddXP={(_xp) => {
+          setStats((prev) => ({
+            ...prev,
+            todayReviews: prev.todayReviews + 1,
+          }));
+        }}
       />
     </div>
   );

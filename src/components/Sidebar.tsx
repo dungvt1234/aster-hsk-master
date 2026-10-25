@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   X,
+  PenTool,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -48,6 +49,13 @@ export function Sidebar({
       label: 'Lộ Trình Học',
       icon: <Zap size={20} />,
       color: '#58CC02',
+    },
+    {
+      id: 'writing',
+      label: 'Tập Viết Chữ Hán',
+      icon: <PenTool size={20} />,
+      color: '#ec4899',
+      badge: 'Mới 2.0',
     },
     {
       id: 'course',

@@ -4,6 +4,7 @@ import {
   BookOpen,
   Sparkles,
   GraduationCap,
+  PenTool,
   Menu,
 } from 'lucide-react';
 import type { ActiveTab } from './Header';
@@ -25,6 +26,12 @@ export function MobileBottomNav({
       label: 'Lộ trình',
       icon: <Zap size={22} />,
       color: '#58CC02',
+    },
+    {
+      id: 'writing' as ActiveTab,
+      label: 'Tập viết',
+      icon: <PenTool size={22} />,
+      color: '#ec4899',
     },
     {
       id: 'course' as ActiveTab,
