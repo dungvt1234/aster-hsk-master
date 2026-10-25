@@ -2535,3 +2535,421 @@ button {
 [data-theme="dark"] .tone-legend {
   background: rgba(0, 0, 0, 0.2);
 }
+
+/* =========================================================================
+   COMPREHENSIVE MOBILE RESPONSIVENESS SUITE (Aster HSK Mobile Master)
+   ========================================================================= */
+
+/* Desktop vs Mobile display utilities */
+.mobile-only {
+  display: none !important;
+}
+.desktop-only {
+  display: flex !important;
+}
+
+/* Base topbar left group */
+.topbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar-mobile-menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-card);
+  color: var(--text-heading);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.topbar-mobile-menu-btn:active {
+  transform: scale(0.95);
+  background: var(--surface-hover);
+}
+
+.sidebar-brand-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-mobile-close-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-right: 4px;
+}
+
+/* Mobile Sidebar Backdrop Overlay */
+.mobile-sidebar-backdrop {
+  display: none;
+}
+
+/* Mobile Bottom Navigation Bar (Hidden on desktop) */
+.mobile-bottom-nav {
+  display: none;
+}
+
+/* Level Mobile Select Dropdown */
+.level-mobile-select-wrap {
+  position: relative;
+}
+
+.level-mobile-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--surface-card);
+  border: 1.5px solid var(--border);
+  color: var(--text-heading);
+  font-weight: 800;
+  font-size: 13px;
+  padding: 6px 28px 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* =========================================================================
+   TABLET & MOBILE BREAKPOINTS (<= 768px)
+   ========================================================================= */
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex !important;
+  }
+  .desktop-only {
+    display: none !important;
+  }
+
+  /* 1. App Shell & Layout */
+  .app-shell {
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .app-main-area {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .app-content {
+    padding-bottom: 84px !important; /* Space for Mobile Bottom Nav */
+    overflow-x: hidden;
+  }
+
+  /* 2. Left Sidebar transforms into Slide-Over Drawer */
+  .mobile-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .app-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 285px !important;
+    min-width: 285px !important;
+    height: 100% !important;
+    z-index: 100 !important;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.35) !important;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    padding: 18px 16px !important;
+    border-right: 1px solid var(--border) !important;
+  }
+
+  .app-sidebar.mobile-drawer-open {
+    transform: translateX(0) !important;
+  }
+
+  /* Ensure labels are visible in mobile drawer */
+  .brand-title, .brand-subtitle, .nav-label, .sidebar-footer .sidebar-ai-btn div, .sidebar-theme-btn span {
+    display: block !important;
+  }
+
+  .sidebar-mobile-close-btn {
+    display: flex !important;
+  }
+
+  .sidebar-nav-btn {
+    justify-content: flex-start !important;
+    padding: 11px 14px !important;
+  }
+
+  .sidebar-brand {
+    justify-content: flex-start !important;
+  }
+
+  .sidebar-ai-btn {
+    justify-content: flex-start !important;
+  }
+
+  /* 3. TopBar on Mobile */
+  .app-topbar {
+    height: 58px;
+    min-height: 58px;
+    padding: 0 14px;
+    gap: 10px;
+  }
+
+  .topbar-mobile-menu-btn {
+    display: flex;
+  }
+
+  .topbar-heading {
+    max-width: 100%;
+  }
+
+  .topbar-title {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .topbar-subtitle {
+    display: none !important;
+  }
+
+  .topbar-right-controls {
+    gap: 8px;
+  }
+
+  .topbar-stat-pill {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  /* 4. Mobile Bottom Navigation Bar */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--surface);
+    border-top: 1.5px solid var(--border);
+    align-items: center;
+    justify-content: space-around;
+    z-index: 50;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 700;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+    user-select: none;
+  }
+
+  .mobile-nav-btn:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-nav-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-nav-label {
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .mobile-nav-indicator {
+    position: absolute;
+    top: 0;
+    width: 28px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+  }
+
+  /* 5. Mascot Tutor on Mobile */
+  .duo-mascot-container {
+    bottom: 74px !important;
+    right: 14px !important;
+  }
+
+  .duo-mascot-fab {
+    width: 52px !important;
+    height: 52px !important;
+    box-shadow: 0 6px 18px rgba(88, 204, 2, 0.35) !important;
+  }
+
+  .duo-mascot-fab span[role="img"] {
+    font-size: 26px !important;
+  }
+
+  .duo-ai-drawer {
+    max-width: 100% !important;
+    height: 85vh !important;
+    max-height: 85vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    align-self: flex-end !important;
+    animation: drawerSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  @keyframes drawerSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* 6. Duolingo Path View on Mobile */
+  .duo-path-layout {
+    padding: 10px 10px 80px !important;
+    gap: 20px !important;
+  }
+
+  .duo-unit-banner {
+    padding: 16px 18px !important;
+    border-radius: 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .duo-guidebook-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 8px !important;
+  }
+
+  .unit-title {
+    font-size: 17px !important;
+  }
+
+  .unit-desc {
+    font-size: 12px !important;
+  }
+
+  /* Scale down zigzag on small screens so buttons never overflow */
+  .duo-node-wrapper {
+    max-width: 100%;
+  }
+
+  /* 7. Audio Course View Responsive Adjustments */
+  .audio-course-container {
+    padding: 12px 12px 90px !important;
+  }
+
+  .lesson-stepper-bar {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .lesson-subtabs-scroll {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+  }
+
+  .lesson-subtabs-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .vocab-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .audio-fixed-player {
+    bottom: 64px !important;
+    left: 10px !important;
+    right: 10px !important;
+    padding: 10px 14px !important;
+  }
+
+  /* 8. Duolingo Lesson Challenge Modal on Mobile */
+  .duo-lesson-header {
+    padding: 14px 14px 6px !important;
+    gap: 12px !important;
+  }
+
+  .duo-challenge-body {
+    padding: 12px 14px !important;
+  }
+
+  .duo-challenge-prompt {
+    font-size: 17px !important;
+  }
+
+  .duo-match-grid {
+    gap: 8px !important;
+  }
+
+  .duo-match-btn {
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+    border-radius: 12px !important;
+  }
+
+  .duo-footer-default,
+  .duo-footer-feedback {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .duo-lesson-footer {
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .duo-btn-large {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* Extra small mobile (iPhone SE <= 375px) */
+@media (max-width: 375px) {
+  .topbar-stat-pill.hearts {
+    display: none !important;
+  }
+  .topbar-title {
+    font-size: 14px;
+  }
+  .mobile-nav-label {
+    font-size: 10px;
+  }
+}
+

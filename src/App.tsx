@@ -22,10 +22,12 @@ import { AudioCourseView } from './components/AudioCourseView';
 import { DriveBooksView } from './components/DriveBooksView';
 import { DuolingoPathView } from './components/DuolingoPathView';
 import { AITutorChatbot } from './components/AITutorChatbot';
+import { MobileBottomNav } from './components/MobileBottomNav';
 
 export function App() {
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
   const [activeTab, setActiveTab] = useState<ActiveTab>('duo_path'); // Mặc định vào thẳng Lộ Trình Duolingo
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [progress, setProgress] = useState<Record<string, CardProgress>>({});
   const [stats, setStats] = useState<UserStats>(() => loadUserStats(LEVEL_COUNTS));
   const [aiPrompt, setAiPrompt] = useState<string | undefined>();
@@ -107,6 +109,8 @@ export function App() {
         theme={theme}
         onToggleTheme={toggleTheme}
         onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
+        isOpenMobile={mobileDrawerOpen}
+        onCloseMobile={() => setMobileDrawerOpen(false)}
       />
 
       {/* 2. Main Right Area (Top Bar + Main Content) */}
@@ -117,6 +121,7 @@ export function App() {
           activeTab={activeTab}
           streak={stats.streak}
           onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
+          onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
         />
 
         <main className="app-content">
@@ -198,6 +203,16 @@ export function App() {
         initialPrompt={aiPrompt}
         onClearInitialPrompt={() => setAiPrompt(undefined)}
         onNavigateTab={(t) => setActiveTab(t as ActiveTab)}
+      />
+
+      {/* 4. Mobile Bottom Navigation Bar (Visible on <= 768px) */}
+      <MobileBottomNav
+        activeTab={activeTab}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          setMobileDrawerOpen(false);
+        }}
+        onOpenMenu={() => setMobileDrawerOpen(true)}
       />
     </div>
   );

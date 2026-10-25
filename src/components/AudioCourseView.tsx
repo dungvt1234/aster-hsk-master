@@ -1925,6 +1925,7 @@ export function AudioCourseView({
 
             {/* THANH SUBTABS NỘI DUNG CHUẨN FLTRP & HÌNH ẢNH NGỮ CẢNH */}
             <div
+              className="lesson-subtabs-scroll"
               style={{
                 display: 'flex',
                 gap: '8px',

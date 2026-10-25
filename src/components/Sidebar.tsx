@@ -10,8 +10,7 @@ import {
   Compass,
   Sun,
   Moon,
-  MessageSquare,
-  Bot,
+  X,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -23,6 +22,8 @@ interface SidebarProps {
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
   onOpenAI?: () => void;
+  isOpenMobile?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export function Sidebar({
@@ -32,6 +33,8 @@ export function Sidebar({
   theme,
   onToggleTheme,
   onOpenAI,
+  isOpenMobile,
+  onCloseMobile,
 }: SidebarProps) {
   const navItems: {
     id: ActiveTab;
@@ -90,86 +93,121 @@ export function Sidebar({
     },
   ];
 
-  return (
-    <aside className="app-sidebar">
-      {/* Brand Header */}
-      <div className="sidebar-brand" onClick={() => onSelectTab('duo_path')}>
-        <div className="brand-logo-ring">
-          <span className="brand-logo-hanzi">汉</span>
-        </div>
-        <div className="brand-info">
-          <h2 className="brand-title">Aster HSK</h2>
-          <span className="brand-subtitle">DUOLINGO MODE</span>
-        </div>
-      </div>
+  const handleItemClick = (id: ActiveTab) => {
+    onSelectTab(id);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
 
-      {/* Main Nav Links */}
-      <nav className="sidebar-nav">
-        {navItems.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
+  return (
+    <>
+      {/* Mobile Drawer Backdrop */}
+      {isOpenMobile && (
+        <div
+          className="mobile-sidebar-backdrop"
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`app-sidebar ${isOpenMobile ? 'mobile-drawer-open' : ''}`}>
+        {/* Brand Header */}
+        <div className="sidebar-brand-wrapper">
+          <div className="sidebar-brand" onClick={() => handleItemClick('duo_path')}>
+            <div className="brand-logo-ring">
+              <span className="brand-logo-hanzi">汉</span>
+            </div>
+            <div className="brand-info">
+              <h2 className="brand-title">Aster HSK</h2>
+              <span className="brand-subtitle">DUOLINGO MODE</span>
+            </div>
+          </div>
+
+          {/* Close button on mobile drawer */}
+          {onCloseMobile && (
             <button
-              key={item.id}
               type="button"
-              className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
-              onClick={() => onSelectTab(item.id)}
-              style={{
-                color: isActive ? item.color : 'var(--text-muted)',
-              }}
+              className="sidebar-mobile-close-btn"
+              onClick={onCloseMobile}
+              title="Đóng menu"
             >
-              <div
-                className="nav-icon-box"
+              <X size={20} />
+            </button>
+          )}
+        </div>
+
+        {/* Main Nav Links */}
+        <nav className="sidebar-nav">
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
+                onClick={() => handleItemClick(item.id)}
                 style={{
-                  background: isActive ? `${item.color}18` : 'transparent',
-                  color: isActive ? item.color : 'inherit',
+                  color: isActive ? item.color : 'var(--text-muted)',
                 }}
               >
-                {item.icon}
-              </div>
-              <span className="nav-label">{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+                <div
+                  className="nav-icon-box"
+                  style={{
+                    background: isActive ? `${item.color}18` : 'transparent',
+                    color: isActive ? item.color : 'inherit',
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <span className="nav-label">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
-      {/* Bottom Footer Actions: AI Tutor & Theme Toggle */}
-      <div className="sidebar-footer">
-        {onOpenAI && (
+        {/* Bottom Footer Actions: AI Tutor & Theme Toggle */}
+        <div className="sidebar-footer">
+          {onOpenAI && (
+            <button
+              type="button"
+              className="sidebar-ai-btn"
+              onClick={() => {
+                onOpenAI();
+                if (onCloseMobile) onCloseMobile();
+              }}
+              title="Mở trợ lý AI Aster giải đáp thắc mắc 24/7"
+            >
+              <div className="ai-icon-pulse">🦉</div>
+              <div style={{ textAlign: 'left', flex: 1 }}>
+                <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text)' }}>
+                  Gia Sư AI Aster
+                </div>
+                <div style={{ fontSize: '11px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span className="online-dot" /> Trực tuyến 24/7
+                </div>
+              </div>
+            </button>
+          )}
+
           <button
             type="button"
-            className="sidebar-ai-btn"
-            onClick={onOpenAI}
-            title="Mở trợ lý AI Aster giải đáp thắc mắc 24/7"
+            className="sidebar-theme-btn"
+            onClick={onToggleTheme}
+            title={theme === 'light' ? 'Chuyển sang giao diện Tối' : 'Chuyển sang giao diện Sáng'}
           >
-            <div className="ai-icon-pulse">🦉</div>
-            <div style={{ textAlign: 'left', flex: 1 }}>
-              <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text)' }}>
-                Gia Sư AI Aster
-              </div>
-              <div style={{ fontSize: '11px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span className="online-dot" /> Trực tuyến 24/7
-              </div>
-            </div>
+            {theme === 'light' ? (
+              <>
+                <Moon size={16} /> <span>Chế độ Tối</span>
+              </>
+            ) : (
+              <>
+                <Sun size={16} color="#fbbf24" /> <span>Chế độ Sáng</span>
+              </>
+            )}
           </button>
-        )}
-
-        <button
-          type="button"
-          className="sidebar-theme-btn"
-          onClick={onToggleTheme}
-          title={theme === 'light' ? 'Chuyển sang giao diện Tối' : 'Chuyển sang giao diện Sáng'}
-        >
-          {theme === 'light' ? (
-            <>
-              <Moon size={16} /> <span>Chế độ Tối</span>
-            </>
-          ) : (
-            <>
-              <Sun size={16} color="#fbbf24" /> <span>Chế độ Sáng</span>
-            </>
-          )}
-        </button>
-      </div>
-    </aside>
+        </div>
+      </aside>
+    </>
   );
 }
