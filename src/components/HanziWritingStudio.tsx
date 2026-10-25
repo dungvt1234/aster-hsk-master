@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Volume2,
   RotateCcw,
@@ -46,6 +46,7 @@ export function HanziWritingStudio({
   const [selectedLevel, setSelectedLevel] = useState<HSKLevel>(currentLevel);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [customInput, setCustomInput] = useState('');
 
   // Canvas Drawing States
   const [showGuide, setShowGuide] = useState(true);
@@ -80,7 +81,27 @@ export function HanziWritingStudio({
       item.hanViet.toLowerCase().includes(searchQuery.toLowerCase().trim())
   );
 
-  const currentItem: VocabItem | undefined = filteredVocab[selectedIndex] || filteredVocab[0] || levelVocab[0];
+  const customVocabItem: VocabItem | null = useMemo(() => {
+    const trimmed = customInput.trim();
+    if (!trimmed) return null;
+    return {
+      id: `custom-${trimmed}`,
+      level: selectedLevel,
+      hanzi: trimmed,
+      pinyin: 'Chữ tự do',
+      hanViet: 'Tự chọn',
+      meaning: `Chữ bạn tự nhập để luyện tập viết: "${trimmed}"`,
+      radical: 'Tự do',
+      strokeCount: trimmed.length,
+      partOfSpeech: 'Hán tự',
+      exampleCn: `练习写汉字：${trimmed}`,
+      examplePinyin: `Liànxí xiě hànzì: ${trimmed}`,
+      exampleVi: `Luyện tập viết chữ Hán: ${trimmed}`,
+    };
+  }, [customInput, selectedLevel]);
+
+  const currentItem: VocabItem | undefined =
+    customVocabItem || filteredVocab[selectedIndex] || filteredVocab[0] || levelVocab[0];
   const etymology = currentItem ? getHanziEtymology(currentItem.hanzi[0], currentItem.meaning, currentItem.radical) : null;
 
   // Draw traditional Mi-Zi-Ge (米字格) background on canvas
@@ -459,27 +480,76 @@ export function HanziWritingStudio({
           ))}
         </div>
 
-        <div style={{ position: 'relative', minWidth: '260px' }}>
-          <Search size={16} color="var(--text-dim)" style={{ position: 'absolute', left: '12px', top: '10px' }} />
-          <input
-            type="text"
-            placeholder="Tìm theo chữ Hán, Pinyin, Nghĩa..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setSelectedIndex(0);
-            }}
-            style={{
-              width: '100%',
-              padding: '8px 14px 8px 36px',
-              borderRadius: '10px',
-              border: '1.5px solid var(--border)',
-              background: 'var(--surface)',
-              color: 'var(--text)',
-              fontSize: '13px',
-              outline: 'none',
-            }}
-          />
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Ô nhập chữ Hán tự do bất kỳ */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <input
+              type="text"
+              placeholder="✍️ Gõ chữ bất kỳ (vd: 龙, 福, 美, 梦)..."
+              value={customInput}
+              onChange={(e) => {
+                setCustomInput(e.target.value);
+                setStrokeCountDrawn(0);
+                setIsCompleted(false);
+              }}
+              style={{
+                padding: '8px 14px',
+                borderRadius: '10px',
+                border: customInput.trim() ? '2px solid #ec4899' : '1.5px solid var(--border)',
+                background: customInput.trim() ? 'rgba(236, 72, 153, 0.08)' : 'var(--surface)',
+                color: 'var(--text-heading)',
+                fontSize: '13px',
+                fontWeight: 700,
+                outline: 'none',
+                width: '230px',
+                boxShadow: customInput.trim() ? '0 0 0 3px rgba(236, 72, 153, 0.15)' : 'none',
+              }}
+              title="Nhập bất kỳ chữ Hán nào để nạp vào bàn vẽ Mễ Tự Cách"
+            />
+            {customInput.trim() && (
+              <button
+                type="button"
+                onClick={() => setCustomInput('')}
+                style={{
+                  padding: '7px 10px',
+                  borderRadius: '8px',
+                  background: 'var(--surface-hover)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-muted)',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+                title="Quay lại danh mục từ HSK"
+              >
+                ✕ Trở lại
+              </button>
+            )}
+          </div>
+
+          {/* Ô tìm kiếm từ vựng có sẵn */}
+          <div style={{ position: 'relative', minWidth: '240px' }}>
+            <Search size={16} color="var(--text-dim)" style={{ position: 'absolute', left: '12px', top: '10px' }} />
+            <input
+              type="text"
+              placeholder="Tìm theo chữ Hán, Pinyin, Nghĩa..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setSelectedIndex(0);
+              }}
+              style={{
+                width: '100%',
+                padding: '8px 14px 8px 36px',
+                borderRadius: '10px',
+                border: '1.5px solid var(--border)',
+                background: 'var(--surface)',
+                color: 'var(--text)',
+                fontSize: '13px',
+                outline: 'none',
+              }}
+            />
+          </div>
         </div>
       </div>
 
