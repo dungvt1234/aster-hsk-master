@@ -11,10 +11,14 @@ import {
   PenTool,
   Trophy,
   Flame,
+  Play,
+  Lightbulb,
+  Compass,
 } from 'lucide-react';
 import type { HSKLevel, VocabItem } from '../types';
 import { HSK_VOCABULARY } from '../data/hskData';
 import { soundEffects } from '../services/audioSynthesizer';
+import { getHanziEtymology } from '../data/hanziEtymologyData';
 
 interface HanziWritingStudioProps {
   currentLevel: HSKLevel;
@@ -76,6 +80,7 @@ export function HanziWritingStudio({
   );
 
   const currentItem: VocabItem | undefined = filteredVocab[selectedIndex] || filteredVocab[0] || levelVocab[0];
+  const etymology = currentItem ? getHanziEtymology(currentItem.hanzi[0], currentItem.meaning, currentItem.radical) : null;
 
   // Draw traditional Mi-Zi-Ge (米字格) background on canvas
   const drawGrid = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
@@ -233,6 +238,50 @@ export function HanziWritingStudio({
     }
   };
 
+  const [isAnimatingStroke, setIsAnimatingStroke] = useState(false);
+  const [activeStepText, setActiveStepText] = useState<string | null>(null);
+
+  const handlePlayStrokeAnimation = () => {
+    if (!currentItem || isAnimatingStroke) return;
+    setIsAnimatingStroke(true);
+    soundEffects.playTap();
+
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      setIsAnimatingStroke(false);
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      setIsAnimatingStroke(false);
+      return;
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    drawGrid(ctx, rect.width, rect.height);
+
+    const etym = getHanziEtymology(currentItem.hanzi, currentItem.meaning, currentItem.radical);
+    const steps = etym.strokeSteps && etym.strokeSteps.length > 0
+      ? etym.strokeSteps
+      : ['Bắt đầu nét 1', 'Kéo nét 2', 'Nét 3 hoàn thành'];
+
+    let stepIdx = 0;
+    const interval = setInterval(() => {
+      if (stepIdx < steps.length) {
+        setActiveStepText(`Nét ${stepIdx + 1}/${steps.length}: ${steps[stepIdx]}`);
+        soundEffects.playCorrect();
+        stepIdx++;
+      } else {
+        clearInterval(interval);
+        setActiveStepText('Hoàn tất bút thuận chuẩn!');
+        setTimeout(() => {
+          setIsAnimatingStroke(false);
+          setActiveStepText(null);
+        }, 1200);
+      }
+    }, 700);
+  };
+
   return (
     <div className="hanzi-writing-studio" style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
       {/* 1. Header Banner */}
@@ -308,8 +357,8 @@ export function HanziWritingStudio({
           gap: '12px',
         }}
       >
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {([1, 2, 3] as HSKLevel[]).map((lvl) => (
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {([1, 2, 3, 4] as HSKLevel[]).map((lvl) => (
             <button
               key={lvl}
               type="button"
@@ -389,9 +438,34 @@ export function HanziWritingStudio({
               justifyContent: 'space-between',
               alignItems: 'center',
               marginBottom: '14px',
+              flexWrap: 'wrap',
+              gap: '8px',
             }}
           >
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handlePlayStrokeAnimation}
+                disabled={isAnimatingStroke}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  background: isAnimatingStroke ? '#0284c7' : 'rgba(2, 132, 199, 0.12)',
+                  color: isAnimatingStroke ? '#fff' : '#0284c7',
+                  border: '1px solid rgba(2, 132, 199, 0.3)',
+                  cursor: isAnimatingStroke ? 'not-allowed' : 'pointer',
+                  boxShadow: isAnimatingStroke ? '0 2px 8px rgba(2, 132, 199, 0.35)' : 'none',
+                }}
+                title="Xem thứ tự từng nét bút thuận chuẩn"
+              >
+                <Play size={13} /> {isAnimatingStroke ? 'Đang diễn hoạt...' : '🎬 Xem Bút Thuận'}
+              </button>
+
               <button
                 type="button"
                 onClick={() => setShowGuide((prev) => !prev)}
@@ -399,7 +473,7 @@ export function HanziWritingStudio({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '6px 12px',
+                  padding: '6px 10px',
                   borderRadius: '8px',
                   fontSize: '12px',
                   fontWeight: 700,
@@ -410,7 +484,7 @@ export function HanziWritingStudio({
                 }}
                 title="Bật/Tắt nét chữ mẫu mờ bên dưới"
               >
-                {showGuide ? <Eye size={14} /> : <EyeOff size={14} />}
+                {showGuide ? <Eye size={13} /> : <EyeOff size={13} />}
                 {showGuide ? 'Mẫu Mờ' : 'Tắt Mẫu'}
               </button>
 
@@ -421,7 +495,7 @@ export function HanziWritingStudio({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '6px 12px',
+                  padding: '6px 10px',
                   borderRadius: '8px',
                   fontSize: '12px',
                   fontWeight: 700,
@@ -432,7 +506,7 @@ export function HanziWritingStudio({
                 }}
                 title="Chế độ thi thử tự viết không nhìn mẫu"
               >
-                <Flame size={14} /> {isBlindMode ? '🔥 Thử Thách Tự Viết' : '○ Luyện Tập'}
+                <Flame size={13} /> {isBlindMode ? '🔥 Tự Viết' : '○ Luyện'}
               </button>
             </div>
 
@@ -470,6 +544,30 @@ export function HanziWritingStudio({
               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)',
             }}
           >
+            {/* Active Stroke Step Floating Badge */}
+            {activeStepText && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: '#0284c7',
+                  color: '#fff',
+                  padding: '5px 14px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  boxShadow: '0 4px 12px rgba(2, 132, 199, 0.45)',
+                  zIndex: 20,
+                  pointerEvents: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                🎬 {activeStepText}
+              </div>
+            )}
+
             {/* Background Faint Hanzi Character Guide */}
             {showGuide && !isBlindMode && currentItem && (
               <div
@@ -705,6 +803,65 @@ export function HanziWritingStudio({
                   </div>
                 </div>
               </div>
+
+              {/* CHIẾT TỰ LỤC THƯ & MẸO NHỚ CHỮ HÁN THÔNG MINH */}
+              {etymology && (
+                <div
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.05) 0%, rgba(217, 119, 6, 0.08) 100%)',
+                    border: '1.5px solid rgba(236, 72, 153, 0.25)',
+                    borderRadius: '14px',
+                    padding: '16px',
+                    marginTop: '16px',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '6px' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 900, color: '#ec4899' }}>
+                      <Lightbulb size={16} color="#ec4899" /> Chiết Tự & Câu Chuyện Nhớ Chữ
+                    </span>
+                    <span style={{ fontSize: '11px', background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', padding: '2px 8px', borderRadius: '12px', fontWeight: 800 }}>
+                      Lục Thư: {etymology.category} ({etymology.categoryCn})
+                    </span>
+                  </div>
+
+                  {/* Decomposed parts pills */}
+                  {etymology.decomposed && etymology.decomposed.length > 0 && (
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+                      {etymology.decomposed.map((part, idx) => (
+                        <div
+                          key={idx}
+                          style={{
+                            background: 'var(--surface)',
+                            border: '1px solid var(--border)',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                          }}
+                        >
+                          <strong style={{ color: '#ec4899', fontSize: '14px', fontFamily: 'var(--font-hanzi)' }}>{part.part}</strong>
+                          <span style={{ color: 'var(--text-muted)' }}>({part.meaning})</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Memory Story */}
+                  <div style={{ fontSize: '13px', color: 'var(--text-heading)', lineHeight: 1.6, background: 'var(--surface)', padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--border)' }}>
+                    💡 <strong>Mẹo nhớ sâu:</strong> {etymology.memoryStory}
+                  </div>
+
+                  {/* Cultural insight */}
+                  {etymology.culturalInsight && (
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', lineHeight: 1.5, display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                      <Compass size={14} color="#d97706" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <span>{etymology.culturalInsight}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Nút hỏi Gia Sư AI phân tích chữ này */}
               {onOpenChatAI && (
