@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Flame,
   Gem,
@@ -6,9 +6,11 @@ import {
   Sparkles,
   Menu,
   Zap,
+  Cloud,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
+import { cloudSync, SyncStatus } from '../services/cloudSyncService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -29,6 +31,11 @@ export function TopBar({
   onOpenSprint,
   onToggleMobileMenu,
 }: TopBarProps) {
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: 'synced', lastSyncedAt: null, pendingChanges: 0 });
+
+  useEffect(() => {
+    return cloudSync.subscribe((s) => setSyncStatus(s));
+  }, []);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
     { level: 1, label: 'HSK 1', color: '#0284c7' },
     { level: 2, label: 'HSK 2', color: '#dc2626', note: '120🎧' },
@@ -173,6 +180,29 @@ export function TopBar({
         <div className="topbar-stat-pill hearts" title="Trái tim còn lại trong ngày">
           <Heart size={16} fill="#FF4B4B" color="#FF4B4B" />
           <span className="stat-number">5/5</span>
+        </div>
+
+        {/* Enterprise Cloud Sync Status */}
+        <div
+          className="topbar-stat-pill desktop-only"
+          style={{
+            background: syncStatus.state === 'syncing' ? 'rgba(2, 132, 199, 0.1)' : 'var(--surface)',
+            border: '1px solid var(--border)',
+            color: syncStatus.state === 'syncing' ? '#0284c7' : 'var(--text-muted)',
+            fontSize: '11px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+          }}
+          title={
+            syncStatus.lastSyncedAt
+              ? `Đồng bộ đám mây thành công lúc ${syncStatus.lastSyncedAt}`
+              : 'Dữ liệu được bảo vệ an toàn trên thiết bị và tự động sao lưu đám mây'
+          }
+        >
+          <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
+          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Cloud Safe'}</span>
         </div>
 
         {/* 3-Minute FSRS Memory Sprint Trigger */}

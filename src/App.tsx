@@ -26,6 +26,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { HanziWritingStudio } from './components/HanziWritingStudio';
 import { PinyinMasterStudio } from './components/PinyinMasterStudio';
 import { MemorySprintModal } from './components/MemorySprintModal';
+import { cloudSync } from './services/cloudSyncService';
 
 export function App() {
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -96,6 +97,7 @@ export function App() {
       };
 
       saveUserStats(nextStats);
+      cloudSync.triggerSync({ progress: nextProgress, stats: nextStats });
       return nextStats;
     });
   };

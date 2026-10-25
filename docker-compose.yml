@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # 1. POSTGRESQL 16 PRIMARY MASTER DATABASE
+  postgres-primary:
+    image: postgres:16-alpine
+    container_name: aster-postgres-master
+    environment:
+      POSTGRES_USER: aster_admin
+      POSTGRES_PASSWORD: aster_secure_password_2026
+      POSTGRES_DB: aster_hsk_master
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aster_admin -d aster_hsk_master"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. PGBOUNCER CONNECTION POOLER (Chịu tải 100.000 kết nối)
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: aster-pgbouncer
+    environment:
+      DB_USER: aster_admin
+      DB_PASSWORD: aster_secure_password_2026
+      DB_HOST: postgres-primary
+      DB_NAME: aster_hsk_master
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 100000
+      DEFAULT_POOL_SIZE: 50
+    ports:
+      - "6432:5432"
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # 3. REDIS 7 CLUSTER / HIGH-SPEED CACHE & LEADERBOARD
+  redis-cluster:
+    image: redis:7-alpine
+    container_name: aster-redis-cache
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
+
+  # 4. ASTER BACKEND API GATEWAY & KAFKA INGESTION WORKER
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aster-backend-api
+    environment:
+      PORT: 8080
+      DATABASE_URL: postgres://aster_admin:aster_secure_password_2026@pgbouncer:5432/aster_hsk_master
+      REDIS_URL: redis://redis-cluster:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - pgbouncer
+      - redis-cluster
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
