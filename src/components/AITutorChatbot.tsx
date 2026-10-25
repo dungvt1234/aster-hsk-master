@@ -11,10 +11,21 @@ import {
   Flame,
   CheckCircle2,
   Lightbulb,
+  Settings,
+  Key,
+  ExternalLink,
+  Check,
+  RefreshCw,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
-import { renderColoredPinyin, ToneLegend } from '../services/highlightUtils';
+import {
+  askGeminiAI,
+  getGeminiApiKey,
+  setGeminiApiKey,
+  removeGeminiApiKey,
+  hasGeminiApiKey,
+} from '../services/geminiService';
 
 interface ChatMessage {
   id: string;
@@ -41,12 +52,19 @@ export function AITutorChatbot({
   onNavigateTab,
 }: AITutorChatbotProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [apiKeyInput, setApiKeyInput] = useState(() => getGeminiApiKey());
+  const [apiKeySavedSuccess, setApiKeySavedSuccess] = useState(false);
+  const [isLiveAI, setIsLiveAI] = useState(() => hasGeminiApiKey());
+
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'm-welcome',
       sender: 'ai',
-      text: `Xin chào bạn! Mình là **Aster AI Tutor** 🦉 — người bạn đồng hành và nhắc nhở học tập HSK của bạn.\n\nHôm nay chuỗi học tập của bạn đang là **${streak} ngày liên tiếp** 🔥. Bạn muốn mình hướng dẫn lộ trình học hôm nay hay giải đáp ngữ pháp câu nào?`,
+      text: hasGeminiApiKey()
+        ? `Xin chào bạn! Mình là **Aster AI Tutor** 🦉 (đang chạy với **Google Gemini AI Live**).\n\nChuỗi học hôm nay của bạn là **${streak} ngày liên tiếp** 🔥. Bạn có thể hỏi mình **bất kỳ câu hỏi nào**: dịch thuật, sửa câu sai, giải thích ngữ pháp hay đàm thoại tiếng Trung nhé!`
+        : `Xin chào bạn! Mình là **Aster AI Tutor** 🦉 — người bạn đồng hành và nhắc nhở học tập HSK của bạn.\n\nHôm nay chuỗi học tập của bạn đang là **${streak} ngày liên tiếp** 🔥.\n\n*(💡 Bạn có thể bấm nút **⚙️ Key** ở góc trên để kết nối **Google Gemini AI** trả lời mọi câu hỏi không giới hạn!)*`,
       timestamp: 'Vừa xong',
     },
   ]);
@@ -62,7 +80,7 @@ export function AITutorChatbot({
     }
   }, [messages, isOpen, isTyping]);
 
-  // Handle external prompt passed into AI (e.g. from quiz mistake)
+  // Handle external trigger prompts (e.g. from buttons in the app)
   useEffect(() => {
     if (initialPrompt) {
       setIsOpen(true);
@@ -71,12 +89,13 @@ export function AITutorChatbot({
     }
   }, [initialPrompt]);
 
-  // Periodic reminder bubble above floating mascot (auto-dismisses after 4s so it never blocks content)
+  // Periodic intelligent tutor encouragement reminders
   useEffect(() => {
     const reminders = [
-      `🔥 Chuỗi ${streak} ngày! Giữ lửa học tập nhé!`,
-      `🎯 Mục tiêu HSK ${currentLevel}: Ôn tập 10 từ vựng mỗi ngày!`,
-      `💡 Có chỗ nào chưa hiểu? Nhấp vào đây để mình giải thích nha!`,
+      `🔥 Chuỗi Streak ${streak} ngày đang chờ bạn tiếp tục!`,
+      `🦉 Mẹo: Học 10 phút mỗi ngày tốt hơn học 2 tiếng vào cuối tuần!`,
+      `🎯 Đã hoàn thành mục tiêu 30 XP hôm nay chưa bạn ơi?`,
+      `✨ Ngữ pháp khó? Cứ mở khung chat hỏi Aster AI bất kỳ lúc nào nhé!`,
     ];
     let idx = 0;
     const interval = setInterval(() => {
@@ -89,7 +108,39 @@ export function AITutorChatbot({
     return () => clearInterval(interval);
   }, [streak, currentLevel]);
 
-  const handleSendMessage = (textToSend?: string) => {
+  const handleSaveApiKey = () => {
+    setGeminiApiKey(apiKeyInput);
+    const active = hasGeminiApiKey();
+    setIsLiveAI(active);
+    setApiKeySavedSuccess(true);
+    soundEffects.playCorrect();
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `sys-${Date.now()}`,
+        sender: 'ai',
+        text: active
+          ? `🎉 **Tuyệt vời! Đã kích hoạt thành công Google Gemini AI Live!**\n\nTừ bây giờ, Aster AI sẽ sử dụng mô hình trí tuệ nhân tạo Gemini để giải đáp thông minh, tự do và chuyên sâu mọi câu hỏi của bạn!`
+          : `ℹ️ **Đã chuyển sang chế độ Ngoại Tuyến (Offline Catalog).**\n\nBạn vẫn có thể tra cứu từ điển và 45 điểm ngữ pháp giáo trình HSK 1 - 4 bình thường nhé.`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+
+    setTimeout(() => {
+      setApiKeySavedSuccess(false);
+      setIsSettingsOpen(false);
+    }, 1200);
+  };
+
+  const handleRemoveApiKey = () => {
+    removeGeminiApiKey();
+    setApiKeyInput('');
+    setIsLiveAI(false);
+    soundEffects.playTap();
+  };
+
+  const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || input).trim();
     if (!query) return;
 
@@ -105,94 +156,58 @@ export function AITutorChatbot({
     if (!textToSend) setInput('');
     setIsTyping(true);
 
-    // Simulate AI Intelligent response grounded in HSK curriculum
-    setTimeout(() => {
-      const aiReply = generateAIResponse(query, currentLevel, streak);
+    // Format chat history for multi-turn Gemini conversation
+    const history = messages
+      .filter((m) => m.id !== 'm-welcome' && !m.id.startsWith('sys-'))
+      .map((m) => ({
+        role: (m.sender === 'user' ? 'user' : 'model') as 'user' | 'model',
+        text: m.text,
+      }));
+
+    try {
+      const response = await askGeminiAI(query, history, currentLevel, streak);
+
+      const aiReply: ChatMessage = {
+        id: `ai-${Date.now()}`,
+        sender: 'ai',
+        text: response.text,
+        chineseSnippet: response.chineseSnippet,
+        pinyinSnippet: response.pinyinSnippet,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      };
+
       setMessages((prev) => [...prev, aiReply]);
-      setIsTyping(false);
       soundEffects.playCorrect();
-    }, 800);
+    } catch (error: any) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `ai-err-${Date.now()}`,
+          sender: 'ai',
+          text: `❌ **Lỗi:** ${error.message || 'Không thể tạo phản hồi.'}\n\nVui lòng kiểm tra lại API Key ở nút ⚙️ phía trên hoặc thử lại nhé.`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+      soundEffects.playIncorrect();
+    } finally {
+      setIsTyping(false);
+    }
   };
 
-  const generateAIResponse = (query: string, level: HSKLevel, streakDays: number): ChatMessage => {
-    const q = query.toLowerCase();
-    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    if (q.includes('khó') || q.includes('nhiều chữ') || q.includes('ngợp') || q.includes('chán') || q.includes('sợ') || q.includes('dễ hiểu')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `### 🌟 Đừng nản lòng bạn nhé! Tiếng Trung thực ra gần gũi với tiếng Việt hơn bạn nghĩ rất nhiều:\n\n1. 🚫 **Bỏ qua những thuật ngữ ngữ pháp khô khan:** Bạn không cần cố nhớ "từ chỉ phương vị", "bổ ngữ kết quả" làm gì cho mệt đầu cả!\n2. 💡 **Chỉ cần nhớ 2 mẹo phản xạ đời sống:**\n   * **Mẹo Vị Trí:** Tiếng Việt nói *"Trên bàn"* ➔ Tiếng Trung nói: *"Bàn ở trên"* (**桌子上** - zhuōzi shang). Cứ nhớ: **ĐỒ VẬT TRƯỚC, VỊ TRÍ SAU**!\n   * **Mẹo Địa Điểm:** Người Trung Quốc tư duy là phải *ĐẾN ĐỊA ĐIỂM NGỒI VÀO CHỖ ĐÃ RỒI MỚI LÀM VIỆC* ➔ **我在医院工作** (Tôi ở bệnh viện làm việc).\n3. 🎮 **Bí quyết giảm 90% áp lực:**\n   * Hãy chuyển sang tab **"Lộ Trình Duolingo"**! Ở đó không có một đống chữ sách giáo khoa, mà chia thành từng mini-game kéo thả thẻ bài 3 phút cực vui tai và nhận XP!\n\n*Bạn chỉ cần học 1 câu mỗi ngày là đã giỏi hơn hôm qua rồi!*`,
-        chineseSnippet: '电脑在桌子上。',
-        pinyinSnippet: 'Diànnǎo zài zhuōzi shang.',
-        timestamp: now,
-      };
-    }
-
-    if (q.includes('lộ trình') || q.includes('hôm nay') || q.includes('học gì')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `### 🧭 Lộ Trình Học Đề Xuất Hôm Nay (HSK ${level}):\n\n1. **Khởi động (5 phút):** Vào tab **Lộ Trình Duolingo**, hoàn thành 1 bài luyện Word Bank để kích hoạt não bộ.\n2. **Học bài mới (15 phút):** Mở **Giáo Trình HSK ${level}**, nghe 2 bài audio bản ngữ Drive và ghi nhớ 5 cấu trúc ngữ pháp.\n3. **Củng cố Spaced Repetition (10 phút):** Lật 15 thẻ **Flashcards 3D** để nạp từ vào trí nhớ dài hạn.\n\n*Bạn chỉ cần hoàn thành 1 bài tập là chuỗi Streak hôm nay sẽ tăng lên **${streakDays + 1} ngày**!*`,
-        timestamp: now,
-      };
-    }
-
-    if (q.includes('tại sao') || q.includes('giải thích') || q.includes('đáp án')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `### 💡 Phân Tích Ngữ Pháp Chi Tiết:\n\nTrong tiếng Trung, thứ tự cấu trúc câu tiêu chuẩn là:\n**[Chủ ngữ] + [Thời gian] + [Địa điểm] + [Phó từ/Trạng ngữ] + [Động từ] + [Tân ngữ]**.\n\nVí dụ kinh điển:\n* **我今天在学校学习汉语。** *(Wǒ jīntiān zài xuéxiào xuéxí Hànyǔ)*\n  * 我 (Tôi) + 今天 (Hôm nay) + 在学校 (ở trường) + 学习 (học) + 汉语 (tiếng Trung).\n\nNếu bạn gặp lỗi ở dạng bài sắp xếp câu (Word Bank), hãy luôn tìm **Chủ ngữ** trước, sau đó đặt **Mốc thời gian** ngay sau chủ ngữ, rồi mới đến hành động nhé!`,
-        chineseSnippet: '我今天在学校学习汉语。',
-        pinyinSnippet: 'Wǒ jīntiān zài xuéxiào xuéxí Hànyǔ.',
-        timestamp: now,
-      };
-    }
-
-    if (q.includes('nhắc nhở') || q.includes('lịch') || q.includes('thông báo')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `### ⏰ Đã Thiết Lập Nhắc Nhở Học Tập!\n\n* **Khung giờ vàng:** 20:00 mỗi tối.\n* **Mục tiêu:** 20 phút / ngày hoặc 30 XP.\n* **Chế độ bảo vệ Streak:** Mình sẽ chủ động nhắc nhở bạn trước 22:00 nếu hôm đó bạn chưa luyện bài nào để bạn không bị đứt chuỗi **${streakDays} ngày** quý giá!`,
-        timestamp: now,
-      };
-    }
-
-    if (q.includes('thanh điệu') || q.includes('phát âm') || q.includes('dấu') || q.includes('âm nào') || q.includes('quy tắc')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `### 🎵 Hướng Dẫn 5 Thanh Điệu & Mã Màu Chuẩn Aster:\n\nTiếng Trung gồm 4 thanh điệu chính và 1 thanh nhẹ, được Aster tô màu nhận diện trực quan:\n\n1. 🔴 **Thanh 1 (Âm Ngang Đỏ - 55):** Giữ âm cao, dài và đều hơi (ví dụ: **mā** - mẹ).\n2. 🟢 **Thanh 2 (Âm Sắc Xanh Lá - 35):** Đi từ trung bình lên cao, như dấu sắc tiếng Việt (ví dụ: **má** - cây gai).\n3. 🔵 **Thanh 3 (Âm Uốn Xanh Dương - 214):** Xuống thấp rồi uốn nhẹ lên (ví dụ: **mǎ** - con ngựa).\n4. 🟣 **Thanh 4 (Âm Rơi Tím - 51):** Giọng rơi từ đỉnh cao nhất dứt khoát xuống đáy (ví dụ: **mà** - mắng).\n5. ⚪ **Thanh nhẹ (Âm Xám):** Phát âm ngắn, nhẹ không dấu (ví dụ: **ma** - trợ từ nghi vấn).\n\n💡 **Quy tắc biến điệu thần thánh:** Khi hai thanh 3 đi cạnh nhau (như **Nǐ + hǎo**), âm đầu tiên phải đọc thành thanh 2 (**Ní hǎo**)! Hãy bấm nút loa dưới đây để nghe câu luyện thanh mẫu chuẩn:`,
-        chineseSnippet: '妈妈骑马，马慢，妈妈骂马。',
-        pinyinSnippet: 'Māma qí mǎ, mǎ màn, māma mà mǎ.',
-        timestamp: now,
-      };
-    }
-
-    if (q.includes('hội thoại') || q.includes('chào') || q.includes('tiếng trung')) {
-      return {
-        id: `ai-${Date.now()}`,
-        sender: 'ai',
-        text: `Tuyệt vời! Hãy cùng mình luyện mẫu câu hội thoại thường ngày HSK ${level} nhé:\n\n**A:** 你好！你喜欢学汉语吗？\n*(Nǐ hǎo! Nǐ xǐhuān xué Hànyǔ ma? - Xin chào! Bạn thích học tiếng Trung không?)*\n\n**B:** 我很喜欢！我觉得汉语很有意思。\n*(Wǒ hěn xǐhuān! Wǒ juéde Hànyǔ hěn yǒu yìsi. - Tôi rất thích! Tôi thấy tiếng Trung rất thú vị.)*\n\n👉 Bấm nút loa bên dưới để nghe mình phát âm mẫu chuẩn giọng Bắc Kinh nhé!`,
-        chineseSnippet: '你好！我觉得汉语很有意思。',
-        pinyinSnippet: 'Nǐ hǎo! Wǒ juéde Hànyǔ hěn yǒu yìsi.',
-        timestamp: now,
-      };
-    }
-
-    // Default friendly assistant response
-    return {
-      id: `ai-${Date.now()}`,
-      sender: 'ai',
-      text: `Mình đã ghi nhận câu hỏi của bạn về: **"${query}"**.\n\nĐể học hiệu quả nhất cho cấp độ **HSK ${level}**, bạn nên kết hợp giữa việc nghe Audio chuẩn giọng Drive, luyện tập phản xạ chọn thẻ Duolingo và ôn lại các câu đã làm sai. Mình luôn ở đây để đồng hành và hỗ trợ bạn 24/7!`,
-      timestamp: now,
-    };
+  const speak = (chineseText: string) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(chineseText);
+    utterance.lang = 'zh-CN';
+    utterance.rate = 0.85;
+    window.speechSynthesis.speak(utterance);
+    soundEffects.playTap();
   };
 
   return (
     <>
       {/* Floating Mascot Trigger Button on Bottom-Right */}
-      <div className="duo-ai-widget-wrapper">
+      <div className="duo-mascot-container">
         {bubbleReminder && !isOpen && (
           <div className="duo-mascot-speech-bubble" onClick={() => setIsOpen(true)}>
             <span>{bubbleReminder}</span>
@@ -220,7 +235,11 @@ export function AITutorChatbot({
               🦉
             </span>
           </div>
-          <span className="fab-online-dot" />
+          <span
+            className="fab-online-dot"
+            style={{ background: isLiveAI ? '#22c55e' : '#94a3b8' }}
+            title={isLiveAI ? 'Gemini AI Live Đang Hoạt Động' : 'Chế độ Ngoại Tuyến'}
+          />
         </button>
       </div>
 
@@ -235,22 +254,158 @@ export function AITutorChatbot({
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 900 }}>Gia Sư AI Aster</h3>
-                    <span className="ai-badge">HSK {currentLevel} Guide</span>
+                    <span
+                      className="ai-badge"
+                      style={{
+                        background: isLiveAI ? 'rgba(34, 197, 94, 0.15)' : 'rgba(2, 132, 199, 0.1)',
+                        color: isLiveAI ? '#16a34a' : '#0284c7',
+                      }}
+                    >
+                      {isLiveAI ? '✨ Gemini Live' : `HSK ${currentLevel} Offline`}
+                    </span>
                   </div>
                   <span className="ai-status-text">
-                    <span className="status-live-dot" /> Trực tuyến · Nhắc nhở & Hướng dẫn 24/7
+                    <span
+                      className="status-live-dot"
+                      style={{ background: isLiveAI ? '#22c55e' : '#94a3b8' }}
+                    />
+                    {isLiveAI ? 'Google Gemini AI 2.5 Flash' : 'Tra cứu ngoại tuyến · Hướng dẫn 24/7'}
                   </span>
                 </div>
               </div>
-              <button
-                type="button"
-                className="ai-drawer-close"
-                onClick={() => setIsOpen(false)}
-                title="Đóng cửa sổ chat"
-              >
-                <X size={20} />
-              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                {/* Gemini Settings Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsSettingsOpen((prev) => !prev)}
+                  style={{
+                    background: isSettingsOpen ? 'var(--surface-hover)' : 'var(--surface-card)',
+                    border: '1px solid var(--border)',
+                    borderRadius: '8px',
+                    padding: '6px 10px',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isLiveAI ? '#16a34a' : 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                  title="Cấu hình Google Gemini AI Key"
+                >
+                  <Key size={14} /> Key AI
+                </button>
+
+                <button
+                  type="button"
+                  className="ai-drawer-close"
+                  onClick={() => setIsOpen(false)}
+                  title="Đóng cửa sổ chat"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
+
+            {/* Gemini API Key Settings Popover Panel */}
+            {isSettingsOpen && (
+              <div
+                style={{
+                  background: 'var(--surface-card)',
+                  borderBottom: '2px solid var(--border)',
+                  padding: '16px 20px',
+                  animation: 'fadeIn 0.2s ease',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Sparkles size={16} color="#0284c7" /> Cấu Hình Google Gemini AI
+                  </h4>
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      fontSize: '11px',
+                      color: '#0284c7',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                      textDecoration: 'none',
+                      fontWeight: 700,
+                    }}
+                  >
+                    Lấy Key Miễn Phí <ExternalLink size={11} />
+                  </a>
+                </div>
+
+                <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                  Nhập Google AI Studio API Key để mở khóa trí tuệ nhân tạo Gemini thật: trả lời mọi câu hỏi, đàm thoại song ngữ tự do và phân tích ngữ pháp theo ngữ cảnh.
+                </p>
+
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                  <input
+                    type="password"
+                    placeholder="Dán mã API Key (AIzaSy...)"
+                    value={apiKeyInput}
+                    onChange={(e) => setApiKeyInput(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      border: '1.5px solid var(--border)',
+                      background: 'var(--surface)',
+                      color: 'var(--text)',
+                      fontSize: '13px',
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveApiKey}
+                    style={{
+                      padding: '8px 14px',
+                      borderRadius: '8px',
+                      background: apiKeySavedSuccess ? '#16a34a' : 'var(--primary)',
+                      color: '#fff',
+                      fontWeight: 800,
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {apiKeySavedSuccess ? <Check size={14} /> : <CheckCircle2 size={14} />}
+                    {apiKeySavedSuccess ? 'Đã Lưu' : 'Kích Hoạt'}
+                  </button>
+                </div>
+
+                {isLiveAI && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
+                    <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700 }}>
+                      ✓ Đang kết nối Gemini 2.5 Flash
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleRemoveApiKey}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: '#ef4444',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        padding: '2px 4px',
+                      }}
+                    >
+                      Xóa Key / Dùng Offline
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Quick Action Chips */}
             <div className="ai-quick-chips">
@@ -285,9 +440,9 @@ export function AITutorChatbot({
               <button
                 type="button"
                 className="ai-chip"
-                onClick={() => handleSendMessage('Nhắc nhở học tập và bảo vệ chuỗi Streak')}
+                onClick={() => handleSendMessage('Dịch câu: Tôi rất thích học tiếng Trung mỗi ngày')}
               >
-                <Bell size={13} color="#FF4B4B" /> Lịch nhắc nhở
+                <BookOpen size={13} color="#0284c7" /> Dịch câu mẫu
               </button>
             </div>
 
@@ -297,34 +452,22 @@ export function AITutorChatbot({
                 <div key={m.id} className={`ai-message-row ${m.sender}`}>
                   {m.sender === 'ai' && <div className="msg-avatar">🦉</div>}
                   <div className="msg-bubble">
-                    <div className="msg-text" style={{ whiteSpace: 'pre-wrap' }}>
+                    <div className="msg-text" style={{ whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
                       {m.text}
                     </div>
 
-                    {/* Audio snippet if present */}
+                    {/* Quick Pronunciation Play Button for Chinese Snippets */}
                     {m.chineseSnippet && (
-                      <div className="msg-audio-card">
-                        <button
-                          type="button"
-                          className="msg-play-audio-btn"
-                          onClick={() => soundEffects.speakChinese(m.chineseSnippet || '')}
-                          title="Phát âm tiếng Trung"
-                        >
-                          <Volume2 size={16} /> Nghe phát âm chuẩn
-                        </button>
-                        <span className="msg-snippet-hanzi">{m.chineseSnippet}</span>
-                        {m.pinyinSnippet && (
-                          <div style={{ marginTop: '4px' }}>
-                            {renderColoredPinyin(m.pinyinSnippet, '14px')}
-                          </div>
-                        )}
-                        <div style={{ marginTop: '8px' }}>
-                          <ToneLegend compact={true} />
-                        </div>
+                      <div className="msg-audio-chip" onClick={() => speak(m.chineseSnippet!)}>
+                        <Volume2 size={14} color="#58CC02" />
+                        <span className="audio-chip-text">
+                          {m.chineseSnippet}
+                        </span>
+                        <span className="audio-chip-tag">Nghe phát âm</span>
                       </div>
                     )}
 
-                    <span className="msg-time">{m.timestamp}</span>
+                    <span className="msg-timestamp">{m.timestamp}</span>
                   </div>
                 </div>
               ))}
@@ -333,9 +476,11 @@ export function AITutorChatbot({
                 <div className="ai-message-row ai">
                   <div className="msg-avatar">🦉</div>
                   <div className="msg-bubble typing-bubble">
-                    <span className="dot" />
-                    <span className="dot" />
-                    <span className="dot" />
+                    <div className="typing-dots">
+                      <span className="dot" />
+                      <span className="dot" />
+                      <span className="dot" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -343,26 +488,34 @@ export function AITutorChatbot({
             </div>
 
             {/* Input Bar */}
-            <div className="ai-input-bar">
+            <form
+              className="ai-input-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendMessage();
+              }}
+            >
               <input
                 type="text"
-                placeholder="Hỏi ngữ pháp, từ vựng hoặc lộ trình học..."
+                className="ai-input-field"
+                placeholder={
+                  isLiveAI
+                    ? 'Hỏi Aster AI bất kỳ điều gì về tiếng Trung...'
+                    : 'Tra cứu từ vựng, ngữ pháp hoặc mẹo HSK...'
+                }
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSendMessage();
-                }}
+                autoFocus
               />
               <button
-                type="button"
+                type="submit"
                 className="ai-send-btn"
-                disabled={!input.trim()}
-                onClick={() => handleSendMessage()}
+                disabled={!input.trim() || isTyping}
                 title="Gửi câu hỏi"
               >
                 <Send size={18} />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
