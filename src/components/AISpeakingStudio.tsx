@@ -199,6 +199,11 @@ interface AISpeakingStudioProps {
   onOpenChatAI?: (prompt: string) => void;
 }
 
+interface CharMatchResult {
+  char: string;
+  status: 'correct' | 'missing';
+}
+
 export function AISpeakingStudio({
   currentLevel,
   onSelectLevel,
@@ -215,6 +220,7 @@ export function AISpeakingStudio({
   const [spokenText, setSpokenText] = useState('');
   const [score, setScore] = useState<number | null>(null);
   const [scoreFeedback, setScoreFeedback] = useState<string>('');
+  const [charBreakdown, setCharBreakdown] = useState<CharMatchResult[]>([]);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [playbackAudioUrl, setPlaybackAudioUrl] = useState<string | null>(null);
 
@@ -222,6 +228,7 @@ export function AISpeakingStudio({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recognitionRef = useRef<any>(null);
+  const spokenTextRef = useRef<string>('');
 
   // Filter phrases
   const filteredPhrases = SPEAKING_BANK.filter((p) => {
@@ -258,9 +265,11 @@ export function AISpeakingStudio({
   }, [selectedLevel, activeCategory]);
 
   const resetState = () => {
+    spokenTextRef.current = '';
     setSpokenText('');
     setScore(null);
     setScoreFeedback('');
+    setCharBreakdown([]);
     setPlaybackAudioUrl(null);
     if (isRecording) {
       stopRecording();
@@ -311,7 +320,7 @@ export function AISpeakingStudio({
       console.warn('[Microphone Warning]:', micErr);
     }
 
-    // 2. Speech recognition for real-time grading
+    // 2. Real Speech Recognition for Standard Mandarin
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
@@ -319,24 +328,25 @@ export function AISpeakingStudio({
       try {
         const recognition = new SpeechRecognition();
         recognition.lang = 'zh-CN';
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.interimResults = true;
 
         recognition.onresult = (event: any) => {
-          let currentTranscript = '';
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            currentTranscript += event.results[i][0].transcript;
+          let fullTranscript = '';
+          for (let i = 0; i < event.results.length; i++) {
+            fullTranscript += event.results[i][0].transcript;
           }
-          setSpokenText(currentTranscript);
+          const text = fullTranscript.trim();
+          spokenTextRef.current = text;
+          setSpokenText(text);
         };
 
         recognition.onend = () => {
-          stopRecording();
+          // Handled on manual stop or natural end
         };
 
         recognition.onerror = (err: any) => {
           console.warn('[Speech Recognition Error]:', err);
-          stopRecording();
         };
 
         recognitionRef.current = recognition;
@@ -345,66 +355,118 @@ export function AISpeakingStudio({
         console.warn('[Recognition start error]:', err);
       }
     } else {
-      // Simulate speech recognition timer for fallback
-      setTimeout(() => {
-        stopRecording();
-      }, 4000);
+      setSpeechSupported(false);
     }
   };
 
   const stopRecording = () => {
     setIsRecording(false);
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {}
     }
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
       } catch {}
     }
-    // Calculate score after a tiny delay
+    // Calculate honest score based strictly on actual captured voice text
     setTimeout(() => {
-      evaluatePronunciation();
-    }, 500);
+      evaluatePronunciation(spokenTextRef.current);
+    }, 400);
   };
 
-  // Evaluate speech accuracy against target sentence
-  const evaluatePronunciation = () => {
-    const targetClean = selectedPhrase.chinese.replace(/[，。！？、“”"'\s]/g, '');
-    const spokenClean = spokenText.replace(/[，。！？、“”"'\s]/g, '');
+  // Evaluate speech accuracy against target sentence with REAL mathematical Levenshtein distance
+  const evaluatePronunciation = (rawInput?: string) => {
+    const rawSpoken = (rawInput !== undefined ? rawInput : spokenTextRef.current).trim();
+    const targetClean = selectedPhrase.chinese.replace(/[，。！？、“”"'\s.,!?;:·]/g, '');
+    const spokenClean = rawSpoken.replace(/[，。！？、“”"'\s.,!?;:·]/g, '');
 
-    let calculatedScore = 0;
-    if (spokenClean.length === 0) {
-      // If recognition didn't catch or unsupported, grant simulated baseline based on practice
-      calculatedScore = Math.floor(82 + Math.random() * 14);
-      setSpokenText(selectedPhrase.chinese);
-    } else {
-      // Calculate character overlap
-      let matches = 0;
-      for (const char of targetClean) {
-        if (spokenClean.includes(char)) {
-          matches++;
+    // Case 1: Absolutely no Chinese speech captured
+    if (!spokenClean || spokenClean.length === 0) {
+      setScore(0);
+      setCharBreakdown(targetClean.split('').map((c) => ({ char: c, status: 'missing' })));
+      soundEffects.playIncorrect();
+      setScoreFeedback(
+        'AI chưa nhận diện được giọng tiếng Trung của bạn. Vui lòng kiểm tra quyền Micro, nói to và đọc rõ ràng theo câu mẫu!'
+      );
+      return;
+    }
+
+    // Case 2: Compute real Levenshtein Distance & Character Alignment
+    const m = targetClean.length;
+    const n = spokenClean.length;
+    const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (targetClean[i - 1] === spokenClean[j - 1]) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = 1 + Math.min(
+            dp[i - 1][j], // deletion
+            dp[i][j - 1], // insertion
+            dp[i - 1][j - 1] // substitution
+          );
         }
-      }
-      calculatedScore = Math.min(100, Math.round((matches / targetClean.length) * 100));
-      if (calculatedScore < 50 && spokenClean.length > 2) {
-        calculatedScore = 70; // Encouragement baseline
       }
     }
 
+    const editDist = dp[m][n];
+    const maxLen = Math.max(m, n);
+    // Strict mathematical accuracy score (0 - 100%)
+    const calculatedScore = Math.max(0, Math.round(((maxLen - editDist) / maxLen) * 100));
+
+    // Character-by-character analysis
+    const breakdown: CharMatchResult[] = [];
+    const missingChars: string[] = [];
+    let correctCount = 0;
+
+    for (let i = 0; i < targetClean.length; i++) {
+      const targetChar = targetClean[i];
+      if (i < spokenClean.length && spokenClean[i] === targetChar) {
+        breakdown.push({ char: targetChar, status: 'correct' });
+        correctCount++;
+      } else if (spokenClean.includes(targetChar)) {
+        breakdown.push({ char: targetChar, status: 'correct' });
+        correctCount++;
+      } else {
+        breakdown.push({ char: targetChar, status: 'missing' });
+        missingChars.push(targetChar);
+      }
+    }
+
+    setCharBreakdown(breakdown);
     setScore(calculatedScore);
 
-    if (calculatedScore >= 90) {
+    // Honest feedback without fabrication
+    if (calculatedScore >= 95) {
       soundEffects.playFanfare();
-      setScoreFeedback('Xuất sắc! Ngữ điệu Bắc Kinh cực kỳ chuẩn xác và tự nhiên! 🎉');
+      setScoreFeedback(
+        `Xuất sắc! Bạn phát âm chuẩn xác toàn bộ ${correctCount}/${targetClean.length} chữ (${calculatedScore}%). Khẩu âm rất tự nhiên! 🎉`
+      );
       if (onAddXp) onAddXp(25);
-    } else if (calculatedScore >= 75) {
+    } else if (calculatedScore >= 80) {
       soundEffects.playCorrect();
-      setScoreFeedback('Rất tốt! Phát âm rõ ràng, đối phương hoàn toàn hiểu được. 👍');
+      setScoreFeedback(
+        `Rất tốt (${calculatedScore}%)! Bạn đọc đúng ${correctCount}/${targetClean.length} chữ.` +
+        (missingChars.length > 0 ? ` Cần chú ý thêm chữ: "${missingChars.join(', ')}".` : '')
+      );
       if (onAddXp) onAddXp(15);
+    } else if (calculatedScore >= 50) {
+      soundEffects.playIncorrect();
+      setScoreFeedback(
+        `Đạt ${calculatedScore}%. Bạn phát âm đúng được ${correctCount}/${targetClean.length} chữ, nhưng còn đọc sai hoặc thiếu: [${missingChars.join(', ')}]. Hãy bấm nghe mẫu chậm 0.7x để luyện lại từng âm!`
+      );
     } else {
       soundEffects.playIncorrect();
-      setScoreFeedback('Cần luyện thêm! Hãy nghe lại mẫu và bắt chước theo từng âm nhé. 💪');
+      setScoreFeedback(
+        `Phát âm chưa chính xác (${calculatedScore}%). AI nhận diện bạn đọc là: "${rawSpoken}", khác so với câu mẫu "${selectedPhrase.chinese}". Hãy nghe kỹ và đọc lại chậm rãi!`
+      );
     }
   };
 
@@ -861,6 +923,79 @@ export function AISpeakingStudio({
                     <Play size={14} fill="currentColor" /> Nghe Lại Giọng Tôi
                   </button>
                 )}
+              </div>
+            )}
+
+            {/* Visual Character Breakdown (Chi Tiết Đối Chiếu Từng Chữ) */}
+            {charBreakdown.length > 0 && (
+              <div
+                style={{
+                  width: '100%',
+                  background: 'var(--surface-card)',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: '16px',
+                  padding: '16px 20px',
+                  marginTop: '4px',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '6px',
+                    marginBottom: '10px',
+                  }}
+                >
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
+                    🔍 Đánh giá chi tiết từng chữ (AI Phân Tích Thực Tế):
+                  </span>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Xanh = Đọc chuẩn • Đỏ = Đọc sai hoặc thiếu
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  {charBreakdown.map((item, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        padding: '6px 12px',
+                        borderRadius: '10px',
+                        background:
+                          item.status === 'correct'
+                            ? 'rgba(16, 185, 129, 0.12)'
+                            : 'rgba(239, 68, 68, 0.12)',
+                        border: `1.5px solid ${item.status === 'correct' ? '#10b981' : '#ef4444'}`,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '22px',
+                          fontWeight: 900,
+                          color: item.status === 'correct' ? '#059669' : '#dc2626',
+                          fontFamily: 'var(--font-hanzi)',
+                        }}
+                      >
+                        {item.char}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 800,
+                          color: item.status === 'correct' ? '#059669' : '#dc2626',
+                          marginTop: '2px',
+                        }}
+                      >
+                        {item.status === 'correct' ? 'Đúng ✓' : 'Sai / Thiếu ✗'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
