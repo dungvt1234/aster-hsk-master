@@ -651,9 +651,9 @@ export function HanziWritingStudio({
 
       {/* 3. Main Workspace: Canvas Left + Info & Guide Right */}
       <div
+        className="hanzi-workspace-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'minmax(320px, 420px) 1fr',
           gap: '24px',
           alignItems: 'start',
         }}
@@ -776,10 +776,12 @@ export function HanziWritingStudio({
 
           {/* Interactive Calligraphy Mi-Zi-Ge Box */}
           <div
+            className="hanzi-canvas-box"
             style={{
               position: 'relative',
-              width: '360px',
-              height: '360px',
+              maxWidth: '360px',
+              width: '100%',
+              aspectRatio: '1 / 1',
               borderRadius: '12px',
               overflow: 'hidden',
               boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)',
@@ -819,7 +821,7 @@ export function HanziWritingStudio({
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: 'var(--font-hanzi)',
-                  fontSize: '250px',
+                  fontSize: 'min(240px, 68vw)',
                   color: 'rgba(217, 119, 6, 0.18)',
                   userSelect: 'none',
                   pointerEvents: 'none',

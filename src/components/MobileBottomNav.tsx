@@ -6,6 +6,7 @@ import {
   GraduationCap,
   PenTool,
   Menu,
+  Gamepad2,
 } from 'lucide-react';
 import type { ActiveTab } from './Header';
 
@@ -28,6 +29,12 @@ export function MobileBottomNav({
       color: '#58CC02',
     },
     {
+      id: 'arena' as ActiveTab,
+      label: 'Đấu trường',
+      icon: <Gamepad2 size={22} />,
+      color: '#f59e0b',
+    },
+    {
       id: 'writing' as ActiveTab,
       label: 'Tập viết',
       icon: <PenTool size={22} />,
@@ -38,12 +45,6 @@ export function MobileBottomNav({
       label: 'Giáo trình',
       icon: <BookOpen size={22} />,
       color: '#0284c7',
-    },
-    {
-      id: 'flashcards' as ActiveTab,
-      label: 'Flashcard',
-      icon: <Sparkles size={22} />,
-      color: '#a855f7',
     },
     {
       id: 'cbt' as ActiveTab,

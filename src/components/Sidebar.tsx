@@ -13,6 +13,7 @@ import {
   X,
   PenTool,
   Volume2,
+  Gamepad2,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -57,6 +58,13 @@ export function Sidebar({
       label: 'Lộ Trình Học',
       icon: <Zap size={20} />,
       color: '#58CC02',
+    },
+    {
+      id: 'arena',
+      label: 'Đấu Trường Game',
+      icon: <Gamepad2 size={20} />,
+      color: '#f59e0b',
+      badge: 'Chơi & Học',
     },
     {
       id: 'pinyin',

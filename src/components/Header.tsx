@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 
-export type ActiveTab = 'duo_path' | 'pinyin' | 'writing' | 'course' | 'flashcards' | 'quiz' | 'cbt' | 'books' | 'dictionary' | 'dashboard';
+export type ActiveTab = 'duo_path' | 'arena' | 'pinyin' | 'writing' | 'course' | 'flashcards' | 'quiz' | 'cbt' | 'books' | 'dictionary' | 'dashboard';
 
 interface HeaderProps {
   currentLevel: HSKLevel;

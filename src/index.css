@@ -2963,3 +2963,19 @@ button {
   }
 }
 
+/* Responsive Hanzi Writing Studio */
+.hanzi-workspace-grid {
+  grid-template-columns: minmax(320px, 420px) 1fr;
+}
+
+@media (max-width: 900px) {
+  .hanzi-workspace-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .hanzi-canvas-box {
+    max-width: 100% !important;
+    max-height: 340px !important;
+  }
+}
+
+

@@ -57,6 +57,11 @@ export function TopBar({
           title: `Lộ Trình HSK ${currentLevel}`,
           subtitle: 'Bản đồ bài học tương tác, rèn phản xạ và nuôi chuỗi ngày học 🔥',
         };
+      case 'arena':
+        return {
+          title: 'Đấu Trường Hán Ngữ 🎮',
+          subtitle: 'Vừa học vừa chơi · Ghép từ thần tốc, thử thách phản xạ và gom XP HSK',
+        };
       case 'pinyin':
         return {
           title: 'Hán Ngữ Ngữ Âm & Phát Âm Pinyin 🗣️',

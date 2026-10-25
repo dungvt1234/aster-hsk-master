@@ -24,6 +24,7 @@ import { DuolingoPathView } from './components/DuolingoPathView';
 import { AITutorChatbot } from './components/AITutorChatbot';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { HanziWritingStudio } from './components/HanziWritingStudio';
+import { HanziArenaGame } from './components/HanziArenaGame';
 import { PinyinMasterStudio } from './components/PinyinMasterStudio';
 import { MemorySprintModal } from './components/MemorySprintModal';
 import { cloudSync } from './services/cloudSyncService';
@@ -158,6 +159,18 @@ export function App() {
               streak={stats.streak}
               onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               onOpenSprint={() => setIsSprintOpen(true)}
+              onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
+            />
+          )}
+
+          {activeTab === 'arena' && (
+            <HanziArenaGame
+              currentLevel={currentLevel}
+              onSelectLevel={setCurrentLevel}
+              onAddXp={(earnedXp) => {
+                authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
+                setCurrentUser(authService.getCurrentUser());
+              }}
               onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
             />
           )}
