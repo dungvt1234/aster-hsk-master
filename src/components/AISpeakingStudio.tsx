@@ -16,10 +16,12 @@ import {
   HelpCircle,
   Flame,
   VolumeX,
+  Users,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
 import { renderColoredPinyin } from '../services/highlightUtils';
+import { Practice1on1Studio } from './Practice1on1Studio';
 
 interface SpeakingPhrase {
   id: string;
@@ -456,6 +458,7 @@ export function AISpeakingStudio({
   onAddXp,
   onOpenChatAI,
 }: AISpeakingStudioProps) {
+  const [studioMode, setStudioMode] = useState<'single' | 'practice_1on1'>('single');
   const [selectedLevel, setSelectedLevel] = useState<HSKLevel>(currentLevel);
   const [activeCategory, setActiveCategory] = useState<string>('Tất cả');
   const [selectedPhrase, setSelectedPhrase] = useState<SpeakingPhrase>(() => {
@@ -805,16 +808,106 @@ export function AISpeakingStudio({
         </div>
       </div>
 
-      {/* Main Studio Grid: Left = Phrase Bank, Right = Active Speaking Arena */}
+      {/* Studio Mode Segmented Controller */}
       <div
         style={{
-          display: 'grid',
-          gridTemplateColumns: '360px 1fr',
-          gap: '24px',
-          alignItems: 'start',
+          display: 'flex',
+          background: 'var(--surface)',
+          padding: '4px',
+          borderRadius: '16px',
+          border: '1.5px solid var(--border)',
+          gap: '6px',
+          marginBottom: '24px',
+          boxShadow: 'var(--card-shadow)',
         }}
-        className="speaking-studio-grid"
       >
+        <button
+          type="button"
+          onClick={() => {
+            soundEffects.playTap();
+            setStudioMode('single');
+          }}
+          style={{
+            flex: 1,
+            padding: '10px 18px',
+            borderRadius: '12px',
+            border: 'none',
+            background: studioMode === 'single' ? '#10b981' : 'transparent',
+            color: studioMode === 'single' ? '#ffffff' : 'var(--text-muted)',
+            fontSize: '13px',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 0.15s ease',
+            boxShadow: studioMode === 'single' ? '0 2px 10px rgba(16, 185, 129, 0.35)' : 'none',
+          }}
+        >
+          <Target size={16} />
+          <span>🎯 Luyện Phát Âm Từng Câu (Chuẩn Âm HSK)</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            soundEffects.playTap();
+            setStudioMode('practice_1on1');
+          }}
+          style={{
+            flex: 1,
+            padding: '10px 18px',
+            borderRadius: '12px',
+            border: 'none',
+            background: studioMode === 'practice_1on1' ? 'linear-gradient(135deg, #6366f1, #4f46e5)' : 'transparent',
+            color: studioMode === 'practice_1on1' ? '#ffffff' : 'var(--text-muted)',
+            fontSize: '13px',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            transition: 'all 0.15s ease',
+            boxShadow: studioMode === 'practice_1on1' ? '0 2px 10px rgba(99, 102, 241, 0.4)' : 'none',
+          }}
+        >
+          <Users size={16} />
+          <span>👥 Phòng Đối Thoại 1:1 Cùng AI (Tình Huống Thực Tế)</span>
+          <span
+            style={{
+              fontSize: '10px',
+              padding: '2px 7px',
+              borderRadius: '8px',
+              background: studioMode === 'practice_1on1' ? '#ffffff' : '#6366f1',
+              color: studioMode === 'practice_1on1' ? '#4f46e5' : '#ffffff',
+              fontWeight: 900,
+            }}
+          >
+            MỚI
+          </span>
+        </button>
+      </div>
+
+      {/* Render Submode */}
+      {studioMode === 'practice_1on1' ? (
+        <Practice1on1Studio
+          currentLevel={selectedLevel}
+          onAddXp={onAddXp}
+          onOpenChatAI={onOpenChatAI}
+        />
+      ) : (
+        /* Main Studio Grid: Left = Phrase Bank, Right = Active Speaking Arena */
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '360px 1fr',
+            gap: '24px',
+            alignItems: 'start',
+          }}
+          className="speaking-studio-grid"
+        >
         {/* LEFT COLUMN: Phrase Bank List */}
         <div
           style={{
@@ -1289,6 +1382,7 @@ export function AISpeakingStudio({
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
