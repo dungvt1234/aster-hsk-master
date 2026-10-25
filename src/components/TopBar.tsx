@@ -3,7 +3,6 @@ import {
   Flame,
   Gem,
   Heart,
-  Sparkles,
   Menu,
   Zap,
   Cloud,
@@ -172,22 +171,22 @@ export function TopBar({
           </select>
         </div>
 
-        {/* 100% Free Forever Badge */}
+        {/* 100% Free Forever Badge (Desktop XL only) */}
         <div
-          className="topbar-stat-pill"
+          className="topbar-stat-pill desktop-xl-only"
           style={{
             background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.22) 100%)',
             border: '1.5px solid #10b981',
             color: '#10b981',
             fontSize: '11px',
             fontWeight: 900,
-            display: 'flex',
             alignItems: 'center',
             gap: '5px',
             padding: '5px 11px',
             borderRadius: '20px',
             boxShadow: '0 2px 8px rgba(16, 185, 129, 0.18)',
             cursor: 'default',
+            flexShrink: 0,
           }}
           title="Nền tảng học Tân HSK 1 - 4 hoàn toàn miễn phí trọn đời cho mọi học viên!"
         >
@@ -202,7 +201,7 @@ export function TopBar({
         </div>
 
         {/* Gems (Desktop/Tablet) */}
-        <div className="topbar-stat-pill gems desktop-only" title="Điểm kim cương tích lũy">
+        <div className="topbar-stat-pill gems desktop-xl-only" title="Điểm kim cương tích lũy">
           <Gem size={15} fill="#1CB0F6" color="#1CB0F6" />
           <span className="stat-number">450</span>
         </div>
@@ -225,6 +224,7 @@ export function TopBar({
             display: 'flex',
             alignItems: 'center',
             gap: '5px',
+            flexShrink: 0,
           }}
           title={
             syncStatus.lastSyncedAt
@@ -236,41 +236,30 @@ export function TopBar({
           <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Cloud Safe'}</span>
         </div>
 
-        {/* 3-Minute FSRS Memory Sprint Trigger */}
+        {/* 3-Minute FSRS Memory Sprint Trigger (Desktop XL only) */}
         {onOpenSprint && (
           <button
             type="button"
             onClick={onOpenSprint}
+            className="desktop-xl-only"
             style={{
               background: '#f59e0b',
               color: '#ffffff',
               border: 'none',
               borderRadius: '20px',
-              padding: '6px 14px',
+              padding: '6px 12px',
               fontWeight: 800,
               fontSize: '12px',
-              display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
+              gap: '4px',
               cursor: 'pointer',
               boxShadow: '0 2px 8px rgba(245, 158, 11, 0.35)',
               transition: 'transform 0.15s ease',
+              flexShrink: 0,
             }}
             title="Kích hoạt Bữa Sáng Trí Nhớ FSRS 3 phút"
           >
             <Zap size={14} fill="#ffffff" /> Sprint 3p
-          </button>
-        )}
-
-        {/* Quick AI Trigger */}
-        {onOpenAI && (
-          <button
-            type="button"
-            className="topbar-ai-btn desktop-only"
-            onClick={onOpenAI}
-            title="Mở trợ lý AI Aster"
-          >
-            <Sparkles size={15} /> Hỏi AI
           </button>
         )}
 

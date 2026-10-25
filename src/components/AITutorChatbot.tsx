@@ -208,7 +208,7 @@ export function AITutorChatbot({
   return (
     <>
       {/* Floating Mascot Trigger Button on Bottom-Right */}
-      <div className="duo-mascot-container">
+      <div className="duo-mascot-container duo-ai-widget-wrapper">
         {bubbleReminder && !isOpen && (
           <div className="duo-mascot-speech-bubble" onClick={() => setIsOpen(true)}>
             <span>{bubbleReminder}</span>
