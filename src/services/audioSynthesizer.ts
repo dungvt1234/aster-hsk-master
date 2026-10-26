@@ -95,6 +95,15 @@ class SoundEffectsManager {
     }
   }
 
+  // Smooth flip chime for Flashcard 3D
+  playCardFlip() {
+    this.playTap();
+  }
+
+  toggleLofi(): boolean {
+    return this.toggleLofiBeats();
+  }
+
   // Pair matched sound in match challenge
   playMatch() {
     try {

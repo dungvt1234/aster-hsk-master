@@ -8,6 +8,7 @@ import {
   Cloud,
   Gift,
   Music,
+  Search,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -29,6 +30,7 @@ interface TopBarProps {
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
   onToggleMobileMenu?: () => void;
+  onOpenCommandPalette?: () => void;
 }
 
 export function TopBar({
@@ -44,6 +46,7 @@ export function TopBar({
   onOpenStore,
   onOpenQuests,
   onToggleMobileMenu,
+  onOpenCommandPalette,
 }: TopBarProps) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: 'synced', lastSyncedAt: null, pendingChanges: 0 });
   const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
@@ -157,6 +160,20 @@ export function TopBar({
 
       {/* Right Stats & Controls */}
       <div className="topbar-right-controls">
+        {/* Quick Search & Command Palette (Ctrl+K) */}
+        {onOpenCommandPalette && (
+          <button
+            type="button"
+            className="topbar-command-search-btn"
+            onClick={onOpenCommandPalette}
+            title="Tìm kiếm nhanh từ vựng, chức năng hoặc phím tắt (Ctrl + K)"
+          >
+            <Search size={15} />
+            <span className="desktop-only">Tìm kiếm</span>
+            <kbd className="desktop-only">Ctrl K</kbd>
+          </button>
+        )}
+
         {/* Desktop: Unified Level Switcher */}
         <div className="level-segmented-control desktop-only" title="Chọn cấp độ HSK muốn học">
           {levels.map((lvl) => {
