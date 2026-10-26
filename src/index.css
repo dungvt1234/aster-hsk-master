@@ -95,7 +95,8 @@ button {
 }
 
 /* App Shell - Modern Duolingo 3-Column / 2-Column Responsive Layout */
-.app-shell {
+.app-shell,
+.app-layout {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
@@ -2675,7 +2676,8 @@ button {
   }
 
   /* 1. App Shell & Layout */
-  .app-shell {
+  .app-shell,
+  .app-layout {
     flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;

@@ -151,7 +151,7 @@ export function App() {
   );
 
   return (
-    <div className="app-layout">
+    <div className="app-shell">
       {/* 1. Left Sidebar Navigation */}
       <Sidebar
         activeTab={activeTab}
