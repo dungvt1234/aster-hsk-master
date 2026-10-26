@@ -263,6 +263,10 @@ export function App() {
                   setCurrentLevel(lvl);
                   setActiveTab('course');
                 }}
+                onNavigateToFlashcards={(lvl) => {
+                  setCurrentLevel(lvl);
+                  setActiveTab('flashcards');
+                }}
               />
             )}
 
