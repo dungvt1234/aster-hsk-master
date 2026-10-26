@@ -22,6 +22,7 @@ import type { HSKLevel } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
 import { renderColoredPinyin } from '../services/highlightUtils';
 import { Practice1on1Studio } from './Practice1on1Studio';
+import { PitchContourVisualizer } from './PitchContourVisualizer';
 
 interface SpeakingPhrase {
   id: string;
@@ -514,6 +515,7 @@ export function AISpeakingStudio({
   const [charBreakdown, setCharBreakdown] = useState<CharMatchResult[]>([]);
   const [speechSupported, setSpeechSupported] = useState(true);
   const [playbackAudioUrl, setPlaybackAudioUrl] = useState<string | null>(null);
+  const [activeAudioStream, setActiveAudioStream] = useState<MediaStream | null>(null);
 
   // Audio recording ref
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -563,6 +565,7 @@ export function AISpeakingStudio({
     setScoreFeedback('');
     setCharBreakdown([]);
     setPlaybackAudioUrl(null);
+    setActiveAudioStream(null);
     if (isRecording) {
       stopRecording();
     }
@@ -590,6 +593,7 @@ export function AISpeakingStudio({
     // 1. Microphone audio recording for playback
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setActiveAudioStream(stream);
       audioChunksRef.current = [];
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
@@ -605,6 +609,7 @@ export function AISpeakingStudio({
         const url = URL.createObjectURL(audioBlob);
         setPlaybackAudioUrl(url);
         stream.getTracks().forEach((track) => track.stop());
+        setActiveAudioStream(null);
       };
 
       mediaRecorder.start();
@@ -1168,6 +1173,15 @@ export function AISpeakingStudio({
               </button>
             </div>
           </div>
+
+          {/* Real-time Pitch Contour Visualizer */}
+          <PitchContourVisualizer
+            pinyin={selectedPhrase.pinyin}
+            chinese={selectedPhrase.chinese}
+            isRecording={isRecording}
+            audioStream={activeAudioStream}
+            score={score}
+          />
 
           {/* Interactive Microphone & Realtime Feedback */}
           <div
