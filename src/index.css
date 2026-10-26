@@ -1225,6 +1225,8 @@ button {
   background: var(--bg);
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
 }
 
@@ -1233,17 +1235,23 @@ button {
   flex-direction: column;
   width: 100%;
   height: 100%;
+  max-height: 100vh;
+  max-height: 100dvh;
   max-width: 860px;
   margin: 0 auto;
   justify-content: space-between;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Header Session Bar */
 .duo-lesson-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 18px;
-  padding: 24px 20px 10px;
+  padding: 18px 20px 10px;
+  box-sizing: border-box;
 }
 
 .duo-quit-btn {
@@ -1314,18 +1322,28 @@ button {
 
 /* Challenge Body */
 .duo-challenge-body {
-  flex: 1;
-  padding: 20px 24px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 24px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   max-width: 680px;
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+
+@media (min-height: 780px) {
+  .duo-challenge-body {
+    justify-content: center;
+  }
 }
 
 .duo-challenge-title {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 900;
   color: var(--text-heading);
   margin-bottom: 6px;
@@ -1334,7 +1352,7 @@ button {
 .duo-challenge-subtitle {
   font-size: 14px;
   color: var(--text-muted);
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 /* Stimulus Box */
@@ -1342,7 +1360,7 @@ button {
   display: flex;
   align-items: flex-end;
   gap: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .duo-mascot-avatar {
@@ -1526,7 +1544,7 @@ button {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 20px;
+  padding: 13px 18px;
   border-radius: 16px;
   background: var(--surface);
   border: 2px solid var(--border);
@@ -1574,9 +1592,14 @@ button {
 
 /* Footer & Feedback Banner */
 .duo-lesson-footer {
+  flex-shrink: 0;
   border-top: 2px solid var(--border);
-  padding: 24px 24px;
+  padding: 16px 24px;
+  background: var(--surface);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  z-index: 20;
   transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .duo-footer-default {

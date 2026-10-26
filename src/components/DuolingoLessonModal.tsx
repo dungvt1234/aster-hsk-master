@@ -73,6 +73,15 @@ export function DuolingoLessonModal({
 
   const currentChallenge = challengeQueue[currentIndex];
 
+  // Khóa cuộn trang nền khi mở modal bài học
+  useEffect(() => {
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origOverflow;
+    };
+  }, []);
+
   // Initialize per-challenge inputs
   useEffect(() => {
     if (!currentChallenge) return;

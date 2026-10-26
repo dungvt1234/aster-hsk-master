@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   BookOpen,
@@ -88,8 +88,28 @@ export function UnitGuidebookModal({
     { tone: 5, char: '吗', pinyin: 'ma', desc: 'Âm Xám: Ngắn và nhẹ', viet: 'Không?' },
   ];
 
+  useEffect(() => {
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origOverflow;
+    };
+  }, []);
+
   return (
-    <div className="duo-modal-overlay" onClick={onClose}>
+    <div
+      className="duo-modal-overlay"
+      onClick={onClose}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+        boxSizing: 'border-box',
+        background: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(5px)',
+      }}
+    >
       <div
         className="duo-guidebook-card"
         onClick={(e) => e.stopPropagation()}

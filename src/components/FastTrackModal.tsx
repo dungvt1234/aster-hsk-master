@@ -98,6 +98,14 @@ export function FastTrackModal({
   const currentQ = questions[currentIndex];
 
   useEffect(() => {
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     if (currentQ?.chineseAudioText) {
       soundEffects.speakChinese(currentQ.chineseAudioText, 0.85);
     }
