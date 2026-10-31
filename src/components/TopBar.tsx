@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Trophy,
   Headphones,
+  Star,
+  Target,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -21,6 +23,8 @@ import { gamificationService, type GamificationState } from '../services/gamific
 import { soundEffects } from '../services/audioSynthesizer';
 import { mistakesService } from '../services/mistakesService';
 import { leagueService } from '../services/leagueService';
+import { dailyGoalService, type DailyGoalState } from '../services/dailyGoalService';
+import { favoriteVocabService } from '../services/favoriteVocabService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -37,6 +41,8 @@ interface TopBarProps {
   onOpenMistakes?: () => void;
   onOpenLeague?: () => void;
   onOpenPodcast?: () => void;
+  onOpenDailyGoal?: () => void;
+  onOpenFavorites?: () => void;
   onToggleMobileMenu?: () => void;
   onOpenCommandPalette?: () => void;
 }
@@ -56,6 +62,8 @@ export function TopBar({
   onOpenMistakes,
   onOpenLeague,
   onOpenPodcast,
+  onOpenDailyGoal,
+  onOpenFavorites,
   onToggleMobileMenu,
   onOpenCommandPalette,
 }: TopBarProps) {
@@ -65,6 +73,8 @@ export function TopBar({
   const [mistakeCount, setMistakeCount] = useState<number>(() => mistakesService.getCount(currentLevel));
   const [leagueTier, setLeagueTier] = useState(() => leagueService.getCurrentTierInfo());
   const [userRank, setUserRank] = useState(() => leagueService.getUserRank());
+  const [dailyGoal, setDailyGoal] = useState<DailyGoalState>(() => dailyGoalService.getState());
+  const [starredCount, setStarredCount] = useState<number>(() => favoriteVocabService.getCount());
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -76,11 +86,19 @@ export function TopBar({
       setLeagueTier(leagueService.getCurrentTierInfo());
       setUserRank(leagueService.getUserRank());
     });
+    const unsubGoal = dailyGoalService.subscribe(() => {
+      setDailyGoal(dailyGoalService.getState());
+    });
+    const unsubFav = favoriteVocabService.subscribe(() => {
+      setStarredCount(favoriteVocabService.getCount());
+    });
     return () => {
       unsubSync();
       unsubGame();
       unsubMistakes();
       unsubLeague();
+      unsubGoal();
+      unsubFav();
     };
   }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -284,6 +302,53 @@ export function TopBar({
           )}
         </div>
 
+        {/* Daily Goal Activity Ring 🎯 */}
+        <div
+          className="topbar-stat-pill daily-goal-pill"
+          onClick={onOpenDailyGoal}
+          style={{
+            cursor: onOpenDailyGoal ? 'pointer' : 'default',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: dailyGoal.todayXp >= dailyGoal.targetXp ? 'rgba(16, 185, 129, 0.12)' : 'var(--surface)',
+            border: `1.5px solid ${dailyGoal.todayXp >= dailyGoal.targetXp ? '#10b981' : 'var(--border)'}`,
+            transition: 'all 0.2s ease',
+          }}
+          title={`Mục tiêu ngày: ${dailyGoal.todayXp}/${dailyGoal.targetXp} XP (${dailyGoalService.getProgressPercent()}%) - Nhấp để tùy chỉnh mục tiêu`}
+        >
+          <div style={{ position: 'relative', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" style={{ transform: 'rotate(-90deg)' }}>
+              <circle cx="10" cy="10" r="8" fill="none" stroke="var(--border)" strokeWidth="2.5" />
+              <circle
+                cx="10"
+                cy="10"
+                r="8"
+                fill="none"
+                stroke={dailyGoal.todayXp >= dailyGoal.targetXp ? '#10b981' : '#3b82f6'}
+                strokeWidth="2.5"
+                strokeDasharray={2 * Math.PI * 8}
+                strokeDashoffset={2 * Math.PI * 8 * (1 - dailyGoalService.getProgressPercent() / 100)}
+                strokeLinecap="round"
+              />
+            </svg>
+            <span style={{ position: 'absolute', fontSize: '9px', fontWeight: 900 }}>
+              {dailyGoal.todayXp >= dailyGoal.targetXp ? '✓' : '🎯'}
+            </span>
+          </div>
+          <span
+            style={{
+              fontSize: '11.5px',
+              fontWeight: 800,
+              color: dailyGoal.todayXp >= dailyGoal.targetXp ? '#059669' : 'var(--text-main)',
+            }}
+          >
+            {dailyGoalService.getProgressPercent()}%
+          </span>
+        </div>
+
         {/* Gems & Store Trigger */}
         <div
           className="topbar-stat-pill gems"
@@ -364,6 +429,34 @@ export function TopBar({
         >
           <AlertCircle size={15} color={mistakeCount > 0 ? '#ef4444' : 'var(--text-muted)'} />
           <span>{mistakeCount > 0 ? `${mistakeCount} Lỗi` : '0 Lỗi'}</span>
+        </div>
+
+        {/* Sổ Từ Yêu Thích (Starred Vocabulary ⭐) */}
+        <div
+          className="topbar-stat-pill favorites desktop-only"
+          onClick={onOpenFavorites}
+          style={{
+            cursor: onOpenFavorites ? 'pointer' : 'default',
+            background: starredCount > 0 ? 'rgba(234, 179, 8, 0.12)' : 'var(--surface)',
+            border: `1.5px solid ${starredCount > 0 ? '#eab308' : 'var(--border)'}`,
+            color: starredCount > 0 ? '#ca8a04' : 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '5px 11px',
+            borderRadius: '20px',
+            fontSize: '11.5px',
+            fontWeight: 800,
+            transition: 'all 0.2s ease',
+          }}
+          title={
+            starredCount > 0
+              ? `Bạn có ${starredCount} từ vựng yêu thích đã lưu. Nhấp để ôn tập bộ từ này`
+              : 'Sổ từ yêu thích: Nhấp để xem các từ vựng đã gắn sao'
+          }
+        >
+          <Star size={14} fill={starredCount > 0 ? '#eab308' : 'none'} color={starredCount > 0 ? '#eab308' : 'var(--text-muted)'} />
+          <span>{starredCount > 0 ? `${starredCount} Đã Lưu` : '0 Đã Lưu'}</span>
         </div>
 
         {/* Giải Đấu Tuần (Weekly League 🏆) */}

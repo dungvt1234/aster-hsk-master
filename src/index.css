@@ -5148,3 +5148,42 @@ button {
 
 
 
+
+/* Daily Goal Activity Ring & Starred Vocab Deck */
+.topbar-stat-pill.daily-goal-pill:hover {
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.topbar-stat-pill.favorites:hover {
+  border-color: #eab308;
+  transform: translateY(-1px);
+}
+
+.star-card-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.star-card-btn:hover {
+  transform: scale(1.15);
+}
+
+.star-card-btn:active {
+  transform: scale(0.9);
+}
+
+.favorites-deck-modal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.favorites-deck-modal .modal-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}

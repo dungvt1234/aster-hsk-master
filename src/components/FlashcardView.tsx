@@ -13,26 +13,35 @@ import {
   Sliders,
   Check,
   RefreshCw,
+  Star,
 } from 'lucide-react';
 import type { VocabItem, HSKLevel } from '../types';
 import { playChineseAudio } from '../services/speech';
 import { soundEffects } from '../services/audioSynthesizer';
+import { favoriteVocabService } from '../services/favoriteVocabService';
 
 interface FlashcardViewProps {
   cards: VocabItem[];
   currentLevel: HSKLevel;
   onAnswer: (vocabId: string, quality: 0 | 1 | 2 | 3) => void;
+  onOpenFavorites?: () => void;
 }
 
 export function FlashcardView({
   cards,
   currentLevel,
   onAnswer,
+  onOpenFavorites,
 }: FlashcardViewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isZenMode, setIsZenMode] = useState(false);
+  const [, setFavTick] = useState(0);
+
+  useEffect(() => {
+    return favoriteVocabService.subscribe(() => setFavTick((t) => t + 1));
+  }, []);
 
   // Drag / Swipe States
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -222,6 +231,27 @@ export function FlashcardView({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Nút mở Sổ Từ Yêu Thích */}
+          {onOpenFavorites && (
+            <button
+              type="button"
+              className="btn-secondary"
+              style={{
+                padding: '6px 10px',
+                fontSize: '12px',
+                background: 'rgba(234, 179, 8, 0.1)',
+                border: '1px solid rgba(234, 179, 8, 0.4)',
+                color: '#ca8a04',
+                fontWeight: 700,
+              }}
+              onClick={onOpenFavorites}
+              title="Mở Sổ Từ Vựng Đã Gắn Sao ⭐"
+            >
+              <Star size={14} fill="#eab308" color="#eab308" />
+              <span className="desktop-only">Đã lưu ({favoriteVocabService.getCount()})</span>
+            </button>
+          )}
+
           {/* Nút bật/tắt Zen Focus Mode */}
           <button
             type="button"
@@ -315,14 +345,47 @@ export function FlashcardView({
           <div className="card-face card-front">
             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span className="han-viet-badge">{currentCard.partOfSpeech}</span>
-              <button
-                type="button"
-                className="audio-btn"
-                onClick={(e) => handleSpeak(currentCard.hanzi, e)}
-                title="Nghe phát âm chuẩn Bắc Kinh"
-              >
-                <Volume2 size={15} /> {isPlayingAudio ? 'Đang phát...' : 'Phát âm'}
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="audio-btn"
+                  style={{
+                    background: favoriteVocabService.isStarred(currentCard.id)
+                      ? 'rgba(234, 179, 8, 0.2)'
+                      : undefined,
+                    border: favoriteVocabService.isStarred(currentCard.id)
+                      ? '1px solid #eab308'
+                      : undefined,
+                    color: favoriteVocabService.isStarred(currentCard.id) ? '#ca8a04' : undefined,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    favoriteVocabService.toggleStar(currentCard.id);
+                  }}
+                  title={
+                    favoriteVocabService.isStarred(currentCard.id)
+                      ? 'Bỏ gắn sao từ này'
+                      : 'Gắn sao ⭐ lưu vào Sổ Từ Yêu Thích'
+                  }
+                >
+                  <Star
+                    size={14}
+                    fill={favoriteVocabService.isStarred(currentCard.id) ? '#eab308' : 'none'}
+                    color={favoriteVocabService.isStarred(currentCard.id) ? '#ca8a04' : 'var(--text-muted)'}
+                  />
+                  <span>
+                    {favoriteVocabService.isStarred(currentCard.id) ? 'Đã lưu' : 'Lưu từ'}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="audio-btn"
+                  onClick={(e) => handleSpeak(currentCard.hanzi, e)}
+                  title="Nghe phát âm chuẩn Bắc Kinh"
+                >
+                  <Volume2 size={15} /> {isPlayingAudio ? 'Đang phát...' : 'Phát âm'}
+                </button>
+              </div>
             </div>
 
             <div style={{ margin: 'auto 0' }}>
@@ -356,13 +419,43 @@ export function FlashcardView({
                     {currentCard.pinyin}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="audio-btn"
-                  onClick={(e) => handleSpeak(currentCard.exampleCn, e)}
-                >
-                  <Volume2 size={13} /> Nghe ví dụ
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    className="audio-btn"
+                    style={{
+                      background: favoriteVocabService.isStarred(currentCard.id)
+                        ? 'rgba(234, 179, 8, 0.2)'
+                        : undefined,
+                      border: favoriteVocabService.isStarred(currentCard.id)
+                        ? '1px solid #eab308'
+                        : undefined,
+                      color: favoriteVocabService.isStarred(currentCard.id) ? '#ca8a04' : undefined,
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      favoriteVocabService.toggleStar(currentCard.id);
+                    }}
+                    title={
+                      favoriteVocabService.isStarred(currentCard.id)
+                        ? 'Bỏ gắn sao từ này'
+                        : 'Gắn sao ⭐ lưu vào Sổ Từ Yêu Thích'
+                    }
+                  >
+                    <Star
+                      size={13}
+                      fill={favoriteVocabService.isStarred(currentCard.id) ? '#eab308' : 'none'}
+                      color={favoriteVocabService.isStarred(currentCard.id) ? '#ca8a04' : '#94a3b8'}
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    className="audio-btn"
+                    onClick={(e) => handleSpeak(currentCard.exampleCn, e)}
+                  >
+                    <Volume2 size={13} /> Nghe ví dụ
+                  </button>
+                </div>
               </div>
 
               <div style={{ marginTop: '10px', marginBottom: '4px' }}>

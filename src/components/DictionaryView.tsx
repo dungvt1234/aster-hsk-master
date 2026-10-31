@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Search, Volume2, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Volume2, BookOpen, Star } from 'lucide-react';
 import type { VocabItem, HSKLevel } from '../types';
 import { playChineseAudio } from '../services/speech';
+import { favoriteVocabService } from '../services/favoriteVocabService';
 
 interface DictionaryViewProps {
   vocabulary: VocabItem[];
@@ -11,8 +12,17 @@ interface DictionaryViewProps {
 export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterLevel, setFilterLevel] = useState<HSKLevel | 'all'>(currentLevel);
+  const [showOnlyStarred, setShowOnlyStarred] = useState(false);
+  const [starredIds, setStarredIds] = useState<string[]>(() => favoriteVocabService.getStarredIds());
+
+  useEffect(() => {
+    return favoriteVocabService.subscribe(() => {
+      setStarredIds(favoriteVocabService.getStarredIds());
+    });
+  }, []);
 
   const filtered = vocabulary.filter((item) => {
+    if (showOnlyStarred && !starredIds.includes(item.id)) return false;
     const matchesLevel = filterLevel === 'all' || item.level === filterLevel;
     const term = searchTerm.toLowerCase().trim();
     const matchesSearch =
@@ -39,8 +49,11 @@ export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps
         <div className="level-picker">
           <button
             type="button"
-            className={`level-btn ${filterLevel === 'all' ? 'active' : ''}`}
-            onClick={() => setFilterLevel('all')}
+            className={`level-btn ${filterLevel === 'all' && !showOnlyStarred ? 'active' : ''}`}
+            onClick={() => {
+              setFilterLevel('all');
+              setShowOnlyStarred(false);
+            }}
           >
             Tất cả
           </button>
@@ -48,12 +61,28 @@ export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps
             <button
               key={lvl}
               type="button"
-              className={`level-btn ${filterLevel === lvl ? 'active' : ''}`}
-              onClick={() => setFilterLevel(lvl)}
+              className={`level-btn ${filterLevel === lvl && !showOnlyStarred ? 'active' : ''}`}
+              onClick={() => {
+                setFilterLevel(lvl);
+                setShowOnlyStarred(false);
+              }}
             >
               HSK {lvl}
             </button>
           ))}
+          <button
+            type="button"
+            className={`level-btn ${showOnlyStarred ? 'active' : ''}`}
+            onClick={() => setShowOnlyStarred(!showOnlyStarred)}
+            style={{
+              background: showOnlyStarred ? 'rgba(234, 179, 8, 0.18)' : undefined,
+              borderColor: showOnlyStarred ? '#eab308' : undefined,
+              color: showOnlyStarred ? '#ca8a04' : undefined,
+              fontWeight: 800,
+            }}
+          >
+            ⭐ Đã Lưu ({starredIds.length})
+          </button>
         </div>
       </div>
 
@@ -62,47 +91,65 @@ export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps
       </div>
 
       <div className="vocab-grid">
-        {filtered.map((item) => (
-          <div key={item.id} className="vocab-card">
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    padding: '2px 8px',
-                    borderRadius: '6px',
-                    background:
-                      item.level === 1
-                        ? 'rgba(16, 185, 129, 0.15)'
-                        : item.level === 2
-                          ? 'rgba(59, 130, 246, 0.15)'
-                          : item.level === 3
-                            ? 'rgba(245, 158, 11, 0.15)'
-                            : 'rgba(217, 56, 56, 0.15)',
-                    color:
-                      item.level === 1
-                        ? '#34d399'
-                        : item.level === 2
-                          ? '#60a5fa'
-                          : item.level === 3
-                            ? '#fbbf24'
-                            : '#f87171',
-                  }}
-                >
-                  HSK {item.level} · {item.partOfSpeech}
-                </span>
+        {filtered.map((item) => {
+          const isStarred = starredIds.includes(item.id);
+          return (
+            <div key={item.id} className="vocab-card">
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      padding: '2px 8px',
+                      borderRadius: '6px',
+                      background:
+                        item.level === 1
+                          ? 'rgba(16, 185, 129, 0.15)'
+                          : item.level === 2
+                            ? 'rgba(59, 130, 246, 0.15)'
+                            : item.level === 3
+                              ? 'rgba(245, 158, 11, 0.15)'
+                              : 'rgba(217, 56, 56, 0.15)',
+                      color:
+                        item.level === 1
+                          ? '#34d399'
+                          : item.level === 2
+                            ? '#60a5fa'
+                            : item.level === 3
+                              ? '#fbbf24'
+                              : '#f87171',
+                    }}
+                  >
+                    HSK {item.level} · {item.partOfSpeech}
+                  </span>
 
-                <button
-                  type="button"
-                  className="audio-btn"
-                  style={{ padding: '4px 8px' }}
-                  onClick={() => playChineseAudio(item.hanzi)}
-                  title="Nghe phát âm"
-                >
-                  <Volume2 size={13} />
-                </button>
-              </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <button
+                      type="button"
+                      className="audio-btn"
+                      style={{
+                        padding: '4px 8px',
+                        background: isStarred ? 'rgba(234, 179, 8, 0.18)' : undefined,
+                        borderColor: isStarred ? '#eab308' : undefined,
+                        color: isStarred ? '#ca8a04' : undefined,
+                      }}
+                      onClick={() => favoriteVocabService.toggleStar(item.id)}
+                      title={isStarred ? 'Bỏ gắn sao' : 'Gắn sao ⭐ lưu vào Sổ Từ Yêu Thích'}
+                    >
+                      <Star size={13} fill={isStarred ? '#eab308' : 'none'} color={isStarred ? '#eab308' : 'var(--text-muted)'} />
+                    </button>
+                    <button
+                      type="button"
+                      className="audio-btn"
+                      style={{ padding: '4px 8px' }}
+                      onClick={() => playChineseAudio(item.hanzi)}
+                      title="Nghe phát âm chuẩn Bắc Kinh"
+                    >
+                      <Volume2 size={13} />
+                    </button>
+                  </div>
+                </div>
 
               <div style={{ margin: '12px 0 6px' }}>
                 <span style={{ fontFamily: 'var(--font-hanzi)', fontSize: '32px', fontWeight: 700, color: '#fff' }}>
@@ -131,7 +178,8 @@ export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps
               </div>
             </div>
           </div>
-        ))}
+        );
+      })}
       </div>
     </div>
   );

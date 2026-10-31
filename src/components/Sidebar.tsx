@@ -36,6 +36,8 @@ interface SidebarProps {
   onOpenLeague?: () => void;
   onOpenPodcast?: () => void;
   onOpenAchievements?: () => void;
+  onOpenDailyGoal?: () => void;
+  onOpenFavorites?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -56,6 +58,8 @@ export function Sidebar({
   onOpenLeague,
   onOpenPodcast,
   onOpenAchievements,
+  onOpenDailyGoal,
+  onOpenFavorites,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -355,6 +359,60 @@ export function Sidebar({
                 title="Mở Chế Độ Nghe Rảnh Tay Podcast"
               >
                 <span>🎧</span> <span>Podcast</span>
+              </button>
+            )}
+
+            {onOpenDailyGoal && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenDailyGoal();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.25)',
+                  color: '#059669',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mục Tiêu Học Tập Ngày & Vòng Hoạt Động"
+              >
+                <span>🎯</span> <span>Mục Tiêu</span>
+              </button>
+            )}
+
+            {onOpenFavorites && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenFavorites();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'rgba(234, 179, 8, 0.08)',
+                  border: '1px solid rgba(234, 179, 8, 0.25)',
+                  color: '#ca8a04',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mở Sổ Từ Vựng Yêu Thích & Đã Lưu"
+              >
+                <span>⭐</span> <span>Từ Đã Lưu</span>
               </button>
             )}
 

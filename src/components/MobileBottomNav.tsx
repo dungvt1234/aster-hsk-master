@@ -25,6 +25,8 @@ interface MobileBottomNavProps {
   onOpenPodcast?: () => void;
   onOpenMistakes?: () => void;
   onOpenAchievements?: () => void;
+  onOpenDailyGoal?: () => void;
+  onOpenFavorites?: () => void;
 }
 
 export function MobileBottomNav({
@@ -36,6 +38,8 @@ export function MobileBottomNav({
   onOpenPodcast,
   onOpenMistakes,
   onOpenAchievements,
+  onOpenDailyGoal,
+  onOpenFavorites,
 }: MobileBottomNavProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -165,8 +169,8 @@ export function MobileBottomNav({
               </button>
             )}
 
-            {/* Quick Action Badges (League, Podcast, Mistakes, Achievements) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '14px' }}>
+            {/* Quick Action Badges (League, Podcast, Mistakes, Achievements, Daily Goal, Favorites) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '14px' }}>
               {onOpenLeague && (
                 <button
                   type="button"
@@ -180,7 +184,7 @@ export function MobileBottomNav({
                     color: '#ca8a04',
                     borderRadius: '12px',
                     padding: '8px 4px',
-                    fontSize: '10.5px',
+                    fontSize: '11px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -207,7 +211,7 @@ export function MobileBottomNav({
                     color: '#0891b2',
                     borderRadius: '12px',
                     padding: '8px 4px',
-                    fontSize: '10.5px',
+                    fontSize: '11px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -234,7 +238,7 @@ export function MobileBottomNav({
                     color: '#ef4444',
                     borderRadius: '12px',
                     padding: '8px 4px',
-                    fontSize: '10.5px',
+                    fontSize: '11px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -261,7 +265,7 @@ export function MobileBottomNav({
                     color: '#d97706',
                     borderRadius: '12px',
                     padding: '8px 4px',
-                    fontSize: '10.5px',
+                    fontSize: '11px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -272,6 +276,60 @@ export function MobileBottomNav({
                 >
                   <span style={{ fontSize: '16px' }}>🎖️</span>
                   <span>Huy Hiệu</span>
+                </button>
+              )}
+
+              {onOpenDailyGoal && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenDailyGoal();
+                  }}
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.12)',
+                    border: '1.5px solid #10b981',
+                    color: '#059669',
+                    borderRadius: '12px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>🎯</span>
+                  <span>Mục Tiêu</span>
+                </button>
+              )}
+
+              {onOpenFavorites && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenFavorites();
+                  }}
+                  style={{
+                    background: 'rgba(234, 179, 8, 0.12)',
+                    border: '1.5px solid #eab308',
+                    color: '#ca8a04',
+                    borderRadius: '12px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>⭐</span>
+                  <span>Từ Đã Lưu</span>
                 </button>
               )}
             </div>

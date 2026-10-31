@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import type { HSKLevel, CardProgress, UserStats } from './types';
+import type { HSKLevel, CardProgress, UserStats, VocabItem } from './types';
 import { HSK_VOCABULARY, LEVEL_COUNTS } from './data/hskData';
 import { QUIZ_QUESTIONS, getMockExamByLevel } from './data/cbtData';
 import {
@@ -20,6 +20,8 @@ import { cloudSync } from './services/cloudSyncService';
 import { authService, UserProfile } from './services/authService';
 import { gamificationService } from './services/gamificationService';
 import { leagueService } from './services/leagueService';
+import { dailyGoalService } from './services/dailyGoalService';
+import { favoriteVocabService } from './services/favoriteVocabService';
 
 // Code-Splitting: Lazy loading heavy views and secondary studios
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -45,6 +47,8 @@ const MistakesReviewModal = lazy(() => import('./components/MistakesReviewModal'
 const WeeklyLeagueModal = lazy(() => import('./components/WeeklyLeagueModal').then(m => ({ default: m.WeeklyLeagueModal })));
 const HandsfreePodcastModal = lazy(() => import('./components/HandsfreePodcastModal').then(m => ({ default: m.HandsfreePodcastModal })));
 const AchievementsModal = lazy(() => import('./components/AchievementsModal').then(m => ({ default: m.AchievementsModal })));
+const DailyGoalModal = lazy(() => import('./components/DailyGoalModal').then(m => ({ default: m.DailyGoalModal })));
+const FavoritesDeckModal = lazy(() => import('./components/FavoritesDeckModal').then(m => ({ default: m.FavoritesDeckModal })));
 
 function LoadingViewFallback() {
   return (
@@ -65,7 +69,17 @@ export function App() {
   const [isLeagueOpen, setIsLeagueOpen] = useState(false);
   const [isPodcastOpen, setIsPodcastOpen] = useState(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
+  const [isDailyGoalOpen, setIsDailyGoalOpen] = useState(false);
+  const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [customReviewCards, setCustomReviewCards] = useState<VocabItem[] | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  const handleEarnXp = (amount: number) => {
+    authService.updateProfile({ xp: (currentUser.xp || 0) + amount });
+    setCurrentUser(authService.getCurrentUser());
+    leagueService.addXp(amount);
+    dailyGoalService.addXp(amount);
+  };
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
   const [activeTab, setActiveTab] = useState<ActiveTab>('duo_path'); // Mặc định vào thẳng Lộ Trình Duolingo
@@ -182,6 +196,8 @@ export function App() {
         onOpenLeague={() => setIsLeagueOpen(true)}
         onOpenPodcast={() => setIsPodcastOpen(true)}
         onOpenAchievements={() => setIsAchievementsOpen(true)}
+        onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
+        onOpenFavorites={() => setIsFavoritesOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -200,6 +216,8 @@ export function App() {
           onOpenMistakes={() => setIsMistakesOpen(true)}
           onOpenLeague={() => setIsLeagueOpen(true)}
           onOpenPodcast={() => setIsPodcastOpen(true)}
+          onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
+          onOpenFavorites={() => setIsFavoritesOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
           onOpenProfile={() => setIsProfileOpen(true)}
@@ -214,11 +232,7 @@ export function App() {
                 currentLevel={currentLevel}
                 onSelectLevel={setCurrentLevel}
                 streak={stats.streak}
-                onAddXp={(earnedXp) => {
-                  authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
-                  setCurrentUser(authService.getCurrentUser());
-                  leagueService.addXp(earnedXp);
-                }}
+                onAddXp={handleEarnXp}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
                 onOpenSprint={() => setIsSprintOpen(true)}
                 onOpenStore={() => setIsStoreOpen(true)}
@@ -231,11 +245,7 @@ export function App() {
               <HanziArenaGame
                 currentLevel={currentLevel}
                 onSelectLevel={setCurrentLevel}
-                onAddXp={(earnedXp) => {
-                  authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
-                  setCurrentUser(authService.getCurrentUser());
-                  leagueService.addXp(earnedXp);
-                }}
+                onAddXp={handleEarnXp}
                 onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
               />
             )}
@@ -259,11 +269,7 @@ export function App() {
               <AISpeakingStudio
                 currentLevel={currentLevel}
                 onSelectLevel={setCurrentLevel}
-                onAddXp={(earnedXp) => {
-                  authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
-                  setCurrentUser(authService.getCurrentUser());
-                  leagueService.addXp(earnedXp);
-                }}
+                onAddXp={handleEarnXp}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               />
             )}
@@ -308,11 +314,49 @@ export function App() {
             )}
 
             {activeTab === 'flashcards' && (
-              <FlashcardView
-                cards={currentCards}
-                currentLevel={currentLevel}
-                onAnswer={handleAnswerCard}
-              />
+              <div>
+                {customReviewCards && (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      background: 'rgba(234, 179, 8, 0.12)',
+                      border: '1.5px solid #eab308',
+                      borderRadius: '12px',
+                      padding: '10px 16px',
+                      marginBottom: '16px',
+                      color: '#ca8a04',
+                      fontSize: '13px',
+                      fontWeight: 800,
+                    }}
+                  >
+                    <span>⭐ Đang ôn tập riêng {customReviewCards.length} từ vựng trong Sổ Từ Yêu Thích</span>
+                    <button
+                      type="button"
+                      onClick={() => setCustomReviewCards(null)}
+                      style={{
+                        background: '#eab308',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '4px 10px',
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Quay lại HSK {currentLevel}
+                    </button>
+                  </div>
+                )}
+                <FlashcardView
+                  cards={customReviewCards || currentCards}
+                  currentLevel={currentLevel}
+                  onAnswer={handleAnswerCard}
+                  onOpenFavorites={() => setIsFavoritesOpen(true)}
+                />
+              </div>
             )}
 
             {activeTab === 'quiz' && (
@@ -361,6 +405,8 @@ export function App() {
         onOpenPodcast={() => setIsPodcastOpen(true)}
         onOpenMistakes={() => setIsMistakesOpen(true)}
         onOpenAchievements={() => setIsAchievementsOpen(true)}
+        onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
+        onOpenFavorites={() => setIsFavoritesOpen(true)}
       />
 
       {/* Modals with Suspense */}
@@ -387,7 +433,8 @@ export function App() {
           isOpen={isSprintOpen}
           onClose={() => setIsSprintOpen(false)}
           currentLevel={currentLevel}
-          onAddXP={(_xp) => {
+          onAddXP={(earned) => {
+            handleEarnXp(earned);
             setStats((prev) => ({
               ...prev,
               todayReviews: prev.todayReviews + 1,
@@ -484,10 +531,28 @@ export function App() {
         <AchievementsModal
           isOpen={isAchievementsOpen}
           onClose={() => setIsAchievementsOpen(false)}
-          onAddXp={(earned) => {
-            authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
-            setCurrentUser(authService.getCurrentUser());
-            leagueService.addXp(earned);
+          onAddXp={handleEarnXp}
+        />
+
+        {/* Mục Tiêu Học Tập Ngày & Vòng Hoạt Động (Daily Goal) 🎯 */}
+        <DailyGoalModal
+          isOpen={isDailyGoalOpen}
+          onClose={() => setIsDailyGoalOpen(false)}
+          onNavigateTab={(tab) => {
+            setActiveTab(tab as ActiveTab);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+
+        {/* Sổ Từ Vựng Yêu Thích & Đã Lưu (Favorites Deck) ⭐ */}
+        <FavoritesDeckModal
+          isOpen={isFavoritesOpen}
+          onClose={() => setIsFavoritesOpen(false)}
+          allVocabulary={HSK_VOCABULARY}
+          onStartFlashcards={(cards) => {
+            setCustomReviewCards(cards);
+            setActiveTab('flashcards');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         />
       </Suspense>
