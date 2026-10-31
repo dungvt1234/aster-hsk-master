@@ -756,6 +756,198 @@ export const UNIT_GUIDE_DATA: Record<string, UnitGuideContent> = {
     ]
   },
 
+  
+  // ==================== HSK 4 (Units 1 - 7) ====================
+  'unit-hsk4-1': {
+    grammars: [
+      {
+        title: '1. Cặp liên từ tăng tiến 不仅...而且... (Không những... mà còn...)',
+        formula: 'Chủ ngữ + 不仅...，而且...',
+        explanation: 'Dùng để nối hai phân câu có ý nghĩa tăng tiến, nâng cấp mức độ.',
+        examples: [
+          { chinese: '他不仅汉语说得好，而且汉字也写得非常漂亮。', pinyin: 'Tā bùjǐn hànyǔ shuō de hǎo, érqiě hànzì yě xiě de fēicháng piàoliang.', vietnamese: 'Anh ấy không những nói tiếng Trung tốt mà viết chữ Hán cũng rất đẹp.', highlights: ['不仅', '而且'] }
+        ]
+      },
+      {
+        title: '2. Phân biệt điều kiện 只有...才... và 只要...就...',
+        formula: '只有 + [Điều kiện duy nhất] + 才... | 只要 + [Điều kiện cần] + 就...',
+        explanation: '只有...才... nhấn mạnh điều kiện thiết yếu duy nhất; 只要...就... nhấn mạnh chỉ cần có điều kiện đó là kết quả sẽ xảy ra.',
+        examples: [
+          { chinese: '只有坚持努力，才能取得最终的成功。', pinyin: 'Zhǐyǒu jiānchí nǔlì, cáinéng qǔdé zuìzhōng de chénggōng.', vietnamese: 'Chỉ có kiên trì nỗ lực thì mới đạt được thành công cuối cùng.', highlights: ['只有', '才'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Biến điệu của phó từ 不 trong 不仅 (bùjǐn)',
+        desc: 'Đứng trước âm tiết thanh 3 (jǐn), 不 giữ nguyên thanh 4 (bù).',
+        examples: [
+          { chinese: '不仅', pinyin: 'Bùjǐn', note: 'Thanh 4 + Thanh 3' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '你觉得学好汉语最关键的是什么？', pinyin: 'Nǐ juéde xuéhǎo hànyǔ zuì guānjiàn de shì shénme?', vietnamese: 'Bạn cảm thấy điều mấu chốt nhất để học tốt tiếng Trung là gì?', highlights: ['关键'] },
+      { speaker: 'B', chinese: '不仅要多听多说，而且每天都要坚持复习。', pinyin: 'Bùjǐn yào duō tīng duō shuō, érqiě měitiān dōu yào jiānchí fùxí.', vietnamese: 'Không những phải nghe nhiều nói nhiều, mà mỗi ngày đều cần kiên trì ôn tập.', highlights: ['不仅', '而且', '坚持'] }
+    ]
+  },
+
+  'unit-hsk4-2': {
+    grammars: [
+      {
+        title: '1. Cấu trúc 达成共识 (Đạt được đồng thuận / Nhất trí)',
+        formula: '双方在...中 + 达成了共识',
+        explanation: 'Thường dùng trong văn phong thương mại, đàm phán hợp đồng song phương.',
+        examples: [
+          { chinese: '双方在合同谈判中达成了共识。', pinyin: 'Shuāngfāng zài hétong tánpàn zhōng dáchéng le gòngshí.', vietnamese: 'Hai bên đã đạt được nhận thức chung trong đàm phán hợp đồng.', highlights: ['达成共识'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 谈判 (tánpàn)',
+        desc: 'Tán thanh 2 trầm bổng, pàn thanh 4 dứt khoát mạnh mẽ.',
+        examples: [
+          { chinese: '谈判', pinyin: 'Tánpàn', note: 'Thanh 2 + Thanh 4' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '这次商业谈判的结果如何？', pinyin: 'Zhè cì shāngyè tánpàn de jiéguǒ rúhé?', vietnamese: 'Kết quả cuộc đàm phán thương mại lần này thế nào?', highlights: ['商业谈判', '如何'] },
+      { speaker: 'B', chinese: '非常顺利，双方已经正式在合同上签字了。', pinyin: 'Fēicháng shùnlì, shuāngfāng yǐjīng zhèngshì zài hétong shang qiānzì le.', vietnamese: 'Rất thuận lợi, hai bên đã chính thức ký kết vào hợp đồng.', highlights: ['顺利', '签字'] }
+    ]
+  },
+
+  'unit-hsk4-3': {
+    grammars: [
+      {
+        title: '1. Cấu trúc 随着...的发展 (Cùng với sự phát triển của...)',
+        formula: '随着 + [Công nghệ/Kinh tế/Xã hội] + 的发展，[Mệnh đề]',
+        explanation: 'Mẫu câu mở đầu rất phổ biến trong các bài luận và bài đọc hiểu HSK 4.',
+        examples: [
+          { chinese: '随着科技的发展，移动支付越来越普及。', pinyin: 'Suízhe kējì de fāzhǎn, yídòng zhīfù yuèláiyuè pǔjí.', vietnamese: 'Cùng với sự phát triển của công nghệ, thanh toán di động ngày càng phổ cập.', highlights: ['随着', '越来越'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 普及 (pǔjí)',
+        desc: 'Pǔ thanh 3 uốn giọng, jí thanh 2 vút lên nhẹ nhàng.',
+        examples: [
+          { chinese: '普及', pinyin: 'Pǔjí', note: 'Thanh 3 + Thanh 2' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '出门不带钱包也可以吗？', pinyin: 'Chūmén bú dài qiánbāo yě kěyǐ ma?', vietnamese: 'Ra ngoài không đem ví tiền cũng được sao?', highlights: ['钱包'] },
+      { speaker: 'B', chinese: '当然可以，现在拿一部手机扫码就能付钱。', pinyin: 'Dāngrán kěyǐ, xiànzài ná yí bù shǒujī sǎomǎ jiù néng fù qián.', vietnamese: 'Đương nhiên được, bây giờ chỉ cần cầm một chiếc điện thoại quét mã là thanh toán được ngay.', highlights: ['扫码', '付钱'] }
+    ]
+  },
+
+  'unit-hsk4-4': {
+    grammars: [
+      {
+        title: '1. Động từ khiến sứ 使 (Khiến cho / Làm cho)',
+        formula: 'A + 使 + B + [Tính từ / Động từ]',
+        explanation: 'Trang trọng hơn 让 và 叫, dùng phổ biến trong thành ngữ và văn viết triết lý.',
+        examples: [
+          { chinese: '谦虚使人进步，骄傲使人落后。', pinyin: 'Qiānxū shǐ rén jìnbù, jiāo\'ào shǐ rén luòhòu.', vietnamese: 'Khiêm tốn khiến người ta tiến bộ, kiêu ngạo làm người ta thụt lùi.', highlights: ['使'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Quy tắc ngắt nhịp thành ngữ bốn chữ (2-2)',
+        desc: 'Hầu hết thành ngữ ngắt nhịp 2 chữ đầu và 2 chữ sau: 亡羊 / 补牢, 塞翁 / 失马.',
+        examples: [
+          { chinese: '亡羊补牢', pinyin: 'Wángyáng-bǔláo', note: 'Nhịp 2/2' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '这次考试我没有考好，心里很难过。', pinyin: 'Zhè cì kǎoshì wǒ méiyǒu kǎo hǎo, xīnlǐ hěn nánguò.', vietnamese: 'Kỳ thi lần này tôi không làm tốt, trong lòng rất buồn.', highlights: ['考试', '难过'] },
+      { speaker: 'B', chinese: '别灰心，失败是成功之母，认真总结经验就好。', pinyin: 'Bié huīxīn, shībài shì chénggōng zhī mǔ, rènzhēn zǒngjié jīngyàn jiù hǎo.', vietnamese: 'Đừng nản lòng, thất bại là mẹ thành công, chăm chỉ đúc kết kinh nghiệm là được.', highlights: ['失败是成功之母', '总结经验'] }
+    ]
+  },
+
+  'unit-hsk4-5': {
+    grammars: [
+      {
+        title: '1. Cấu trúc 是...的关键 (Là mấu chốt của...)',
+        formula: '[Yếu tố/Hành động] + 是 + [Mục tiêu/Kết quả] + 的关键',
+        explanation: 'Nhấn mạnh nguyên nhân trọng yếu dẫn tới thắng lợi hoặc thăng tiến.',
+        examples: [
+          { chinese: '认真的态度是获得晋升的关键。', pinyin: 'Rènzhēn de tàidù shì huòdé jìnshēng de guānjiàn.', vietnamese: 'Thái độ nghiêm túc là mấu chốt để nhận được sự thăng chức.', highlights: ['是', '的关键'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 晋升 (jìnshēng)',
+        desc: 'Jìn thanh 4 nhấn giọng, shēng thanh 1 ngang dài.',
+        examples: [
+          { chinese: '晋升', pinyin: 'Jìnshēng', note: 'Thanh 4 + Thanh 1' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '听说王经理下个月要晋升了？', pinyin: 'Tīngshuō Wáng jīnglǐ xià gè yuè yào jìnshēng le?', vietnamese: 'Nghe nói quản lý Vương tháng sau được thăng chức à?', highlights: ['晋升'] },
+      { speaker: 'B', chinese: '是的，他工作能力强，又善于激励团队，实至名归。', pinyin: 'Shì de, tā gōngzuò nénglì qiáng, yòu shànyú jīlì tuánduì, shízhìmíngguī.', vietnamese: 'Đúng vậy, năng lực làm việc của anh ấy rất mạnh lại giỏi khích lệ đội nhóm, hoàn toàn xứng đáng.', highlights: ['善于', '激励'] }
+    ]
+  },
+
+  'unit-hsk4-6': {
+    grammars: [
+      {
+        title: '1. Cụm giới từ 有助于... (Có lợi cho / Giúp ích cho...)',
+        formula: '[Hành vi/Phương pháp] + 有助于 + [Kết quả tích cực]',
+        explanation: 'Diễn tả tác dụng tích cực của một thói quen hoặc giải pháp.',
+        examples: [
+          { chinese: '每月记账有助于避免不必要的浪费。', pinyin: 'Měiyuè jìzhàng yǒuzhùyú bìmiǎn bú bìyào de làngfèi.', vietnamese: 'Mỗi tháng ghi sổ chi tiêu giúp ích cho việc tránh lãng phí không cần thiết.', highlights: ['有助于', '避免'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 投资 (tóuzī)',
+        desc: 'Tóu thanh 2 đi lên, zī thanh 1 bằng phẳng.',
+        examples: [
+          { chinese: '投资', pinyin: 'Tóuzī', note: 'Thanh 2 + Thanh 1' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '你平时是怎么管理个人财务的？', pinyin: 'Nǐ píngshí shì zěnme guǎnlǐ gèrén cáiwù de?', vietnamese: 'Bình thường bạn quản lý tài chính cá nhân như thế nào?', highlights: ['个人财务'] },
+      { speaker: 'B', chinese: '我会把一部分收入存进银行，其余的进行稳健理财。', pinyin: 'Wǒ huì bǎ yí bùfen shōurù cún jìn yínháng, qíyú de jìnxíng wěnjiàn lǐcái.', vietnamese: 'Tôi đem một phần thu nhập gửi tiết kiệm ngân hàng, phần còn lại đầu tư tài chính vững chắc.', highlights: ['存', '理财'] }
+    ]
+  },
+
+  'unit-hsk4-7': {
+    grammars: [
+      {
+        title: '1. Cấu trúc 把...放在第一位 (Đặt cái gì lên vị trí hàng đầu)',
+        formula: '必须 + 把 + [An toàn / Đạo đức / Con người] + 放在第一位',
+        explanation: 'Nhấn mạnh giá trị cốt lõi không thể xâm phạm trong công nghệ và kinh doanh.',
+        examples: [
+          { chinese: '科技创新必须始终把人类安全放在第一位。', pinyin: 'Kējì chuàngxīn bìxū shǐzhōng bǎ rénlèi ānquán fàng zài dì-yī wèi.', vietnamese: 'Đổi mới công nghệ phải luôn đặt an toàn con người lên hàng đầu.', highlights: ['把', '放在第一位'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 创新 (chuàngxīn)',
+        desc: 'Chuàng thanh 4 dứt khoát, xīn thanh 1 âm vang cao.',
+        examples: [
+          { chinese: '创新', pinyin: 'Chuàngxīn', note: 'Thanh 4 + Thanh 1' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '人工智能会取代人类的工作吗？', pinyin: 'Réngōng zhìnéng huì qǔdài rénlèi de gōngzuò ma?', vietnamese: 'Trí tuệ nhân tạo liệu có thay thế công việc của con người không?', highlights: ['人工智能', '取代'] },
+      { speaker: 'B', chinese: '科技能够提高生产效率，但人类的创造力始终是不可替代的。', pinyin: 'Kējì nénggòu tígāo shēngchǎn xiàolǜ, dàn rénlèi de chuàngzàolì shǐzhōng shì bù kě tìdài de.', vietnamese: 'Công nghệ có thể nâng cao hiệu suất sản xuất, nhưng sức sáng tạo của con người thì mãi mãi không thể thay thế.', highlights: ['提高效率', '不可替代'] }
+    ]
+  },
+
   'unit-hsk4-8': {
     grammars: [
       {
