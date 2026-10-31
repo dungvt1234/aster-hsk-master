@@ -660,5 +660,125 @@ export const UNIT_GUIDE_DATA: Record<string, UnitGuideContent> = {
       { speaker: 'A', chinese: '你坚持每天早上跑步多长时间了？', pinyin: 'Nǐ jiānchí měitiān zǎoshang pǎobù duō cháng shíjiān le?', vietnamese: 'Bạn kiên trì chạy bộ mỗi sáng được bao lâu rồi?', highlights: ['跑步', '多长时间'] },
       { speaker: 'B', chinese: '已经有半年了，现在不仅体重下降了，而且精神特别好！', pinyin: 'Yǐjīng yǒu bàn nián le, xiànzài bùjǐn tǐzhòng xiàjiàng le, érqiě jīngshen tèbié hǎo!', vietnamese: 'Đã được nửa năm rồi, giờ không chỉ cân nặng giảm mà tinh thần còn đặc biệt sảng khoái!', highlights: ['半年', '不仅', '而且'] }
     ]
+  },
+
+  'unit-hsk1-8': {
+    grammars: [
+      {
+        title: '1. Mẫu câu hỏi và miêu tả thời tiết với 天气 (tiānqì)',
+        formula: '今天天气 + [Tính từ: 很好 / 很冷 / 不热] | 今天天气怎么样？',
+        explanation: 'Hỏi thời tiết dùng "怎么样" (thế nào). Miêu tả thời tiết trực tiếp bằng tính từ.',
+        examples: [
+          { chinese: '今天天气很好，不冷也不热。', pinyin: 'Jīntiān tiānqì hěn hǎo, bù lěng yě bú rè.', vietnamese: 'Hôm nay thời tiết rất đẹp, không lạnh cũng không nóng.', highlights: ['天气', '很好'] }
+        ]
+      },
+      {
+        title: '2. Bày tỏ sở thích giải trí: 喜欢 + Động từ',
+        formula: '我喜欢 + [看电影 / 听音乐 / 看书]',
+        explanation: 'Động từ 喜欢 (xǐhuan: thích) có thể kết hợp trực tiếp với cụm động từ chỉ hành động.',
+        examples: [
+          { chinese: '明天我想去看电影。', pinyin: 'Míngtiān wǒ xiǎng qù kàn diànyǐng.', vietnamese: 'Ngày mai tôi muốn đi xem phim.', highlights: ['看电影'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm biến điệu của 不 (bù)',
+        desc: 'Đứng trước từ mang thanh 4, 不 đọc thành thanh 2 (bú). Ví dụ: 不热 (bú rè), 不去 (bú qù).',
+        examples: [
+          { chinese: '不热', pinyin: 'Bú rè', note: 'Biến điệu thanh 2 + 4' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '今天天气怎么样？', pinyin: 'Jīntiān tiānqì zěnmeyàng?', vietnamese: 'Hôm nay thời tiết thế nào?', highlights: ['天气'] },
+      { speaker: 'B', chinese: '今天天气很好，下午我们一起去公园散步吧！', pinyin: 'Jīntiān tiānqì hěn hǎo, xiàwǔ wǒmen yìqǐ qù gōngyuán sànbù ba!', vietnamese: 'Hôm nay thời tiết rất đẹp, chiều nay chúng ta cùng đi công viên đi dạo nhé!', highlights: ['一起', '公园'] }
+    ]
+  },
+
+  'unit-hsk2-8': {
+    grammars: [
+      {
+        title: '1. Động từ năng nguyện 要 (yào: cần phải / sẽ)',
+        formula: 'Chủ ngữ + 要 + Động từ',
+        explanation: 'Biểu thị ý định hoặc sự cần thiết phải thực hiện công việc.',
+        examples: [
+          { chinese: '今天事情很多，我要加班。', pinyin: 'Jīntiān shìqing hěn duō, wǒ yào jiābān.', vietnamese: 'Hôm nay nhiều việc quá, tôi cần phải tăng ca.', highlights: ['要', '加班'] }
+        ]
+      },
+      {
+        title: '2. Mẫu câu nghe gọi điện thoại chuẩn công sở',
+        formula: '喂，请问 + [Người muốn tìm] + 在吗？',
+        explanation: 'Khẩu ngữ gọi điện thoại lịch thiệp mở đầu bằng 喂 (wèi: a lô).',
+        examples: [
+          { chinese: '喂，请问王经理在吗？', pinyin: 'Wèi, qǐngwèn Wáng jīnglǐ zài ma?', vietnamese: 'A lô, xin hỏi Giám đốc Vương có ở đó không ạ?', highlights: ['喂', '请问'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Thanh điệu từ 加班 (jiābān)',
+        desc: 'Hai âm tiết thanh 1 đi liền nhau: ngân cao và đều.',
+        examples: [
+          { chinese: '加班', pinyin: 'Jiābān', note: 'Thanh 1 + Thanh 1' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '李明，你今天几点下班？', pinyin: 'Lǐ Míng, nǐ jīntiān jǐ diǎn xiàbān?', vietnamese: 'Lý Minh, hôm nay mấy giờ bạn tan làm?', highlights: ['几点', '下班'] },
+      { speaker: 'B', chinese: '今天事情有点儿多，估计要加班到八点。', pinyin: 'Jīntiān shìqing yǒudiǎnr duō, gūjì yào jiābān dào bā diǎn.', vietnamese: 'Hôm nay có hơi nhiều việc, dự tính phải tăng ca đến 8 giờ tối.', highlights: ['加班', '八点'] }
+    ]
+  },
+
+  'unit-hsk3-8': {
+    grammars: [
+      {
+        title: '1. Cấu trúc câu vị ngữ là danh từ: 是……的责任 (Là trách nhiệm của...)',
+        formula: '[Hành động] + 是 + [Đối tượng] + 的责任',
+        explanation: 'Nhấn mạnh nghĩa vụ và ý thức công dân.',
+        examples: [
+          { chinese: '保护环境是每个人的责任。', pinyin: 'Bǎohù huánjìng shì měi gè rén de zérèn.', vietnamese: 'Bảo vệ môi trường là trách nhiệm của mỗi người.', highlights: ['保护环境', '责任'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 环境 (huánjìng)',
+        desc: 'Huán thanh 2 vút lên, jìng thanh 4 dứt khoát.',
+        examples: [
+          { chinese: '环境', pinyin: 'Huánjìng', note: 'Thanh 2 + Thanh 4' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '你去超市怎么自己带布袋子？', pinyin: 'Nǐ qù chāoshì zěnme zìjǐ dài bù dàizi?', vietnamese: 'Sao bạn đi siêu thị lại tự đem theo túi vải thế?', highlights: ['超市', '自己'] },
+      { speaker: 'B', chinese: '少用塑料袋，不仅节约，还能保护环境！', pinyin: 'Shǎo yòng sùliàodài, bùjǐn jiéyuē, hái néng bǎohù huánjìng!', vietnamese: 'Ít dùng túi nilon, không những tiết kiệm mà còn bảo vệ môi trường!', highlights: ['节约', '保护环境'] }
+    ]
+  },
+
+  'unit-hsk4-8': {
+    grammars: [
+      {
+        title: '1. Cụm từ 学会 + [Kỹ năng] (Học cách làm gì đó)',
+        formula: '学会 + [倾听 / 沟通 / 尊重]',
+        explanation: 'Nhấn mạnh sự rèn luyện năng lực tâm lý và kỹ năng mềm.',
+        examples: [
+          { chinese: '学会倾听他人是良好沟通的第一步。', pinyin: 'Xuéhuì qīngtīng tārén shì liánghǎo gōutōng de dì yí bù.', vietnamese: 'Học cách lắng nghe người khác là bước đầu tiên của giao tiếp tốt.', highlights: ['学会', '倾听'] }
+        ]
+      }
+    ],
+    toneRules: [
+      {
+        ruleTitle: 'Phát âm chuẩn từ 沟通 (gōutōng)',
+        desc: 'Hai âm tiết thanh 1 cao đều.',
+        examples: [
+          { chinese: '沟通', pinyin: 'Gōutōng', note: 'Thanh 1 + Thanh 1' }
+        ]
+      }
+    ],
+    dialogue: [
+      { speaker: 'A', chinese: '在工作中遇到意见不同时，应该怎么处理？', pinyin: 'Zài gōngzuò zhōng yù dào yìjiàn bùtóng shí, yīnggāi zěnme chǔlǐ?', vietnamese: 'Khi gặp ý kiến bất đồng trong công việc thì nên xử lý thế nào?', highlights: ['意见不同', '处理'] },
+      { speaker: 'B', chinese: '多换位思考，学会尊重并倾听对方的想法，才能达成共识。', pinyin: 'Duō huànwèi sīkǎo, xuéhuì zūnzhòng bìng qīngtīng duìfāng de xiǎngfǎ, cái néng dáchéng gòngshí.', vietnamese: 'Hãy đặt mình vào vị trí đối phương, học cách tôn trọng và lắng nghe suy nghĩ của họ thì mới đạt được đồng thuận.', highlights: ['换位思考', '倾听', '共识'] }
+    ]
   }
 };

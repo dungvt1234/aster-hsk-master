@@ -189,3 +189,4 @@ class DailyGoalService {
 }
 
 export const dailyGoalService = new DailyGoalService();
+

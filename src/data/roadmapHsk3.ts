@@ -1,0 +1,517 @@
+import type { RoadmapUnit } from '../types';
+
+export const HSK3_ROADMAP_UNITS: RoadmapUnit[] = [
+  // =========================================================================
+  // HSK 3: TRUNG CẤP B1 (CÔNG SỞ · ĐỜI SỐNG XÃ HỘI · DIỄN ĐẠT QUAN ĐIỂM)
+  // =========================================================================
+
+  // Unit 1: Phỏng vấn & Lập kế hoạch
+  {
+    id: 'unit-hsk3-1',
+    unitNumber: 1,
+    level: 3,
+    title: 'Unit 1: Phỏng vấn & Lập kế hoạch (面试与规划)',
+    description: 'Chuẩn bị phỏng vấn xin việc (面试), nói về kinh nghiệm, sở trường và kế hoạch 5 năm tới.',
+    themeColor: '#059669',
+    nodes: [
+      {
+        id: 'node-hsk3-1-1',
+        unitNumber: 1,
+        title: 'Buổi phỏng vấn xin việc',
+        subtitle: '面试 · 简历 · 机会 · 努力 · 经验',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-1-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ vựng phỏng vấn tuyển dụng:',
+            matchPairs: [
+              { id: 'iv-1', left: '面试', right: 'Phỏng vấn' },
+              { id: 'iv-2', left: '机会', right: 'Cơ hội' },
+              { id: 'iv-3', left: '努力', right: 'Nỗ lực / Chăm chỉ' },
+              { id: 'iv-4', left: '经验', right: 'Kinh nghiệm' },
+            ],
+            explanation: '面试 (miànshì: phỏng vấn), 机会 (jīhuì: cơ hội).',
+          },
+          {
+            id: 'c-3-1-1-2',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Tôi rất trân trọng cơ hội phỏng vấn lần này."',
+            chineseAudioText: '我非常珍惜这次面试机会。',
+            pinyinAudioText: 'Wǒ fēicháng zhēnxī zhè cì miànshì jīhuì.',
+            tokens: ['我', '非常珍惜', '这次', '面试机会', '工作', '努力'],
+            correctTokens: ['我', '非常珍惜', '这次', '面试机会'],
+            explanation: '珍惜 (zhēnxī: trân trọng) + 面试机会 (cơ hội phỏng vấn).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-1-2',
+        unitNumber: 1,
+        title: 'Cúp Vinh Quang Phỏng Vấn',
+        subtitle: 'Giành lấy cơ hội việc làm',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-1-2-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Chỉ cần cố gắng, nhất định sẽ thành công."',
+            chineseAudioText: '只要努力，就一定会成功。',
+            pinyinAudioText: 'Zhǐyào nǔlì, jiù yídìng huì chénggōng.',
+            tokens: ['只要', '努力', '就', '一定会', '成功', '如果'],
+            correctTokens: ['只要', '努力', '就', '一定会', '成功'],
+            explanation: 'Cặp liên từ điều kiện thiết yếu: 只要... 就... (chỉ cần... thì...).',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 2: Du lịch, Sân bay & Khách sạn
+  {
+    id: 'unit-hsk3-2',
+    unitNumber: 2,
+    level: 3,
+    title: 'Unit 2: Du lịch, Sân bay & Khách sạn (旅行与住宿)',
+    description: 'Thủ tục check-in sân bay, đặt phòng khách sạn, hỏi giờ tàu chạy và chuẩn bị hành lý.',
+    themeColor: '#06b6d4',
+    nodes: [
+      {
+        id: 'node-hsk3-2-1',
+        unitNumber: 2,
+        title: 'Sân bay & Hành lý',
+        subtitle: '飞机 · 护照 · 行李箱 · 准时',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-2-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối các từ vựng du lịch & sân bay:',
+            matchPairs: [
+              { id: 'air-1', left: '护照', right: 'Hộ chiếu' },
+              { id: 'air-2', left: '行李箱', right: 'Va li hành lý' },
+              { id: 'air-3', left: '准时', right: 'Đúng giờ' },
+              { id: 'air-4', left: '宾馆', right: 'Khách sạn' },
+            ],
+            explanation: '护照 (hùzhào: hộ chiếu), 行李箱 (xínglǐxiāng: va li).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-2-2',
+        unitNumber: 2,
+        title: 'Nhận phòng khách sạn',
+        subtitle: '预订 · 房卡 · 入住 · 退房',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-2-2-1',
+            type: 'word_bank',
+            prompt: 'Dịch câu: "Tôi đã đặt trước một phòng đơn trên mạng."',
+            chineseAudioText: '我在网上预订了一个单人间。',
+            pinyinAudioText: 'Wǒ zài wǎngshàng yùdìng le yí gè dānrénjiān.',
+            tokens: ['我在网上', '预订了', '一个', '单人间', '退房', '护照'],
+            correctTokens: ['我在网上', '预订了', '一个', '单人间'],
+            explanation: '预订 (yùdìng: đặt trước), 单人间 (phòng đơn).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-2-3',
+        unitNumber: 2,
+        title: 'Cúp Vinh Quang Sân Bay',
+        subtitle: 'Chuyến bay an toàn & đúng giờ',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-2-3-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ thủ tục bay:',
+            matchPairs: [
+              { id: 'ap-1', left: '航班', right: 'Chuyến bay' },
+              { id: 'ap-2', left: '起飞', right: 'Cất cánh' },
+              { id: 'ap-3', left: '降落', right: 'Hạ cánh' },
+              { id: 'ap-4', left: '安全', right: 'An toàn' },
+            ],
+            explanation: 'Thuật ngữ sân bay quan trọng bậc nhất.',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 3: Môi trường công sở & Thảo luận
+  {
+    id: 'unit-hsk3-3',
+    unitNumber: 3,
+    level: 3,
+    title: 'Unit 3: Môi trường công sở & Thảo luận (职场办公)',
+    description: 'Họp hành, gửi email công việc, giải quyết vấn đề kỹ thuật và nâng cao năng suất.',
+    themeColor: '#10b981',
+    nodes: [
+      {
+        id: 'node-hsk3-3-1',
+        unitNumber: 3,
+        title: 'Họp & Giải quyết vấn đề',
+        subtitle: '会议 · 发电子邮件 · 解决 · 提高',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-3-1-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Chúng ta cần nâng cao hiệu suất làm việc."',
+            chineseAudioText: '我们需要提高工作效率。',
+            pinyinAudioText: 'Wǒmen xūyào tígāo gōngzuò xiàolǜ.',
+            tokens: ['我们', '需要', '提高', '工作效率', '会议', '解决'],
+            correctTokens: ['我们', '需要', '提高', '工作效率'],
+            explanation: '提高 (tígāo: nâng cao) + Danh từ (hiệu suất/trình độ/kết quả).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-3-2',
+        unitNumber: 3,
+        title: 'Cúp Vinh Quang Công Sở',
+        subtitle: 'Chuyên gia công sở năng động',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-3-2-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ công việc chuyên nghiệp:',
+            matchPairs: [
+              { id: 'of3-1', left: '经理', right: 'Giám đốc / Quản lý' },
+              { id: 'of3-2', left: '完成', right: 'Hoàn thành' },
+              { id: 'of3-3', left: '计划', right: 'Kế hoạch' },
+              { id: 'of3-4', left: '讨论', right: 'Thảo luận' },
+            ],
+            explanation: 'Bộ từ vựng văn phòng HSK 3.',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 4: Tính cách, Cảm xúc & Giao lưu
+  {
+    id: 'unit-hsk3-4',
+    unitNumber: 4,
+    level: 3,
+    title: 'Unit 4: Tính cách, Cảm xúc & Giao lưu (性格与情感)',
+    description: 'Miêu tả phẩm chất con người: nhiệt tình, nghiêm túc, chu đáo và các sắc thái cảm xúc.',
+    themeColor: '#a855f7',
+    nodes: [
+      {
+        id: 'node-hsk3-4-1',
+        unitNumber: 4,
+        title: 'Tính cách & Phẩm chất',
+        subtitle: '热情 · 认真 · 难过 · 放心',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-4-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối các tính từ miêu tả con người:',
+            matchPairs: [
+              { id: 'per-1', left: '热情', right: 'Nhiệt tình' },
+              { id: 'per-2', left: '认真', right: 'Chăm chỉ / Nghiêm túc' },
+              { id: 'per-3', left: '难过', right: 'Buồn bã / Khó chịu' },
+              { id: 'per-4', left: '放心', right: 'Yên tâm' },
+            ],
+            explanation: 'Các tính từ cốt lõi trong đề thi HSK 3.',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-4-2',
+        unitNumber: 4,
+        title: 'Cúp Vinh Quang Cảm Xúc',
+        subtitle: 'Hiểu người & thấu hiểu lòng mình',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-4-2-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Anh ấy là một người vô cùng nhiệt tình."',
+            chineseAudioText: '他是一个非常热情的人。',
+            pinyinAudioText: 'Tā shì yí gè fēicháng rèqíng de rén.',
+            tokens: ['他是一个', '非常', '热情的', '人', '认真', '难过'],
+            correctTokens: ['他是一个', '非常', '热情的', '人'],
+            explanation: 'Cấu trúc miêu tả tính cách: 是一个 + Phó từ + Tính từ + 的人.',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 5: Ẩm thực 8 trường phái & Thưởng thức món ngon
+  {
+    id: 'unit-hsk3-5',
+    unitNumber: 5,
+    level: 3,
+    title: 'Unit 5: Ẩm thực 8 trường phái & Đi ăn nhà hàng (八大菜系与点餐)',
+    description: 'Khám phá ẩm thực Tứ Xuyên, Quảng Đông, 4 vị chua cay ngọt mặn (酸甜苦辣) và gọi món theo thực đơn.',
+    themeColor: '#ea580c',
+    nodes: [
+      {
+        id: 'node-hsk3-5-1',
+        unitNumber: 5,
+        title: 'Mùi vị & Gọi món đặc sản',
+        subtitle: '酸甜苦辣 · 菜单 · 特色菜 · 买单',
+        type: 'lesson',
+        xpReward: 30,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-5-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối 4 mùi vị ẩm thực Trung Hoa:',
+            matchPairs: [
+              { id: 'tst-1', left: '酸', right: 'Chua' },
+              { id: 'tst-2', left: '甜', right: 'Ngọt' },
+              { id: 'tst-3', left: '苦', right: 'Đắng' },
+              { id: 'tst-4', left: '辣', right: 'Cay' },
+            ],
+            explanation: 'Thành ngữ "酸甜苦辣" (toan điềm khổ lạt: chua cay mặn ngọt) vừa chỉ ẩm thực vừa chỉ hương vị cuộc đời.',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-5-2',
+        unitNumber: 5,
+        title: 'Cúp Vinh Quang Mỹ Vị',
+        subtitle: 'Chuyên gia ẩm thực Trung Hoa',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-5-2-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Xin hỏi nhà hàng của bạn có món đặc sản gì?"',
+            chineseAudioText: '请问你们饭馆有什么特色菜？',
+            pinyinAudioText: 'Qǐngwèn nǐmen fànguǎn yǒu shénme tèsè cài?',
+            tokens: ['请问', '你们饭馆', '有什么', '特色菜', '菜单', '买单'],
+            correctTokens: ['请问', '你们饭馆', '有什么', '特色菜'],
+            explanation: '特色菜 (tèsè cài: món đặc sản / món làm nên tên tuổi quán).',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 6: Mua sắm Online & Chuyển phát nhanh
+  {
+    id: 'unit-hsk3-6',
+    unitNumber: 6,
+    level: 3,
+    title: 'Unit 6: Mua sắm Online & Chuyển phát nhanh (网购与快递)',
+    description: 'Thói quen mua sắm trực tuyến Taobao/JD, nhận kiện hàng bưu kiện (取快递) và dịch vụ đổi trả.',
+    themeColor: '#0284c7',
+    nodes: [
+      {
+        id: 'node-hsk3-6-1',
+        unitNumber: 6,
+        title: 'Mua sắm qua mạng',
+        subtitle: '网购 · 快递 · 取包裹 · 满意',
+        type: 'lesson',
+        xpReward: 25,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-6-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ vựng mua sắm điện tử:',
+            matchPairs: [
+              { id: 'ec-1', left: '网购', right: 'Mua sắm qua mạng' },
+              { id: 'ec-2', left: '快递', right: 'Chuyển phát nhanh' },
+              { id: 'ec-3', left: '包裹', right: 'Kiện hàng / Bưu phẩm' },
+              { id: 'ec-4', left: '满意', right: 'Hài lòng' },
+            ],
+            explanation: '网购 (wǎnggòu: mua sắm online), 快递 (kuàidì: ship nhanh).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-6-2',
+        unitNumber: 6,
+        title: 'Cúp Vinh Quang Thương Mại Số',
+        subtitle: 'Khám phá thế giới số Trung Hoa',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-6-2-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Kiện hàng của tôi đã được giao tới rồi."',
+            chineseAudioText: '我的快递已经寄到了。',
+            pinyinAudioText: 'Wǒ de kuàidì yǐjīng jì dào le.',
+            tokens: ['我的快递', '已经', '寄到了', '网购', '不满意'],
+            correctTokens: ['我的快递', '已经', '寄到了'],
+            explanation: '寄到 (jì dào: gửi tới nơi).',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 7: Thể hình & Lối sống lành mạnh
+  {
+    id: 'unit-hsk3-7',
+    unitNumber: 7,
+    level: 3,
+    title: 'Unit 7: Thể hình & Lối sống lành mạnh (健身与健康)',
+    description: 'Tập gym (健身房), rèn luyện thói quen tốt (习惯), ăn uống điều độ và giữ tinh thần sảng khoái.',
+    themeColor: '#14b8a6',
+    nodes: [
+      {
+        id: 'node-hsk3-7-1',
+        unitNumber: 7,
+        title: 'Rèn luyện thân thể',
+        subtitle: '锻炼 · 健身房 · 习惯 · 坚持',
+        type: 'lesson',
+        xpReward: 30,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-7-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ thể hình & thói quen:',
+            matchPairs: [
+              { id: 'fit-1', left: '锻炼', right: 'Tập luyện thể thao' },
+              { id: 'fit-2', left: '健身房', right: 'Phòng gym' },
+              { id: 'fit-3', left: '习惯', right: 'Thói quen' },
+              { id: 'fit-4', left: '坚持', right: 'Kiên trì' },
+            ],
+            explanation: '坚持锻炼 (kiên trì rèn luyện).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-7-2',
+        unitNumber: 7,
+        title: 'Cúp Vinh Quang Thể Lực',
+        subtitle: 'Cơ thể dẻo dai & khỏe mạnh',
+        type: 'trophy',
+        xpReward: 45,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-7-2-1',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Mỗi ngày kiên trì chạy bộ rất có ích cho sức khỏe."',
+            chineseAudioText: '每天坚持跑步对身体很有好处。',
+            pinyinAudioText: 'Měitiān jiānchí pǎobù duì shēntǐ hěn yǒu hǎochù.',
+            tokens: ['每天坚持', '跑步', '对身体', '很有好处', '健身房', '累'],
+            correctTokens: ['每天坚持', '跑步', '对身体', '很有好处'],
+            explanation: 'Cấu trúc: 对... 很有好处 (rất có lợi cho...).',
+          },
+        ],
+      },
+    ],
+  },
+
+  // Unit 8 (Chủ đề mới!): Bảo vệ môi trường & Đời sống hiện đại
+  {
+    id: 'unit-hsk3-8',
+    unitNumber: 8,
+    level: 3,
+    title: 'Unit 8: Bảo vệ môi trường & Đời sống xanh (绿色生活与环保)',
+    description: 'Phân loại rác (垃圾分类), tiết kiệm nước điện, bảo vệ tự nhiên và lối sống bền vững.',
+    themeColor: '#16a34a',
+    nodes: [
+      {
+        id: 'node-hsk3-8-1',
+        unitNumber: 8,
+        title: 'Hành tinh xanh',
+        subtitle: '环境 · 保护 · 节约 · 塑料袋',
+        type: 'lesson',
+        xpReward: 30,
+        status: 'active',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-8-1-1',
+            type: 'match_pairs',
+            prompt: 'Nối từ vựng môi trường:',
+            matchPairs: [
+              { id: 'env-1', left: '环境', right: 'Môi trường' },
+              { id: 'env-2', left: '保护', right: 'Bảo vệ' },
+              { id: 'env-3', left: '节约用水', right: 'Tiết kiệm nước' },
+              { id: 'env-4', left: '垃圾分类', right: 'Phân loại rác' },
+            ],
+            explanation: '保护环境 (bảo vệ môi trường), 节约资源 (tiết kiệm tài nguyên).',
+          },
+          {
+            id: 'c-3-8-1-2',
+            type: 'word_bank',
+            prompt: 'Ghép câu: "Bảo vệ môi trường là trách nhiệm của mỗi người."',
+            chineseAudioText: '保护环境是每个人的责任。',
+            pinyinAudioText: 'Bǎohù huánjìng shì měi gè rén de zérèn.',
+            tokens: ['保护环境', '是', '每个人的', '责任', '节约', '垃圾'],
+            correctTokens: ['保护环境', '是', '每个人的', '责任'],
+            explanation: '责任 (zérèn: trách nhiệm).',
+          },
+        ],
+      },
+      {
+        id: 'node-hsk3-8-2',
+        unitNumber: 8,
+        title: 'Đại Cúp Vinh Quang HSK 3 Toàn Diện',
+        subtitle: 'Tốt nghiệp toàn bộ Lộ Trình HSK 3',
+        type: 'trophy',
+        xpReward: 90,
+        status: 'locked',
+        stars: 0,
+        challenges: [
+          {
+            id: 'c-3-8-2-1',
+            type: 'match_pairs',
+            prompt: 'Tổng kết tinh hoa HSK 3:',
+            matchPairs: [
+              { id: 'h3g-1', left: '影响', right: 'Ảnh hưởng' },
+              { id: 'h3g-2', left: '选择', right: 'Lựa chọn' },
+              { id: 'h3g-3', left: '关系', right: 'Quan hệ' },
+              { id: 'h3g-4', left: '解决', right: 'Giải quyết' },
+            ],
+            explanation: 'Toàn bộ từ vựng then chốt của cấp độ Trung Cấp HSK 3.',
+          },
+        ],
+      },
+    ],
+  },
+];

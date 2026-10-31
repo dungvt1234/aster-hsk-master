@@ -87,3 +87,4 @@ class FavoriteVocabService {
 }
 
 export const favoriteVocabService = new FavoriteVocabService();
+

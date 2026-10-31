@@ -292,3 +292,4 @@ export function DailyGoalModal({ isOpen, onClose, onNavigateTab }: DailyGoalModa
     </div>
   );
 }
+
