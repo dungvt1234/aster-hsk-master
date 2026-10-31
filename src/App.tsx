@@ -40,6 +40,7 @@ const AuthModal = lazy(() => import('./components/AuthModal').then(m => ({ defau
 const UserProfileModal = lazy(() => import('./components/UserProfileModal').then(m => ({ default: m.UserProfileModal })));
 const DiamondStoreModal = lazy(() => import('./components/DiamondStoreModal').then(m => ({ default: m.DiamondStoreModal })));
 const DailyQuestsModal = lazy(() => import('./components/DailyQuestsModal').then(m => ({ default: m.DailyQuestsModal })));
+const MistakesReviewModal = lazy(() => import('./components/MistakesReviewModal').then(m => ({ default: m.MistakesReviewModal })));
 
 function LoadingViewFallback() {
   return (
@@ -56,6 +57,7 @@ export function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isQuestsOpen, setIsQuestsOpen] = useState(false);
+  const [isMistakesOpen, setIsMistakesOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -168,6 +170,7 @@ export function App() {
         onOpenAI={() => setAiPrompt('Gợi ý cho tôi kế hoạch học tiếng Trung hôm nay')}
         onOpenStore={() => setIsStoreOpen(true)}
         onOpenQuests={() => setIsQuestsOpen(true)}
+        onOpenMistakes={() => setIsMistakesOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -183,6 +186,7 @@ export function App() {
           onOpenSprint={() => setIsSprintOpen(true)}
           onOpenStore={() => setIsStoreOpen(true)}
           onOpenQuests={() => setIsQuestsOpen(true)}
+          onOpenMistakes={() => setIsMistakesOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
           onOpenProfile={() => setIsProfileOpen(true)}
@@ -418,6 +422,17 @@ export function App() {
           onOpenStore={() => {
             setIsQuestsOpen(false);
             setIsStoreOpen(true);
+          }}
+        />
+
+        {/* Sổ Tay Lỗi Sai (Mistakes Review Notebook) 📝 */}
+        <MistakesReviewModal
+          isOpen={isMistakesOpen}
+          onClose={() => setIsMistakesOpen(false)}
+          currentLevel={currentLevel}
+          onAddXp={(earned) => {
+            authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
+            setCurrentUser(authService.getCurrentUser());
           }}
         />
       </Suspense>

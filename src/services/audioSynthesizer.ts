@@ -1,6 +1,29 @@
 // Audio Synthesizer utilizing Web Audio API and Web Speech API
 // Clean, low-latency, zero external asset dependencies
 
+export const hapticFeedback = {
+  tap: () => {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate(12); } catch {}
+    }
+  },
+  correct: () => {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate([15, 50, 20]); } catch {}
+    }
+  },
+  incorrect: () => {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate([35, 45, 35]); } catch {}
+    }
+  },
+  fanfare: () => {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate([25, 40, 25, 40, 60]); } catch {}
+    }
+  },
+};
+
 class SoundEffectsManager {
   private ctx: AudioContext | null = null;
 
@@ -17,6 +40,7 @@ class SoundEffectsManager {
 
   // Duolingo-style crisp 2-note chime for correct answer (C5 -> E5 -> G5)
   playCorrect() {
+    hapticFeedback.correct();
     try {
       const ctx = this.getContext();
       const now = ctx.currentTime;
@@ -51,6 +75,7 @@ class SoundEffectsManager {
 
   // Duolingo-style low buzz for wrong answer
   playIncorrect() {
+    hapticFeedback.incorrect();
     try {
       const ctx = this.getContext();
       const now = ctx.currentTime;
@@ -74,6 +99,7 @@ class SoundEffectsManager {
 
   // Pop sound when selecting/tapping a token
   playTap() {
+    hapticFeedback.tap();
     try {
       const ctx = this.getContext();
       const now = ctx.currentTime;
@@ -129,6 +155,7 @@ class SoundEffectsManager {
 
   // Fanfare when lesson completed
   playFanfare() {
+    hapticFeedback.fanfare();
     try {
       const ctx = this.getContext();
       const now = ctx.currentTime;

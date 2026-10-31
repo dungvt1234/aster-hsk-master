@@ -1,0 +1,20 @@
+{
+  "name": "Aster HSK Master — Nền Tảng Học & Thi HSK 1 - 4",
+  "short_name": "Aster HSK",
+  "description": "Nền tảng học tiếng Trung tương tác với Lộ trình Duolingo, Flashcard 3D Spaced Repetition, Gia Sư AI & Thi thử CBT.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#58CC02",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

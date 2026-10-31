@@ -12,9 +12,11 @@ import {
   ArrowRight,
   Flame,
 } from 'lucide-react';
-import type { DuolingoChallenge } from '../types';
+import type { DuolingoChallenge, HSKLevel } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
 import { gamificationService } from '../services/gamificationService';
+import { explainMistakeWithAI } from '../services/geminiService';
+import { mistakesService } from '../services/mistakesService';
 import {
   renderColoredPinyin,
   ToneLegend,
@@ -25,6 +27,7 @@ interface DuolingoLessonModalProps {
   title: string;
   challenges: DuolingoChallenge[];
   xpReward: number;
+  level?: HSKLevel;
   onClose: () => void;
   onComplete: (earnedXp: number) => void;
   onAskAI?: (prompt: string, context: string) => void;
@@ -44,6 +47,7 @@ export function DuolingoLessonModal({
   title,
   challenges: initialChallenges,
   xpReward,
+  level = 1,
   onClose,
   onComplete,
   onAskAI,
@@ -53,6 +57,10 @@ export function DuolingoLessonModal({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hearts, setHearts] = useState(10); // Tăng giới hạn tim bài học lên 10
   const [combo, setCombo] = useState(0);
+
+  // In-modal AI mistake explanation
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
+  const [isLoadingAiExplanation, setIsLoadingAiExplanation] = useState(false);
 
   // Challenge state
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
@@ -123,6 +131,9 @@ export function DuolingoLessonModal({
     if (currentChallenge.chineseAudioText) {
       soundEffects.speakChinese(currentChallenge.chineseAudioText, 0.85);
     }
+
+    setAiExplanation(null);
+    setIsLoadingAiExplanation(false);
   }, [currentIndex, currentChallenge]);
 
   // Handle Quit confirmation
@@ -229,11 +240,54 @@ export function DuolingoLessonModal({
 
       // Duolingo Smart Re-queue: push failed challenge to the end of the queue
       setChallengeQueue((prev) => [...prev, currentChallenge]);
+
+      // Record mistake for review notebook
+      const userAnsStr = currentChallenge.type === 'word_bank'
+        ? selectedTokens.join(' ')
+        : (selectedOption || '');
+      const correctAnsStr = currentChallenge.type === 'word_bank'
+        ? (currentChallenge.correctTokens || []).join(' ')
+        : (currentChallenge.correctAnswer || '');
+
+      mistakesService.record({
+        level,
+        type: currentChallenge.type,
+        prompt: currentChallenge.prompt,
+        userAnswer: userAnsStr,
+        correctAnswer: correctAnsStr,
+        explanation: currentChallenge.explanation,
+      });
     }
+  };
+
+  // 1-Click AI explanation request
+  const handleGetAiExplanation = async () => {
+    if (!currentChallenge || isLoadingAiExplanation) return;
+    setIsLoadingAiExplanation(true);
+    soundEffects.playTap();
+
+    const userAnsStr = currentChallenge.type === 'word_bank'
+      ? selectedTokens.join(' ')
+      : (selectedOption || '');
+    const correctAnsStr = currentChallenge.type === 'word_bank'
+      ? (currentChallenge.correctTokens || []).join(' ')
+      : (currentChallenge.correctAnswer || '');
+
+    const expl = await explainMistakeWithAI({
+      level,
+      prompt: currentChallenge.prompt,
+      userAnswer: userAnsStr,
+      correctAnswer: correctAnsStr,
+      explanation: currentChallenge.explanation,
+    });
+    setAiExplanation(expl);
+    setIsLoadingAiExplanation(false);
   };
 
   // Move to next challenge
   const handleContinue = () => {
+    setAiExplanation(null);
+    setIsLoadingAiExplanation(false);
     if (currentIndex + 1 < challengeQueue.length) {
       setCurrentIndex((prev) => prev + 1);
     } else {
@@ -584,9 +638,9 @@ export function DuolingoLessonModal({
             </div>
           ) : (
             <div className="duo-footer-feedback incorrect">
-              <div className="feedback-left">
-                <XCircle size={36} color="#FF4B4B" />
-                <div>
+              <div className="feedback-left" style={{ flex: 1 }}>
+                <XCircle size={36} color="#FF4B4B" style={{ flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
                   <h3 className="feedback-title" style={{ color: '#FF4B4B' }}>
                     Chưa chính xác!
                   </h3>
@@ -596,22 +650,45 @@ export function DuolingoLessonModal({
                       : `Đáp án đúng: ${currentChallenge?.correctAnswer}`}
                   </p>
                   <p className="feedback-subdesc">{currentChallenge?.explanation}</p>
+
+                  {/* 1-Click Inline AI Explanation Box */}
+                  {isLoadingAiExplanation && (
+                    <div className="duo-ai-explanation-box loading">
+                      <div className="duo-ai-spinner" />
+                      <span>🦉 Aster AI đang phân tích lỗi sai & mẹo nhớ...</span>
+                    </div>
+                  )}
+
+                  {aiExplanation && (
+                    <div className="duo-ai-explanation-box">
+                      <div className="duo-ai-explanation-header">
+                        <span>🦉 Aster AI Giải Thích Nhanh</span>
+                        <button
+                          type="button"
+                          onClick={() => setAiExplanation(null)}
+                          className="duo-ai-close-btn"
+                          title="Đóng giải thích"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="duo-ai-explanation-body">
+                        {aiExplanation}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                {onAskAI && (
+              <div className="feedback-actions" style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '150px' }}>
+                {!aiExplanation && (
                   <button
                     type="button"
                     className="duo-btn duo-btn-ai"
-                    onClick={() =>
-                      onAskAI(
-                        `Tại sao câu "${currentChallenge?.prompt}" đáp án lại là "${currentChallenge?.correctAnswer || (currentChallenge?.correctTokens || []).join(' ')}"?`,
-                        currentChallenge?.explanation || ''
-                      )
-                    }
-                    title="Hỏi Trợ lý AI giải thích cặn kẽ"
+                    onClick={handleGetAiExplanation}
+                    disabled={isLoadingAiExplanation}
+                    title="Hỏi Trợ lý AI giải thích trực tiếp tại đây"
                   >
-                    <Sparkles size={16} /> Hỏi Trợ Lý AI
+                    <Sparkles size={16} /> {isLoadingAiExplanation ? 'Đang phân tích...' : 'Tại sao sai? (Hỏi AI)'}
                   </button>
                 )}
                 <button

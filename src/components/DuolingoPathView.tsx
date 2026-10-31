@@ -903,6 +903,7 @@ export function DuolingoPathView({
           title={activeNode.title}
           challenges={activeNode.challenges}
           xpReward={activeNode.xpReward}
+          level={currentLevel}
           onClose={() => setActiveNode(null)}
           onComplete={handleLessonCompleted}
           onAskAI={(prompt) => {

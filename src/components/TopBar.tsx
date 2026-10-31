@@ -9,6 +9,7 @@ import {
   Gift,
   Music,
   Search,
+  AlertCircle,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -16,6 +17,7 @@ import { cloudSync, SyncStatus } from '../services/cloudSyncService';
 import type { UserProfile } from '../services/authService';
 import { gamificationService, type GamificationState } from '../services/gamificationService';
 import { soundEffects } from '../services/audioSynthesizer';
+import { mistakesService } from '../services/mistakesService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -29,6 +31,7 @@ interface TopBarProps {
   onOpenSprint?: () => void;
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
+  onOpenMistakes?: () => void;
   onToggleMobileMenu?: () => void;
   onOpenCommandPalette?: () => void;
 }
@@ -45,21 +48,27 @@ export function TopBar({
   onOpenSprint,
   onOpenStore,
   onOpenQuests,
+  onOpenMistakes,
   onToggleMobileMenu,
   onOpenCommandPalette,
 }: TopBarProps) {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ state: 'synced', lastSyncedAt: null, pendingChanges: 0 });
   const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
   const [isLofi, setIsLofi] = useState(soundEffects.isLofiActive());
+  const [mistakeCount, setMistakeCount] = useState<number>(() => mistakesService.getCount(currentLevel));
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
     const unsubGame = gamificationService.subscribe((g) => setGameState({ ...g }));
+    const unsubMistakes = mistakesService.subscribe((list) => {
+      setMistakeCount(list.filter((m) => m.level === currentLevel).length);
+    });
     return () => {
       unsubSync();
       unsubGame();
+      unsubMistakes();
     };
-  }, []);
+  }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
     { level: 1, label: 'HSK 1', color: '#0284c7' },
     { level: 2, label: 'HSK 2', color: '#dc2626', note: '120🎧' },
@@ -313,6 +322,34 @@ export function TopBar({
           <span className="stat-number">
             {gamificationService.isInfiniteHeartsActive() ? '∞' : '10/10'}
           </span>
+        </div>
+
+        {/* Sổ Tay Lỗi Sai (Mistakes Notebook) */}
+        <div
+          className="topbar-stat-pill mistakes"
+          onClick={onOpenMistakes}
+          style={{
+            cursor: onOpenMistakes ? 'pointer' : 'default',
+            background: mistakeCount > 0 ? 'rgba(239, 68, 68, 0.12)' : 'var(--surface)',
+            border: `1.5px solid ${mistakeCount > 0 ? '#ef4444' : 'var(--border)'}`,
+            color: mistakeCount > 0 ? '#ef4444' : 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '5px 11px',
+            borderRadius: '20px',
+            fontSize: '11.5px',
+            fontWeight: 800,
+            transition: 'all 0.2s ease',
+          }}
+          title={
+            mistakeCount > 0
+              ? `Bạn có ${mistakeCount} câu lỗi sai cần ôn lại để củng cố trí nhớ`
+              : 'Sổ tay lỗi sai: Rất tốt, chưa có lỗi sai nào tồn đọng'
+          }
+        >
+          <AlertCircle size={15} color={mistakeCount > 0 ? '#ef4444' : 'var(--text-muted)'} />
+          <span>{mistakeCount > 0 ? `${mistakeCount} Lỗi` : '0 Lỗi'}</span>
         </div>
 
         {/* Enterprise Cloud Sync Status */}

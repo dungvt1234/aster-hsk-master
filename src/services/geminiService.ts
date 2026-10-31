@@ -299,3 +299,46 @@ export function queryOfflineExpert(
       `Hãy bấm vào biểu tượng **⚙️ Key AI** ở góc trên khung chat để nhập **Google Gemini API Key miễn phí** — Trợ lý sẽ lập tức biến thành Gia Sư AI Trí Tuệ Nhân Tạo bản ngữ thông minh không giới hạn!`,
   };
 }
+
+export async function explainMistakeWithAI(params: {
+  prompt: string;
+  userAnswer: string;
+  correctAnswer: string;
+  explanation?: string;
+  level: HSKLevel;
+}): Promise<string> {
+  const apiKey = getGeminiApiKey();
+  const sysPrompt = `Bạn là Aster AI — Gia sư tiếng Trung bản ngữ thông thái của Aster HSK Master (học viên đang học HSK ${params.level}).
+Nhiệm vụ: Giải thích ngắn gọn (2-3 câu súc tích bằng tiếng Việt) cho học viên tại sao đáp án "${params.userAnswer || 'chưa chọn'}" là chưa đúng và vì sao "${params.correctAnswer}" mới là đáp án chính xác cho câu hỏi "${params.prompt}".
+Kèm 1 mẹo phân biệt ngữ pháp hoặc từ vựng thực tế. Không chào hỏi rườm rà, đi thẳng vào bản chất vấn đề.`;
+
+  if (apiKey) {
+    const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-flash-latest'];
+    for (const model of models) {
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ role: 'user', parts: [{ text: sysPrompt }] }],
+            }),
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text && text.trim()) return text.trim();
+        }
+      } catch {}
+    }
+  }
+
+  // Fallback offline explanation
+  if (params.explanation) {
+    return `💡 **Gợi ý từ điển:** ${params.explanation}\n\n*Phân tích:* Đáp án chính xác là **${params.correctAnswer}**. Lựa chọn của bạn (${params.userAnswer ? `"${params.userAnswer}"` : 'chưa chọn'}) chưa đúng trật tự từ hoặc ngữ cảnh của câu.`;
+  }
+  return `💡 **Phân tích:** Trong câu "${params.prompt}", đáp án chính xác phải là **${params.correctAnswer}**. Hãy lưu ý ngữ cảnh và cấu trúc câu đặc trưng của HSK ${params.level}!`;
+}
+

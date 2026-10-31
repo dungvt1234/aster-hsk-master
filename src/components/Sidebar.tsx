@@ -32,6 +32,7 @@ interface SidebarProps {
   onOpenAI?: () => void;
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
+  onOpenMistakes?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -48,6 +49,7 @@ export function Sidebar({
   onOpenAI,
   onOpenStore,
   onOpenQuests,
+  onOpenMistakes,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -264,6 +266,35 @@ export function Sidebar({
                 title="Mở Cửa Hàng Kim Cương 💎"
               >
                 <span>💎</span> <span>Cửa Hàng</span>
+              </button>
+            )}
+
+            {onOpenMistakes && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenMistakes();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  gridColumn: '1 / -1',
+                  background: 'rgba(239, 68, 68, 0.08)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  color: '#ef4444',
+                  borderRadius: '10px',
+                  padding: '7px 8px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                  marginTop: '2px',
+                }}
+                title="Mở Sổ Tay Lỗi Sai để ôn luyện cấp tốc"
+              >
+                <span>📝</span> <span>Sổ Tay Lỗi Sai</span>
               </button>
             )}
           </div>
