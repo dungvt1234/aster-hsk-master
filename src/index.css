@@ -4288,4 +4288,591 @@ button {
   justify-content: flex-end;
 }
 
+/* ==========================================================================
+   Weekly Leagues Modal (Bảng Xếp Hạng Giải Đấu Tuần 🏆)
+   ========================================================================== */
+
+.league-modal-card {
+  background: var(--surface);
+  border-radius: 24px;
+  width: 92%;
+  max-width: 620px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  animation: duoScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.league-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+}
+
+.league-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.league-badge-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #eab308;
+  background: var(--surface-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.league-tier-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.league-tier-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-heading);
+}
+
+.league-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.league-time-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.league-user-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 12px 24px;
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  text-align: center;
+}
+
+.league-user-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.league-stat-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.league-stat-val {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.tag-promote {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tag-demote {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tag-safe {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.league-roster-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.league-section-divider {
+  padding: 8px 12px;
+  margin: 6px 0 2px;
+  border-radius: 8px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.league-section-divider.promotion {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px dashed rgba(16, 185, 129, 0.35);
+}
+
+.league-section-divider.safe {
+  background: var(--surface-card);
+  color: var(--text-muted);
+}
+
+.league-section-divider.demotion {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px dashed rgba(239, 68, 68, 0.35);
+}
+
+.league-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--surface-card);
+  border: 1.5px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.league-row:hover {
+  background: var(--surface-card-hover, var(--surface));
+  border-color: var(--border);
+}
+
+.league-row.is-current-user {
+  background: rgba(88, 204, 2, 0.12);
+  border-color: #58CC02;
+  box-shadow: 0 4px 14px rgba(88, 204, 2, 0.15);
+}
+
+[data-theme='dark'] .league-row.is-current-user {
+  background: rgba(88, 204, 2, 0.2);
+}
+
+.league-rank-col {
+  width: 32px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.league-rank-col .medal {
+  font-size: 20px;
+}
+
+.league-avatar-col {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.league-country-flag {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  font-size: 11px;
+}
+
+.league-info-col {
+  flex: 1;
+}
+
+.league-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.league-user-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.league-streak-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.1);
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+.league-xp-col {
+  text-align: right;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.league-xp-val {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text-heading);
+}
+
+.league-xp-unit {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.league-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.league-footer-tip {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Hands-free Podcast Mode Modal (Chế Độ Nghe Rảnh Tay 🎧)
+   ========================================================================== */
+
+.podcast-modal-card {
+  background: var(--surface);
+  border-radius: 24px;
+  width: 92%;
+  max-width: 620px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  animation: duoScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.podcast-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-card);
+}
+
+.podcast-header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.podcast-header-icon {
+  font-size: 28px;
+}
+
+.podcast-header-title h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.podcast-header-title p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.podcast-level-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.podcast-lvl-btn {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.podcast-lvl-btn.active {
+  background: #06b6d4;
+  border-color: #06b6d4;
+  color: #ffffff;
+}
+
+.podcast-player-body {
+  flex: 1;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* Audio Waveform Animation */
+.podcast-wave-box {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+}
+
+.wave-bar {
+  width: 4px;
+  height: 6px;
+  background: #06b6d4;
+  border-radius: 4px;
+  transition: height 0.2s ease;
+}
+
+.podcast-wave-box.playing .wave-bar:nth-child(1) { animation: wavePulse 0.8s ease-in-out infinite 0.1s; }
+.podcast-wave-box.playing .wave-bar:nth-child(2) { animation: wavePulse 0.8s ease-in-out infinite 0.3s; }
+.podcast-wave-box.playing .wave-bar:nth-child(3) { animation: wavePulse 0.8s ease-in-out infinite 0.2s; }
+.podcast-wave-box.playing .wave-bar:nth-child(4) { animation: wavePulse 0.8s ease-in-out infinite 0.4s; }
+.podcast-wave-box.playing .wave-bar:nth-child(5) { animation: wavePulse 0.8s ease-in-out infinite 0.15s; }
+
+@keyframes wavePulse {
+  0%, 100% { height: 6px; }
+  50% { height: 24px; }
+}
+
+.podcast-track-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.podcast-sleep-pill {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.podcast-hanzi-display h1 {
+  margin: 0;
+  font-size: 68px;
+  font-weight: 900;
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-heading);
+  letter-spacing: 2px;
+  transition: transform 0.2s ease;
+}
+
+.podcast-hanzi-display.active-pulse h1 {
+  transform: scale(1.06);
+  color: #06b6d4;
+}
+
+.podcast-pinyin-display {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: -6px;
+}
+
+.podcast-meaning-display p {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-heading);
+  transition: color 0.2s ease;
+}
+
+.podcast-meaning-display.highlight p {
+  color: #10b981;
+}
+
+.podcast-example-box {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  max-width: 480px;
+  width: 100%;
+  margin-top: 6px;
+  transition: all 0.25s ease;
+}
+
+.podcast-example-box.highlight-box {
+  border-color: #06b6d4;
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.podcast-ex-cn {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-heading);
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.podcast-ex-vi {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.podcast-phase-badge {
+  font-size: 12px;
+  font-weight: 800;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.podcast-controls-panel {
+  padding: 18px 24px;
+  background: var(--surface-card);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.podcast-controls-left,
+.podcast-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.podcast-controls-center {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.podcast-btn-secondary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.podcast-btn-secondary:hover {
+  border-color: #06b6d4;
+  color: var(--text-heading);
+}
+
+.podcast-btn-secondary.active {
+  background: #06b6d4;
+  border-color: #06b6d4;
+  color: #ffffff;
+}
+
+.podcast-btn-nav {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-heading);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.podcast-btn-nav:hover {
+  border-color: #06b6d4;
+  transform: scale(1.05);
+}
+
+.podcast-btn-play {
+  background: #06b6d4;
+  border: none;
+  color: #ffffff;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+  transition: all 0.2s ease;
+}
+
+.podcast-btn-play:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
+}
+
+.podcast-btn-play:active {
+  transform: scale(0.96);
+}
+
+
 

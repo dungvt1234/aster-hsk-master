@@ -33,6 +33,8 @@ interface SidebarProps {
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
   onOpenMistakes?: () => void;
+  onOpenLeague?: () => void;
+  onOpenPodcast?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -50,6 +52,8 @@ export function Sidebar({
   onOpenStore,
   onOpenQuests,
   onOpenMistakes,
+  onOpenLeague,
+  onOpenPodcast,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -295,6 +299,60 @@ export function Sidebar({
                 title="Mở Sổ Tay Lỗi Sai để ôn luyện cấp tốc"
               >
                 <span>📝</span> <span>Sổ Tay Lỗi Sai</span>
+              </button>
+            )}
+
+            {onOpenLeague && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenLeague();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'rgba(234, 179, 8, 0.08)',
+                  border: '1px solid rgba(234, 179, 8, 0.25)',
+                  color: '#ca8a04',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mở Bảng Xếp Hạng Giải Đấu Tuần"
+              >
+                <span>🏆</span> <span>Giải Đấu</span>
+              </button>
+            )}
+
+            {onOpenPodcast && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenPodcast();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  background: 'rgba(6, 182, 212, 0.08)',
+                  border: '1px solid rgba(6, 182, 212, 0.25)',
+                  color: '#0891b2',
+                  borderRadius: '10px',
+                  padding: '7px 6px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                }}
+                title="Mở Chế Độ Nghe Rảnh Tay Podcast"
+              >
+                <span>🎧</span> <span>Podcast</span>
               </button>
             )}
           </div>

@@ -10,6 +10,8 @@ import {
   Music,
   Search,
   AlertCircle,
+  Trophy,
+  Headphones,
 } from 'lucide-react';
 import type { HSKLevel } from '../types';
 import type { ActiveTab } from './Header';
@@ -18,6 +20,7 @@ import type { UserProfile } from '../services/authService';
 import { gamificationService, type GamificationState } from '../services/gamificationService';
 import { soundEffects } from '../services/audioSynthesizer';
 import { mistakesService } from '../services/mistakesService';
+import { leagueService } from '../services/leagueService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -32,6 +35,8 @@ interface TopBarProps {
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
   onOpenMistakes?: () => void;
+  onOpenLeague?: () => void;
+  onOpenPodcast?: () => void;
   onToggleMobileMenu?: () => void;
   onOpenCommandPalette?: () => void;
 }
@@ -49,6 +54,8 @@ export function TopBar({
   onOpenStore,
   onOpenQuests,
   onOpenMistakes,
+  onOpenLeague,
+  onOpenPodcast,
   onToggleMobileMenu,
   onOpenCommandPalette,
 }: TopBarProps) {
@@ -56,6 +63,8 @@ export function TopBar({
   const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
   const [isLofi, setIsLofi] = useState(soundEffects.isLofiActive());
   const [mistakeCount, setMistakeCount] = useState<number>(() => mistakesService.getCount(currentLevel));
+  const [leagueTier, setLeagueTier] = useState(() => leagueService.getCurrentTierInfo());
+  const [userRank, setUserRank] = useState(() => leagueService.getUserRank());
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -63,10 +72,15 @@ export function TopBar({
     const unsubMistakes = mistakesService.subscribe((list) => {
       setMistakeCount(list.filter((m) => m.level === currentLevel).length);
     });
+    const unsubLeague = leagueService.subscribe(() => {
+      setLeagueTier(leagueService.getCurrentTierInfo());
+      setUserRank(leagueService.getUserRank());
+    });
     return () => {
       unsubSync();
       unsubGame();
       unsubMistakes();
+      unsubLeague();
     };
   }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -351,6 +365,56 @@ export function TopBar({
           <AlertCircle size={15} color={mistakeCount > 0 ? '#ef4444' : 'var(--text-muted)'} />
           <span>{mistakeCount > 0 ? `${mistakeCount} Lỗi` : '0 Lỗi'}</span>
         </div>
+
+        {/* Giải Đấu Tuần (Weekly League 🏆) */}
+        <div
+          className="topbar-stat-pill league"
+          onClick={onOpenLeague}
+          style={{
+            cursor: onOpenLeague ? 'pointer' : 'default',
+            background: 'rgba(234, 179, 8, 0.12)',
+            border: '1.5px solid #eab308',
+            color: '#ca8a04',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '5px 11px',
+            borderRadius: '20px',
+            fontSize: '11.5px',
+            fontWeight: 800,
+            transition: 'all 0.2s ease',
+          }}
+          title={`Bảng xếp hạng tuần: ${leagueTier.name} (Bạn đang xếp hạng #${userRank})`}
+        >
+          <span>{leagueTier.badge}</span>
+          <span>#{userRank} {leagueTier.name}</span>
+        </div>
+
+        {/* Chế độ Nghe Rảnh Tay (Hands-free Podcast 🎧) */}
+        <button
+          type="button"
+          className="desktop-only"
+          onClick={onOpenPodcast}
+          style={{
+            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(14, 165, 233, 0.08))',
+            border: '1.5px solid #06b6d4',
+            color: '#0891b2',
+            borderRadius: '20px',
+            padding: '5px 11px',
+            fontSize: '11.5px',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            cursor: 'pointer',
+            flexShrink: 0,
+            transition: 'all 0.2s ease',
+          }}
+          title="Bật chế độ nghe rảnh tay Podcast (Shadowing lặp lại tự động)"
+        >
+          <Headphones size={13} color="#0891b2" />
+          <span>Podcast 🎧</span>
+        </button>
 
         {/* Enterprise Cloud Sync Status */}
         <div

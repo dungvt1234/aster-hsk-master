@@ -21,6 +21,9 @@ interface MobileBottomNavProps {
   onSelectTab: (tab: ActiveTab) => void;
   onOpenMenu: () => void;
   onOpenCommandPalette?: () => void;
+  onOpenLeague?: () => void;
+  onOpenPodcast?: () => void;
+  onOpenMistakes?: () => void;
 }
 
 export function MobileBottomNav({
@@ -28,6 +31,9 @@ export function MobileBottomNav({
   onSelectTab,
   onOpenMenu,
   onOpenCommandPalette,
+  onOpenLeague,
+  onOpenPodcast,
+  onOpenMistakes,
 }: MobileBottomNavProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -156,6 +162,90 @@ export function MobileBottomNav({
                 <span>Tìm kiếm từ vựng hoặc lệnh nhanh (Ctrl + K)...</span>
               </button>
             )}
+
+            {/* Quick Action Badges (League, Podcast, Mistakes) */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '14px' }}>
+              {onOpenLeague && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenLeague();
+                  }}
+                  style={{
+                    background: 'rgba(234, 179, 8, 0.12)',
+                    border: '1.5px solid #eab308',
+                    color: '#ca8a04',
+                    borderRadius: '12px',
+                    padding: '8px 6px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>🏆</span>
+                  <span>Giải Đấu</span>
+                </button>
+              )}
+
+              {onOpenPodcast && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenPodcast();
+                  }}
+                  style={{
+                    background: 'rgba(6, 182, 212, 0.12)',
+                    border: '1.5px solid #06b6d4',
+                    color: '#0891b2',
+                    borderRadius: '12px',
+                    padding: '8px 6px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>🎧</span>
+                  <span>Podcast</span>
+                </button>
+              )}
+
+              {onOpenMistakes && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenMistakes();
+                  }}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.12)',
+                    border: '1.5px solid #ef4444',
+                    color: '#ef4444',
+                    borderRadius: '12px',
+                    padding: '8px 6px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>📝</span>
+                  <span>Sổ Lỗi Sai</span>
+                </button>
+              )}
+            </div>
 
             <div className="sheet-grid">
               {sheetItems.map((item) => {

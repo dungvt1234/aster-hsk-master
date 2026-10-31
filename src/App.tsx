@@ -19,6 +19,7 @@ import { MobileBottomNav } from './components/MobileBottomNav';
 import { cloudSync } from './services/cloudSyncService';
 import { authService, UserProfile } from './services/authService';
 import { gamificationService } from './services/gamificationService';
+import { leagueService } from './services/leagueService';
 
 // Code-Splitting: Lazy loading heavy views and secondary studios
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -41,6 +42,8 @@ const UserProfileModal = lazy(() => import('./components/UserProfileModal').then
 const DiamondStoreModal = lazy(() => import('./components/DiamondStoreModal').then(m => ({ default: m.DiamondStoreModal })));
 const DailyQuestsModal = lazy(() => import('./components/DailyQuestsModal').then(m => ({ default: m.DailyQuestsModal })));
 const MistakesReviewModal = lazy(() => import('./components/MistakesReviewModal').then(m => ({ default: m.MistakesReviewModal })));
+const WeeklyLeagueModal = lazy(() => import('./components/WeeklyLeagueModal').then(m => ({ default: m.WeeklyLeagueModal })));
+const HandsfreePodcastModal = lazy(() => import('./components/HandsfreePodcastModal').then(m => ({ default: m.HandsfreePodcastModal })));
 
 function LoadingViewFallback() {
   return (
@@ -58,6 +61,8 @@ export function App() {
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isQuestsOpen, setIsQuestsOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
+  const [isLeagueOpen, setIsLeagueOpen] = useState(false);
+  const [isPodcastOpen, setIsPodcastOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -144,6 +149,7 @@ export function App() {
       });
       setCurrentUser(authService.getCurrentUser());
       gamificationService.updateQuestProgress('practice', 1);
+      leagueService.addXp(5);
     }
   };
 
@@ -171,6 +177,8 @@ export function App() {
         onOpenStore={() => setIsStoreOpen(true)}
         onOpenQuests={() => setIsQuestsOpen(true)}
         onOpenMistakes={() => setIsMistakesOpen(true)}
+        onOpenLeague={() => setIsLeagueOpen(true)}
+        onOpenPodcast={() => setIsPodcastOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -187,6 +195,8 @@ export function App() {
           onOpenStore={() => setIsStoreOpen(true)}
           onOpenQuests={() => setIsQuestsOpen(true)}
           onOpenMistakes={() => setIsMistakesOpen(true)}
+          onOpenLeague={() => setIsLeagueOpen(true)}
+          onOpenPodcast={() => setIsPodcastOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
           onOpenProfile={() => setIsProfileOpen(true)}
@@ -204,6 +214,7 @@ export function App() {
                 onAddXp={(earnedXp) => {
                   authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
                   setCurrentUser(authService.getCurrentUser());
+                  leagueService.addXp(earnedXp);
                 }}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
                 onOpenSprint={() => setIsSprintOpen(true)}
@@ -220,6 +231,7 @@ export function App() {
                 onAddXp={(earnedXp) => {
                   authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
                   setCurrentUser(authService.getCurrentUser());
+                  leagueService.addXp(earnedXp);
                 }}
                 onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
               />
@@ -247,6 +259,7 @@ export function App() {
                 onAddXp={(earnedXp) => {
                   authService.updateProfile({ xp: (currentUser.xp || 0) + earnedXp });
                   setCurrentUser(authService.getCurrentUser());
+                  leagueService.addXp(earnedXp);
                 }}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
               />
@@ -341,6 +354,9 @@ export function App() {
         }}
         onOpenMenu={() => setMobileDrawerOpen(true)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenLeague={() => setIsLeagueOpen(true)}
+        onOpenPodcast={() => setIsPodcastOpen(true)}
+        onOpenMistakes={() => setIsMistakesOpen(true)}
       />
 
       {/* Modals with Suspense */}
@@ -433,7 +449,27 @@ export function App() {
           onAddXp={(earned) => {
             authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
             setCurrentUser(authService.getCurrentUser());
+            leagueService.addXp(earned);
           }}
+        />
+
+        {/* Bảng Xếp Hạng Giải Đấu Tuần (Weekly Leagues) 🏆 */}
+        <WeeklyLeagueModal
+          isOpen={isLeagueOpen}
+          onClose={() => setIsLeagueOpen(false)}
+          user={currentUser}
+          streak={stats.streak}
+          onNavigateToLesson={() => {
+            setActiveTab('duo_path');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+
+        {/* Chế Độ Nghe Rảnh Tay Podcast (Hands-free Shadowing) 🎧 */}
+        <HandsfreePodcastModal
+          isOpen={isPodcastOpen}
+          onClose={() => setIsPodcastOpen(false)}
+          currentLevel={currentLevel}
         />
       </Suspense>
     </div>
