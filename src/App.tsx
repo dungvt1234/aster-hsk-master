@@ -44,6 +44,7 @@ const DailyQuestsModal = lazy(() => import('./components/DailyQuestsModal').then
 const MistakesReviewModal = lazy(() => import('./components/MistakesReviewModal').then(m => ({ default: m.MistakesReviewModal })));
 const WeeklyLeagueModal = lazy(() => import('./components/WeeklyLeagueModal').then(m => ({ default: m.WeeklyLeagueModal })));
 const HandsfreePodcastModal = lazy(() => import('./components/HandsfreePodcastModal').then(m => ({ default: m.HandsfreePodcastModal })));
+const AchievementsModal = lazy(() => import('./components/AchievementsModal').then(m => ({ default: m.AchievementsModal })));
 
 function LoadingViewFallback() {
   return (
@@ -63,6 +64,7 @@ export function App() {
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
   const [isLeagueOpen, setIsLeagueOpen] = useState(false);
   const [isPodcastOpen, setIsPodcastOpen] = useState(false);
+  const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -179,6 +181,7 @@ export function App() {
         onOpenMistakes={() => setIsMistakesOpen(true)}
         onOpenLeague={() => setIsLeagueOpen(true)}
         onOpenPodcast={() => setIsPodcastOpen(true)}
+        onOpenAchievements={() => setIsAchievementsOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -357,6 +360,7 @@ export function App() {
         onOpenLeague={() => setIsLeagueOpen(true)}
         onOpenPodcast={() => setIsPodcastOpen(true)}
         onOpenMistakes={() => setIsMistakesOpen(true)}
+        onOpenAchievements={() => setIsAchievementsOpen(true)}
       />
 
       {/* Modals with Suspense */}
@@ -410,6 +414,10 @@ export function App() {
           onOpenAuth={() => {
             setIsProfileOpen(false);
             setIsAuthOpen(true);
+          }}
+          onOpenAchievements={() => {
+            setIsProfileOpen(false);
+            setIsAchievementsOpen(true);
           }}
           onLogout={() => {
             authService.logout();
@@ -470,6 +478,17 @@ export function App() {
           isOpen={isPodcastOpen}
           onClose={() => setIsPodcastOpen(false)}
           currentLevel={currentLevel}
+        />
+
+        {/* Phòng Truyền Thống 12 Huy Hiệu Danh Giá (Achievements) 🎖️ */}
+        <AchievementsModal
+          isOpen={isAchievementsOpen}
+          onClose={() => setIsAchievementsOpen(false)}
+          onAddXp={(earned) => {
+            authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
+            setCurrentUser(authService.getCurrentUser());
+            leagueService.addXp(earned);
+          }}
         />
       </Suspense>
     </div>

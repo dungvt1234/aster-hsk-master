@@ -35,6 +35,7 @@ interface SidebarProps {
   onOpenMistakes?: () => void;
   onOpenLeague?: () => void;
   onOpenPodcast?: () => void;
+  onOpenAchievements?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -54,6 +55,7 @@ export function Sidebar({
   onOpenMistakes,
   onOpenLeague,
   onOpenPodcast,
+  onOpenAchievements,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -353,6 +355,35 @@ export function Sidebar({
                 title="Mở Chế Độ Nghe Rảnh Tay Podcast"
               >
                 <span>🎧</span> <span>Podcast</span>
+              </button>
+            )}
+
+            {onOpenAchievements && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenAchievements();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  gridColumn: '1 / -1',
+                  background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(245, 158, 11, 0.06))',
+                  border: '1px solid rgba(234, 179, 8, 0.3)',
+                  color: '#ca8a04',
+                  borderRadius: '10px',
+                  padding: '7px 8px',
+                  fontSize: '11px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                  marginTop: '2px',
+                }}
+                title="Mở Phòng Truyền Thống 12 Huy Hiệu"
+              >
+                <span>🎖️</span> <span>Phòng Huy Hiệu</span>
               </button>
             )}
           </div>

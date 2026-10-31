@@ -24,6 +24,7 @@ interface UserProfileModalProps {
   totalMastered: number;
   onOpenAuth: () => void;
   onLogout: () => void;
+  onOpenAchievements?: () => void;
 }
 
 export function UserProfileModal({
@@ -34,6 +35,7 @@ export function UserProfileModal({
   totalMastered,
   onOpenAuth,
   onLogout,
+  onOpenAchievements,
 }: UserProfileModalProps) {
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatar || '🐼');
   const [syncMsg, setSyncMsg] = useState<string | null>(null);
@@ -221,6 +223,41 @@ export function UserProfileModal({
             </div>
           </div>
         </div>
+
+        {/* Achievements Showcase Shortcut */}
+        {onOpenAchievements && (
+          <button
+            type="button"
+            onClick={() => {
+              onClose();
+              onOpenAchievements();
+            }}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px 16px',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(245, 158, 11, 0.08))',
+              border: '1.5px solid rgba(234, 179, 8, 0.35)',
+              color: '#d97706',
+              fontWeight: 800,
+              fontSize: '13px',
+              cursor: 'pointer',
+              marginBottom: '16px',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '18px' }}>🎖️</span>
+              <span>Phòng Truyền Thống Huy Hiệu</span>
+            </div>
+            <span style={{ fontSize: '11px', background: '#d97706', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>
+              Xem 12 Thành Tựu
+            </span>
+          </button>
+        )}
 
         {/* 100% Free Forever Plan Card */}
         <div

@@ -24,6 +24,7 @@ interface MobileBottomNavProps {
   onOpenLeague?: () => void;
   onOpenPodcast?: () => void;
   onOpenMistakes?: () => void;
+  onOpenAchievements?: () => void;
 }
 
 export function MobileBottomNav({
@@ -34,6 +35,7 @@ export function MobileBottomNav({
   onOpenLeague,
   onOpenPodcast,
   onOpenMistakes,
+  onOpenAchievements,
 }: MobileBottomNavProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -163,8 +165,8 @@ export function MobileBottomNav({
               </button>
             )}
 
-            {/* Quick Action Badges (League, Podcast, Mistakes) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginBottom: '14px' }}>
+            {/* Quick Action Badges (League, Podcast, Mistakes, Achievements) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '14px' }}>
               {onOpenLeague && (
                 <button
                   type="button"
@@ -177,8 +179,8 @@ export function MobileBottomNav({
                     border: '1.5px solid #eab308',
                     color: '#ca8a04',
                     borderRadius: '12px',
-                    padding: '8px 6px',
-                    fontSize: '11px',
+                    padding: '8px 4px',
+                    fontSize: '10.5px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -204,8 +206,8 @@ export function MobileBottomNav({
                     border: '1.5px solid #06b6d4',
                     color: '#0891b2',
                     borderRadius: '12px',
-                    padding: '8px 6px',
-                    fontSize: '11px',
+                    padding: '8px 4px',
+                    fontSize: '10.5px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -231,8 +233,8 @@ export function MobileBottomNav({
                     border: '1.5px solid #ef4444',
                     color: '#ef4444',
                     borderRadius: '12px',
-                    padding: '8px 6px',
-                    fontSize: '11px',
+                    padding: '8px 4px',
+                    fontSize: '10.5px',
                     fontWeight: 800,
                     display: 'flex',
                     flexDirection: 'column',
@@ -243,6 +245,33 @@ export function MobileBottomNav({
                 >
                   <span style={{ fontSize: '16px' }}>📝</span>
                   <span>Sổ Lỗi Sai</span>
+                </button>
+              )}
+
+              {onOpenAchievements && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenAchievements();
+                  }}
+                  style={{
+                    background: 'rgba(245, 158, 11, 0.12)',
+                    border: '1.5px solid #f59e0b',
+                    color: '#d97706',
+                    borderRadius: '12px',
+                    padding: '8px 4px',
+                    fontSize: '10.5px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>🎖️</span>
+                  <span>Huy Hiệu</span>
                 </button>
               )}
             </div>
