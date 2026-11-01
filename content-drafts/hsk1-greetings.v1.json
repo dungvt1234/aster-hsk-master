@@ -1,0 +1,186 @@
+{
+  "id": "pilot-hsk1-greetings-v1",
+  "title": "Chào hỏi và xin lỗi",
+  "status": "draft",
+  "level": 1,
+  "publication": {
+    "enabled": false,
+    "languageReview": "pending",
+    "sourceReview": "text-extraction-only",
+    "assetRights": "unverified"
+  },
+  "sources": [
+    {
+      "id": "source-standard-lesson1",
+      "title": "HSK标准教程1-第1课.pptx",
+      "url": "https://docs.google.com/presentation/d/1tHJE-3G-83SAlmWYs14XBOlKZ1zVwVaA/edit",
+      "anchors": [
+        "教学内容和目标",
+        "两个三声音节的连续变调",
+        "课文 1",
+        "课文 2",
+        "课文 3"
+      ],
+      "note": "Đã đọc văn bản trích xuất. Chưa đối chiếu toàn bộ hình, âm thanh và bố cục slide."
+    }
+  ],
+  "goals": [
+    "Chọn cách chào một người, nhiều người hoặc người cần xưng hô lịch sự.",
+    "Đáp lại lời xin lỗi bằng câu phù hợp.",
+    "Phân biệt cách ghi pinyin và cách đọc khi hai thanh 3 đứng cạnh nhau."
+  ],
+  "vocabulary": [
+    {
+      "id": "v-nihao",
+      "hanzi": "你好",
+      "pinyin": "nǐ hǎo",
+      "meaning": "Xin chào",
+      "usage": "Chào một người trong tình huống thông thường."
+    },
+    {
+      "id": "v-ninhao",
+      "hanzi": "您好",
+      "pinyin": "nín hǎo",
+      "meaning": "Xin chào (lịch sự)",
+      "usage": "Dùng khi muốn thể hiện sự kính trọng với người đối diện."
+    },
+    {
+      "id": "v-nimenhao",
+      "hanzi": "你们好",
+      "pinyin": "nǐmen hǎo",
+      "meaning": "Chào các bạn",
+      "usage": "Chào nhiều người."
+    },
+    {
+      "id": "v-duibuqi",
+      "hanzi": "对不起",
+      "pinyin": "duìbuqǐ",
+      "meaning": "Xin lỗi",
+      "usage": "Dùng khi mình gây phiền hoặc mắc lỗi."
+    },
+    {
+      "id": "v-meiguanxi",
+      "hanzi": "没关系",
+      "pinyin": "méi guānxi",
+      "meaning": "Không sao",
+      "usage": "Có thể đáp lại lời xin lỗi."
+    }
+  ],
+  "points": [
+    {
+      "id": "p-greet",
+      "title": "Chọn cách chào",
+      "explanation": "Chào một người có thể dùng 你好. Khi muốn nói lịch sự hơn, dùng 您好. Khi chào nhiều người, dùng 你们好.",
+      "vocabIds": [
+        "v-nihao",
+        "v-ninhao",
+        "v-nimenhao"
+      ]
+    },
+    {
+      "id": "p-apology",
+      "title": "Xin lỗi và đáp lại",
+      "explanation": "Khi mình mắc lỗi, có thể nói 对不起. Người nghe có thể đáp 没关系: không sao. Đây là một cặp lời nói khác với cảm ơn và đáp lại lời cảm ơn.",
+      "vocabIds": [
+        "v-duibuqi",
+        "v-meiguanxi"
+      ]
+    },
+    {
+      "id": "p-tones",
+      "title": "Viết nǐ hǎo, đọc gần như ní hǎo",
+      "explanation": "你好 được ghi pinyin là nǐ hǎo. Khi nói liền hai âm tiết thanh 3, âm đầu được đọc thành thanh 2. Phân biệt cách ghi thanh gốc với cách đọc trong câu.",
+      "vocabIds": [
+        "v-nihao"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "id": "e-greet",
+      "hanzi": "你们好！",
+      "pinyin": "Nǐmen hǎo!",
+      "meaning": "Chào các bạn!",
+      "pointId": "p-greet"
+    },
+    {
+      "id": "e-apology",
+      "hanzi": "对不起。— 没关系。",
+      "pinyin": "Duìbuqǐ. — Méi guānxi.",
+      "meaning": "Xin lỗi. — Không sao.",
+      "pointId": "p-apology"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "q-greet",
+      "type": "multiple_choice",
+      "prompt": "Muốn chào lịch sự một người lớn tuổi, bạn chọn câu nào?",
+      "options": [
+        "您好！",
+        "你们好！",
+        "对不起。"
+      ],
+      "answerIndex": 0,
+      "explanation": "您好 là cách chào thể hiện sự kính trọng. 你们好 dùng để chào nhiều người.",
+      "pointId": "p-greet"
+    },
+    {
+      "id": "q-group",
+      "type": "multiple_choice",
+      "prompt": "Bạn bước vào nhóm bạn. Câu nào phù hợp để chào cả nhóm?",
+      "options": [
+        "没关系。",
+        "你们好！",
+        "对不起。"
+      ],
+      "answerIndex": 1,
+      "explanation": "你们好 có nghĩa là chào các bạn.",
+      "pointId": "p-greet"
+    },
+    {
+      "id": "q-apology",
+      "type": "multiple_choice",
+      "prompt": "Một người nói 对不起. Bạn muốn đáp không sao, nên chọn câu nào?",
+      "options": [
+        "你好。",
+        "没关系。",
+        "您。"
+      ],
+      "answerIndex": 1,
+      "explanation": "没关系 là cách đáp không sao trong tình huống này.",
+      "pointId": "p-apology"
+    },
+    {
+      "id": "q-tones",
+      "type": "multiple_choice",
+      "prompt": "Khi ghi pinyin theo thanh gốc cho 你好, chọn cách viết nào?",
+      "options": [
+        "ní hǎo",
+        "nǐ hǎo",
+        "nǐ háo"
+      ],
+      "answerIndex": 1,
+      "explanation": "Viết nǐ hǎo theo thanh gốc; khi nói liền, âm đầu biến thành thanh 2.",
+      "pointId": "p-tones"
+    }
+  ],
+  "audio": {
+    "kind": "not-attached",
+    "status": "pending-source-matching",
+    "note": "Không coi giọng đọc tự động là bản thu người thật. Chưa gán MP3 từ bộ 301 câu hoặc HSK khác."
+  },
+  "integration": {
+    "mode": "not-bundled",
+    "existingTargets": [
+      "src/data/grammarDataHsk1.ts:01",
+      "src/data/roadmapHsk1.ts:unit-hsk1-1"
+    ],
+    "progressMigration": "Không đổi ID hoặc trạng thái các bài hiện có trong đợt biên tập này."
+  },
+  "editorialNotes": [
+    "Phần cảm ơn chuyển sang bản mẫu bài 2; tránh gộp nhiều mục tiêu vào bài đầu.",
+    "Các ví dụ và giải thích tiếng Việt trong bản nháp được biên soạn lại, không nhập toàn bộ slide.",
+    "Chưa đánh dấu đã kiểm duyệt chuyên môn; cần đối chiếu pinyin, phát âm và quyền dùng tài nguyên trước khi xuất bản."
+  ]
+}
