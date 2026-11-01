@@ -342,13 +342,13 @@ export function AITutorChatbot({
                 </div>
 
                 <p style={{ margin: '0 0 10px', fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  Hệ thống đã kích hoạt sẵn Google Gemini AI cho toàn bộ người học. Bạn có thể dán mã API Key cá nhân nếu muốn sử dụng hạn mức riêng.
+                  Chưa có AI dùng chung. Nếu dùng key cá nhân, key sẽ được lưu trong trình duyệt và gửi trực tiếp đến Google; chỉ dùng trên thiết bị bạn tin cậy.
                 </p>
 
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                   <input
                     type="password"
-                    placeholder={isUsingCustomApiKey() ? "Dán mã API Key cá nhân..." : "Đang dùng Key mặc định của hệ thống..."}
+                    placeholder={isUsingCustomApiKey() ? "Dán mã API Key cá nhân..." : "Nhập key cá nhân nếu muốn kết nối..."}
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
                     style={{
@@ -386,7 +386,7 @@ export function AITutorChatbot({
                 {isLiveAI && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '4px' }}>
                     <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700 }}>
-                      {isUsingCustomApiKey() ? '✓ Đang dùng Key cá nhân của bạn' : '✓ Đang dùng Key mặc định hệ thống (Sẵn sàng 24/7)'}
+                      {isUsingCustomApiKey() ? '✓ Đang dùng Key cá nhân của bạn' : 'Chưa kết nối Gemini; đang dùng trả lời theo dữ liệu có sẵn'}
                     </span>
                     {isUsingCustomApiKey() && (
                       <button

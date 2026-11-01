@@ -520,8 +520,7 @@ export function Sidebar({
           {user && (
             <div
               onClick={() => {
-                if (user.isGuest && onOpenAuth) onOpenAuth();
-                else if (onOpenProfile) onOpenProfile();
+                if (onOpenProfile) onOpenProfile();
                 if (onCloseMobile) onCloseMobile();
               }}
               style={{
@@ -536,7 +535,7 @@ export function Sidebar({
                 marginBottom: '10px',
                 transition: 'transform 0.15s ease',
               }}
-              title={user.isGuest ? 'Bấm để đăng nhập hoặc tạo tài khoản' : 'Xem thông tin hồ sơ của bạn'}
+              title="Xem tiến độ và xuất bản sao dữ liệu"
             >
               <span style={{ fontSize: '24px' }}>{user.avatar || '🐼'}</span>
               <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
@@ -544,7 +543,7 @@ export function Sidebar({
                   {user.name}
                 </div>
                 <div style={{ fontSize: '11px', color: user.isGuest ? '#0284c7' : '#10b981', fontWeight: 700 }}>
-                  {user.isGuest ? 'Đăng ký (Miễn Phí 100%)' : `🎁 Miễn Phí Trọn Đời · ${user.xp} XP`}
+                  {user.isGuest ? 'Tiến độ trên thiết bị' : `${user.xp} XP · Trên thiết bị`}
                 </div>
               </div>
             </div>

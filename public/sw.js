@@ -1,5 +1,5 @@
 // Aster HSK Master Service Worker - High Performance Offline First PWA
-const CACHE_NAME = 'aster-hsk-cache-v1';
+const CACHE_NAME = 'aster-hsk-cache-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -21,7 +21,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (key.startsWith('aster-hsk-cache-') && key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
@@ -44,6 +44,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // HTML is network-first so deployed fixes do not stay hidden behind stale pages.
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then(async (response) => {
+        if (response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+          await cache.put('/', response.clone());
+        }
+        return response;
+      }).catch(async () => (await caches.match('/')) || Response.error())
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cached) => {
       // Return cached asset if found, but refresh in background (Stale-While-Revalidate)
@@ -58,7 +72,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          return cached;
+          return cached || Response.error();
         });
 
       return cached || fetchPromise;

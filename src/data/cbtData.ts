@@ -110,7 +110,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
 export const MOCK_EXAM_HSK1: CBTExam = {
   id: 'cbt-hsk1-demo',
   level: 1,
-  title: 'Đề Thi Thử HSK 1 Chuẩn Quốc Tế (CBT Mock Test 01)',
+  title: 'Đề luyện tập HSK 1',
   durationMinutes: 35,
   totalScore: 200,
   passScore: 120,
@@ -243,7 +243,7 @@ export const MOCK_EXAM_HSK1: CBTExam = {
 export const MOCK_EXAM_HSK2: CBTExam = {
   id: 'hsk2-cbt-01',
   level: 2,
-  title: 'Đề Thi Thử HSK 2 Chuẩn Quốc Tế CBT (Mã đề: H21001)',
+  title: 'Đề luyện tập HSK 2',
   durationMinutes: 50,
   totalScore: 200,
   passScore: 120,
@@ -339,7 +339,7 @@ export const MOCK_EXAM_HSK2: CBTExam = {
 export const MOCK_EXAM_HSK3: CBTExam = {
   id: 'hsk3-cbt-01',
   level: 3,
-  title: 'Đề Thi Thử HSK 3 Chuẩn Quốc Tế CBT (Mã đề: H31001)',
+  title: 'Đề luyện tập HSK 3',
   durationMinutes: 85,
   totalScore: 300,
   passScore: 180,

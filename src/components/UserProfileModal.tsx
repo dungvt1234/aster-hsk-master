@@ -5,7 +5,6 @@ import {
   Flame,
   Zap,
   Cloud,
-  LogOut,
   UserCheck,
   Calendar,
   Sparkles,
@@ -13,8 +12,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { authService, UserProfile, AVATAR_PRESETS } from '../services/authService';
-import { cloudSync } from '../services/cloudSyncService';
 import { soundEffects } from '../services/audioSynthesizer';
+import { buildLearningBackup } from '../services/learningBackup';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -49,15 +48,18 @@ export function UserProfileModal({
   };
 
   const handleManualSync = () => {
-    soundEffects.playTap();
-    setSyncMsg('Đang gửi dữ liệu lên máy chủ đám mây Aster...');
-    cloudSync.triggerSync({
-      progress: JSON.parse(localStorage.getItem('aster_hsk_progress_v1') || '{}'),
-      stats: JSON.parse(localStorage.getItem('aster_hsk_stats_v1') || '{}'),
-    });
-    setTimeout(() => {
-      setSyncMsg('✓ Tiến độ của bạn đã được sao lưu đám mây thành công!');
-    }, 1500);
+    try {
+      const file = new Blob([JSON.stringify(buildLearningBackup(localStorage), null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `aster-tien-do-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setSyncMsg('Đã tạo bản sao tiến độ. Hãy giữ tệp ở nơi an toàn.');
+    } catch {
+      setSyncMsg('Không thể xuất dữ liệu trên trình duyệt này.');
+    }
   };
 
   return (
@@ -140,7 +142,7 @@ export function UserProfileModal({
             <span>{user.email}</span>
             {!user.isGuest ? (
               <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                ✓ ĐÃ XÁC THỰC
+                HỒ SƠ TRÊN THIẾT BỊ
               </span>
             ) : (
               <span style={{ fontSize: '10px', background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
@@ -304,7 +306,7 @@ export function UserProfileModal({
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Cloud size={18} color="#0284c7" />
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-heading)' }}>
-              {syncMsg || 'Sao lưu đám mây: An toàn 100%'}
+              {syncMsg || 'Tiến độ chỉ được lưu trên thiết bị này'}
             </span>
           </div>
           <button
@@ -321,7 +323,7 @@ export function UserProfileModal({
               cursor: 'pointer',
             }}
           >
-            Đồng bộ ngay
+            Xuất tiến độ
           </button>
         </div>
 
@@ -351,64 +353,17 @@ export function UserProfileModal({
                 boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
               }}
             >
-              <UserCheck size={16} /> Tạo Tài Khoản Để Lưu Điểm Vĩnh Viễn
+              <UserCheck size={16} /> Tìm hiểu về lưu tiến độ
             </button>
           </div>
         )}
 
         {/* Action Buttons: Logout or Switch Account */}
         <div style={{ display: 'flex', gap: '10px' }}>
-          {!user.isGuest ? (
-            <button
-              type="button"
-              onClick={() => {
-                onLogout();
-                onClose();
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid var(--border)',
-                background: 'var(--surface-card)',
-                color: '#dc2626',
-                fontSize: '12px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <LogOut size={14} /> Đăng Xuất
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onOpenAuth();
-              }}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: '10px',
-                border: '1px solid var(--border)',
-                background: 'var(--surface-card)',
-                color: '#0284c7',
-                fontSize: '12px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-              }}
-            >
-              <Sparkles size={14} /> Đăng Nhập Tài Khoản
-            </button>
-          )}
+          <button type="button" onClick={() => { onClose(); onOpenAuth(); }} style={{ flex: 1, padding: 10, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface-card)', color: '#0284c7', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+            <Sparkles size={14} /> Thông tin lưu tiến độ
+          </button>
+
         </div>
       </div>
     </div>

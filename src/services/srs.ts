@@ -70,13 +70,13 @@ export function loadUserStats(totalCounts: Record<HSKLevel, number>, userId?: st
   }
 
   return {
-    streak: 3,
-    lastStudyDate: new Date().toISOString().slice(0, 10),
-    todayReviews: 12,
-    totalMastered: 45,
+    streak: 0,
+    lastStudyDate: '',
+    todayReviews: 0,
+    totalMastered: 0,
     levelProgress: {
-      1: { learned: 120, mastered: 45, total: totalCounts[1] || 150 },
-      2: { learned: 35, mastered: 10, total: totalCounts[2] || 150 },
+      1: { learned: 0, mastered: 0, total: totalCounts[1] || 150 },
+      2: { learned: 0, mastered: 0, total: totalCounts[2] || 150 },
       3: { learned: 0, mastered: 0, total: totalCounts[3] || 300 },
       4: { learned: 0, mastered: 0, total: totalCounts[4] || 600 },
     },

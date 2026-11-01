@@ -66,7 +66,7 @@ function LoadingViewFallback() {
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => authService.getCurrentUser());
-  const [isAuthOpen, setIsAuthOpen] = useState(() => !authService.isAuthenticated());
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isQuestsOpen, setIsQuestsOpen] = useState(false);
@@ -127,9 +127,6 @@ export function App() {
   useEffect(() => {
     const unsubscribe = authService.subscribe((user) => {
       setCurrentUser(user);
-      if (!authService.isAuthenticated()) {
-        setIsAuthOpen(true);
-      }
       const loadedProg = loadAllProgress(user.id);
       const loadedStat = loadUserStats(LEVEL_COUNTS, user.id);
       setProgress(loadedProg);
@@ -369,6 +366,7 @@ export function App() {
                 <FlashcardView
                   cards={customReviewCards || currentCards}
                   currentLevel={currentLevel}
+                  progress={progress}
                   onAnswer={handleAnswerCard}
                   onOpenFavorites={() => setIsFavoritesOpen(true)}
                 />
@@ -383,7 +381,7 @@ export function App() {
             )}
 
             {activeTab === 'cbt' && (
-              <CBTExamView exam={getMockExamByLevel(currentLevel)} />
+              <CBTExamView key={currentLevel} exam={getMockExamByLevel(currentLevel)} />
             )}
 
             {activeTab === 'dictionary' && (
@@ -464,13 +462,9 @@ export function App() {
 
         {/* Auth Modal (Đăng Ký & Đăng Nhập Bắt Buộc) */}
         <AuthModal
-          isOpen={isAuthOpen || !authService.isAuthenticated()}
-          onClose={() => {
-            if (authService.isAuthenticated()) {
-              setIsAuthOpen(false);
-            }
-          }}
-          canClose={authService.isAuthenticated()}
+          isOpen={isAuthOpen}
+          onClose={() => setIsAuthOpen(false)}
+          canClose
           onSuccess={() => {
             setIsAuthOpen(false);
           }}

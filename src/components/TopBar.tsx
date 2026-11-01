@@ -163,7 +163,7 @@ export function TopBar({
       case 'cbt':
         return {
           title: `Phòng Thi CBT`,
-          subtitle: 'Mô phỏng 100% giao diện thi chứng chỉ máy tính chính thức của Hanban',
+          subtitle: 'Đề luyện tập mô phỏng để làm quen với hình thức thi',
         };
       case 'books':
         return {
@@ -572,11 +572,11 @@ export function TopBar({
           title={
             syncStatus.lastSyncedAt
               ? `Đồng bộ đám mây thành công lúc ${syncStatus.lastSyncedAt}`
-              : 'Dữ liệu được bảo vệ an toàn trên thiết bị và tự động sao lưu đám mây'
+              : 'Tiến độ chỉ lưu trong trình duyệt này. Chưa có sao lưu đám mây.'
           }
         >
           <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
-          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Cloud Safe'}</span>
+          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Lưu trên thiết bị'}</span>
         </div>
 
         {/* Lo-Fi Ambient Study Beats Player Toggle */}
@@ -630,7 +630,7 @@ export function TopBar({
               transition: 'transform 0.15s ease',
               flexShrink: 0,
             }}
-            title="Kích hoạt Bữa Sáng Trí Nhớ FSRS 3 phút"
+            title="Kích hoạt Bữa Sáng Trí Nhớ 3 phút"
           >
             <Zap size={14} fill="#ffffff" /> Sprint 3p
           </button>
@@ -667,7 +667,7 @@ export function TopBar({
         {user ? (
           <button
             type="button"
-            onClick={user.isGuest && onOpenAuth ? onOpenAuth : onOpenProfile}
+            onClick={onOpenProfile}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -682,11 +682,11 @@ export function TopBar({
               fontWeight: 800,
               boxShadow: 'var(--card-shadow)',
             }}
-            title={user.isGuest ? 'Bấm để tạo tài khoản hoặc đăng nhập' : `Tài khoản của ${user.name}`}
+            title="Xem hồ sơ và xuất tiến độ"
           >
             <span style={{ fontSize: '16px' }}>{user.avatar || '🐼'}</span>
             <span>
-              {user.isGuest ? 'Đăng nhập' : user.name.split(' ').slice(-1)[0]}
+              {user.isGuest ? 'Tiến độ' : user.name.split(' ').slice(-1)[0]}
             </span>
           </button>
         ) : null}

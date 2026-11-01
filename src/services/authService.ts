@@ -51,8 +51,8 @@ class AuthService {
       email: 'guest@aster-hsk.vn',
       avatar: '🐼',
       currentLevel: 1,
-      streak: 3,
-      xp: 450,
+      streak: 0,
+      xp: 0,
       createdAt: new Date().toISOString(),
       isGuest: true,
     };
@@ -104,79 +104,12 @@ class AuthService {
    * Đăng ký tài khoản mới.
    * ĐẶC BIỆT: Tự động kế thừa tiến độ hiện tại để học viên không bị mất streak và từ đã học!
    */
-  public async register(name: string, email: string, password: string): Promise<UserProfile> {
-    const trimmedEmail = email.trim().toLowerCase();
-    const trimmedName = name.trim();
-
-    if (!trimmedEmail || !trimmedEmail.includes('@')) {
-      throw new Error('Email không hợp lệ. Vui lòng nhập đúng định dạng.');
-    }
-    if (password.length < 6) {
-      throw new Error('Mật khẩu phải có ít nhất 6 ký tự để bảo mật tài khoản.');
-    }
-
-    const users = this.getRegisteredUsers();
-    if (users[trimmedEmail]) {
-      throw new Error('Email này đã được đăng ký. Vui lòng chuyển sang Đăng Nhập!');
-    }
-
-    // Chọn avatar ngẫu nhiên
-    const randomAvatar = AVATAR_PRESETS[Math.floor(Math.random() * AVATAR_PRESETS.length)].emoji;
-
-    const newUser: UserProfile = {
-      id: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-      name: trimmedName || 'Học Viên Mới',
-      email: trimmedEmail,
-      avatar: randomAvatar,
-      currentLevel: this.currentUser.currentLevel || 1,
-      streak: Math.max(1, this.currentUser.streak || 1),
-      xp: Math.max(100, this.currentUser.xp || 100),
-      createdAt: new Date().toISOString(),
-      isGuest: false,
-    };
-
-    // Lưu vào kho users
-    users[trimmedEmail] = {
-      user: newUser,
-      passwordHash: btoa(password), // Mã hóa cơ bản trong storage
-    };
-    this.saveRegisteredUsers(users);
-
-    // Kế thừa dữ liệu học của máy hiện tại gán vào user mới
-    this.migrateGuestDataToUser(newUser.id);
-
-    // Đặt làm user hiện tại
-    this.currentUser = newUser;
-    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(newUser));
-    localStorage.setItem('aster_user_id', newUser.id);
-    this.notify();
-
-    return newUser;
+  public async register(_name: string, _email: string, _password: string): Promise<UserProfile> {
+    throw new Error('Tạo tài khoản đang tạm dừng. Bạn vẫn có thể học trên thiết bị này.');
   }
 
-  /**
-   * Đăng nhập tài khoản đã có
-   */
-  public async login(email: string, password: string): Promise<UserProfile> {
-    const trimmedEmail = email.trim().toLowerCase();
-    const users = this.getRegisteredUsers();
-    const record = users[trimmedEmail];
-
-    if (!record) {
-      throw new Error('Tài khoản không tồn tại. Vui lòng kiểm tra lại email hoặc bấm Đăng Ký!');
-    }
-
-    if (record.passwordHash !== btoa(password)) {
-      throw new Error('Mật khẩu không chính xác. Vui lòng thử lại!');
-    }
-
-    const user = { ...record.user, isGuest: false };
-    this.currentUser = user;
-    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(user));
-    localStorage.setItem('aster_user_id', user.id);
-    this.notify();
-
-    return user;
+  public async login(_email: string, _password: string): Promise<UserProfile> {
+    throw new Error('Đăng nhập đang tạm dừng. Dữ liệu cũ vẫn được giữ trên thiết bị này.');
   }
 
   /**
@@ -205,42 +138,8 @@ class AuthService {
   /**
    * Đăng nhập / Đăng ký 1 chạm bằng Google Account
    */
-  public async loginWithGoogle(googleProfile?: { email: string; name: string; avatar?: string }): Promise<UserProfile> {
-    const email = googleProfile?.email?.trim().toLowerCase() || 'hocvien.google@gmail.com';
-    const name = googleProfile?.name?.trim() || 'Học Viên Google';
-    const avatar = googleProfile?.avatar || '🌟';
-
-    const users = this.getRegisteredUsers();
-    let record = users[email];
-
-    if (!record) {
-      const newUser: UserProfile = {
-        id: `usr_g_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
-        name,
-        email,
-        avatar,
-        currentLevel: this.currentUser.currentLevel || 1,
-        streak: Math.max(1, this.currentUser.streak || 1),
-        xp: Math.max(150, this.currentUser.xp || 150),
-        createdAt: new Date().toISOString(),
-        isGuest: false,
-      };
-
-      users[email] = {
-        user: newUser,
-        passwordHash: 'GOOGLE_OAUTH_VERIFIED',
-      };
-      this.saveRegisteredUsers(users);
-      this.migrateGuestDataToUser(newUser.id);
-      this.currentUser = newUser;
-    } else {
-      this.currentUser = { ...record.user, isGuest: false };
-    }
-
-    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(this.currentUser));
-    localStorage.setItem('aster_user_id', this.currentUser.id);
-    this.notify();
-    return this.currentUser;
+  public async loginWithGoogle(_profile?: { email: string; name: string; avatar?: string }): Promise<UserProfile> {
+    throw new Error('Đăng nhập Google chưa được hỗ trợ.');
   }
 
   /**
@@ -277,8 +176,8 @@ class AuthService {
       email: 'guest@aster-hsk.vn',
       avatar: '🐼',
       currentLevel: 1,
-      streak: 1,
-      xp: 50,
+      streak: 0,
+      xp: 0,
       createdAt: new Date().toISOString(),
       isGuest: true,
     };

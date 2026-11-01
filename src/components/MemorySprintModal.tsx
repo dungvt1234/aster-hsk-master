@@ -300,7 +300,7 @@ export function MemorySprintModal({
               Hoàn Thành Bữa Sáng Trí Nhớ!
             </h2>
             <p style={{ margin: '0 0 24px', color: 'var(--text-muted)', fontSize: '14px' }}>
-              Trí nhớ phản xạ FSRS của bạn đã được gia cố vững chắc cho ngày hôm nay!
+              Trí nhớ phản xạ SRS của bạn đã được gia cố vững chắc cho ngày hôm nay!
             </p>
 
             {/* Metric Score Grid */}

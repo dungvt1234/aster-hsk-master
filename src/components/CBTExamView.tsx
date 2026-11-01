@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { CBTExam } from '../types';
 import { playChineseAudio } from '../services/speech';
+import { scorePracticeExam } from '../services/examScoring';
 
 interface CBTExamViewProps {
   exam: CBTExam;
@@ -23,13 +24,14 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
   const [flaggedQuestions, setFlaggedQuestions] = useState<Set<number>>(new Set());
   const [timeLeftSeconds, setTimeLeftSeconds] = useState(exam.durationMinutes * 60);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
   const currentQ = exam.questions[currentQuestionIndex];
 
   // Bộ đếm thời gian thi đấu chuẩn
   useEffect(() => {
-    if (isSubmitted || timeLeftSeconds <= 0) return;
+    if (!hasStarted || isSubmitted || timeLeftSeconds <= 0) return;
 
     const timer = setInterval(() => {
       setTimeLeftSeconds((prev) => {
@@ -43,7 +45,7 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isSubmitted, timeLeftSeconds]);
+  }, [hasStarted, isSubmitted, timeLeftSeconds]);
 
   const formatTimer = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -75,22 +77,7 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
     setIsPlayingAudio(false);
   };
 
-  // Tính điểm thi
-  let correctCount = 0;
-  let listeningScore = 0;
-  let readingScore = 0;
-
-  exam.questions.forEach((q) => {
-    const isCorrect = userAnswers[q.id] === q.correctAnswer;
-    if (isCorrect) {
-      correctCount += 1;
-      if (q.section === 'listening') listeningScore += 20;
-      else readingScore += 20;
-    }
-  });
-
-  const totalScore = listeningScore + readingScore;
-  const isPassed = totalScore >= exam.passScore;
+  const { listeningMax, readingMax, listeningScore, readingScore, totalScore, isPassed } = scorePracticeExam(exam, userAnswers);
 
   if (isSubmitted) {
     return (
@@ -113,24 +100,24 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
           </div>
 
           <h2 style={{ fontSize: '24px', fontWeight: 800 }}>
-            {isPassed ? 'CHÚC MỪNG! BẠN ĐÃ ĐẠT CHỨNG CHỈ HSK 1' : 'CHƯA ĐẠT ĐIỂM CHUẨN HSK 1'}
+            {isPassed ? 'HOÀN THÀNH BÀI LUYỆN TẬP' : 'TIẾP TỤC ÔN TẬP'}
           </h2>
           <p style={{ color: 'var(--text-muted)', marginTop: '6px' }}>
-            {exam.title} · Điểm qua môn: <strong>{exam.passScore}/200</strong>
+            {exam.title} · Mốc tham khảo: <strong>{exam.passScore}/{exam.totalScore}</strong>
           </p>
 
           <div style={{ fontSize: '54px', fontWeight: 900, color: isPassed ? 'var(--success)' : 'var(--primary)', margin: '16px 0' }}>
-            {totalScore} <span style={{ fontSize: '24px', color: 'var(--text-dim)' }}>/ 200</span>
+            {totalScore} <span style={{ fontSize: '24px', color: 'var(--text-dim)' }}>/ {exam.totalScore}</span>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', margin: '20px 0' }}>
             <div style={{ background: 'var(--surface-card)', padding: '12px 24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Điểm Nghe (Listening)</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#38bdf8' }}>{listeningScore} / 100</div>
+              <div style={{ fontSize: '22px', fontWeight: 700, color: '#38bdf8' }}>{listeningScore} / {listeningMax}</div>
             </div>
             <div style={{ background: 'var(--surface-card)', padding: '12px 24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Điểm Đọc (Reading)</div>
-              <div style={{ fontSize: '22px', fontWeight: 700, color: '#34d399' }}>{readingScore} / 100</div>
+              <div style={{ fontSize: '22px', fontWeight: 700, color: '#34d399' }}>{readingScore} / {readingMax}</div>
             </div>
           </div>
         </div>
@@ -159,7 +146,7 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
                     Câu {q.id} [{q.section === 'listening' ? 'Nghe' : 'Đọc'}]
                   </span>
                   <span style={{ fontSize: '12px', fontWeight: 700, color: isCorrect ? 'var(--success)' : '#ef4444' }}>
-                    {isCorrect ? '✅ Đúng (+20đ)' : `❌ Sai (Bạn chọn: ${userChoice || 'Bỏ trống'})`}
+                    {isCorrect ? '✅ Đúng' : `❌ Sai (Bạn chọn: ${userChoice || 'Bỏ trống'})`}
                   </span>
                 </div>
                 <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -179,6 +166,7 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
           style={{ margin: '24px auto 0', display: 'flex', alignItems: 'center', gap: '8px' }}
           onClick={() => {
             setIsSubmitted(false);
+            setHasStarted(false);
             setUserAnswers({});
             setTimeLeftSeconds(exam.durationMinutes * 60);
             setCurrentQuestionIndex(0);
@@ -190,15 +178,24 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
     );
   }
 
+  if (!hasStarted) return (
+    <div className="cbt-container" style={{ padding: 32, color: 'var(--text)' }}>
+      <h2>{exam.title}</h2>
+      <p>Đây là bài luyện tập mô phỏng, không phải kỳ thi cấp chứng chỉ chính thức.</p>
+      <p>{exam.questions.length} câu hỏi · {exam.durationMinutes} phút. Đồng hồ bắt đầu khi bạn nhấn nút bên dưới.</p>
+      <button type="button" className="btn-primary" onClick={() => setHasStarted(true)}>Bắt đầu làm bài</button>
+    </div>
+  );
+
   return (
     <div className="cbt-container">
       {/* CBT Header */}
       <div className="cbt-topbar">
         <div>
           <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--primary)', fontWeight: 700 }}>
-            HỆ THỐNG THI TRỰC TUYẾN CHUẨN HANBAN CBT
+            BÀI THI LUYỆN TẬP
           </span>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginTop: '2px' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-heading)', marginTop: '2px' }}>
             {exam.title}
           </h2>
         </div>
@@ -264,10 +261,10 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
             >
               <div>
                 <div style={{ fontSize: '12px', color: '#60a5fa', fontWeight: 700 }}>
-                  🎧 FILE GHI ÂM BẢN XỨ (MÔ PHỎNG PHÒNG THI)
+                  🎧 GIỌNG ĐỌC TỰ ĐỘNG
                 </div>
-                <div style={{ fontSize: '13px', color: '#e2e8f0', marginTop: '4px' }}>
-                  Nhấn nút để nghe đoạn hội thoại phát âm chuẩn.
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  Nhấn nút để nghe bằng giọng đọc của thiết bị.
                 </div>
               </div>
 
@@ -285,7 +282,7 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
           {currentQ.passage && (
             <div
               style={{
-                background: 'rgba(0, 0, 0, 0.3)',
+                background: 'var(--surface-card)',
                 border: '1px solid var(--border)',
                 borderRadius: '10px',
                 padding: '16px',
@@ -293,14 +290,14 @@ export function CBTExamView({ exam }: CBTExamViewProps) {
                 fontFamily: 'var(--font-hanzi)',
                 fontSize: '17px',
                 lineHeight: '1.7',
-                color: '#fff',
+                color: 'var(--text)',
               }}
             >
               {currentQ.passage}
             </div>
           )}
 
-          <div style={{ fontSize: '16px', fontWeight: 600, color: '#f8fafc', marginBottom: '20px' }}>
+          <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text)', marginBottom: '20px' }}>
             {currentQ.prompt}
           </div>
 

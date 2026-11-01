@@ -237,7 +237,7 @@ export function DuolingoPathView({
                     Bữa Sáng Trí Nhớ 3p ⚡
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    10 câu FSRS chống quên nhanh
+                    10 câu SRS chống quên nhanh
                   </div>
                 </div>
               </div>
@@ -755,7 +755,7 @@ export function DuolingoPathView({
         <div className="duo-sidebar-card">
           <div className="card-header">
             <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Award size={18} color="#FFC800" /> Bảng Xếp Hạng Đồng
+              <Award size={18} color="#FFC800" /> Bảng Xếp Hạng Mô Phỏng
             </h4>
           </div>
 

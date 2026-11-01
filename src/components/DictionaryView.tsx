@@ -21,7 +21,13 @@ export function DictionaryView({ vocabulary, currentLevel }: DictionaryViewProps
     });
   }, []);
 
-  const filtered = vocabulary.filter((item) => {
+  const greeting: VocabItem = {
+    id: 'dictionary-nihao', level: 1, hanzi: '你好', pinyin: 'nǐ hǎo', hanViet: 'Nhĩ hảo',
+    meaning: 'Xin chào', radical: '亻 (nhân); 女 (nữ)', strokeCount: 13, partOfSpeech: 'Lời chào',
+    exampleCn: '你好！', examplePinyin: 'Nǐ hǎo!', exampleVi: 'Xin chào!',
+  };
+  const entries = vocabulary.some((item) => item.hanzi === greeting.hanzi) ? vocabulary : [...vocabulary, greeting];
+  const filtered = entries.filter((item) => {
     if (showOnlyStarred && !starredIds.includes(item.id)) return false;
     const matchesLevel = filterLevel === 'all' || item.level === filterLevel;
     const term = searchTerm.toLowerCase().trim();

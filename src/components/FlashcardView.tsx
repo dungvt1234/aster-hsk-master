@@ -15,7 +15,8 @@ import {
   RefreshCw,
   Star,
 } from 'lucide-react';
-import type { VocabItem, HSKLevel } from '../types';
+import type { VocabItem, HSKLevel, CardProgress } from '../types';
+import { calculateSM2 } from '../services/srs';
 import { playChineseAudio } from '../services/speech';
 import { soundEffects } from '../services/audioSynthesizer';
 import { favoriteVocabService } from '../services/favoriteVocabService';
@@ -23,6 +24,7 @@ import { favoriteVocabService } from '../services/favoriteVocabService';
 interface FlashcardViewProps {
   cards: VocabItem[];
   currentLevel: HSKLevel;
+  progress: Record<string, CardProgress>;
   onAnswer: (vocabId: string, quality: 0 | 1 | 2 | 3) => void;
   onOpenFavorites?: () => void;
 }
@@ -30,6 +32,7 @@ interface FlashcardViewProps {
 export function FlashcardView({
   cards,
   currentLevel,
+  progress,
   onAnswer,
   onOpenFavorites,
 }: FlashcardViewProps) {
@@ -49,6 +52,7 @@ export function FlashcardView({
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const currentCard = cards[currentIndex] || cards[0];
+  const intervalLabel = (quality: 0 | 1 | 2 | 3) => currentCard ? `${calculateSM2(progress[currentCard.id], currentCard.id, quality).intervalDays} ngày` : '';
 
   const handleSpeak = useCallback(
     async (text: string, e?: React.MouseEvent) => {
@@ -199,7 +203,7 @@ export function FlashcardView({
         <CheckCircle2 size={48} color="var(--success)" style={{ margin: '0 auto 16px' }} />
         <h2>Bạn đã hoàn thành toàn bộ thẻ ôn tập HSK {currentLevel} hôm nay!</h2>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>
-          Tuyệt vời! Thuật toán SM-2 / FSRS sẽ hẹn lịch ôn tập tiếp theo khi trí nhớ bước vào chu kỳ quên.
+          Tuyệt vời! Thuật toán SRS sẽ hẹn lịch ôn tập tiếp theo khi trí nhớ bước vào chu kỳ quên.
         </p>
       </div>
     );
@@ -485,7 +489,7 @@ export function FlashcardView({
             </div>
 
             <div style={{ color: 'var(--text-dim)', fontSize: '11px', textAlign: 'center', marginTop: '4px' }}>
-              Đánh giá trí nhớ bên dưới (hoặc vuốt thẻ) để thuật toán SM-2/FSRS xếp lịch ôn tập
+              Đánh giá trí nhớ bên dưới (hoặc vuốt thẻ) để thuật toán SRS xếp lịch ôn tập
             </div>
           </div>
         </div>
@@ -500,7 +504,7 @@ export function FlashcardView({
           title="Phím 1: Chưa nhớ, ôn lại ngay"
         >
           <span className="btn-title" style={{ color: '#ef4444' }}>Quên / Lại</span>
-          <span className="btn-sub">&lt; 1 ngày (Phím 1)</span>
+          <span className="btn-sub">{intervalLabel(0)} (Phím 1)</span>
         </button>
 
         <button
@@ -510,7 +514,7 @@ export function FlashcardView({
           title="Phím 2: Hơi khó nhớ"
         >
           <span className="btn-title" style={{ color: '#f59e0b' }}>Khó</span>
-          <span className="btn-sub">1-2 ngày (Phím 2)</span>
+          <span className="btn-sub">{intervalLabel(1)} (Phím 2)</span>
         </button>
 
         <button
@@ -520,7 +524,7 @@ export function FlashcardView({
           title="Phím 3: Nhớ tốt"
         >
           <span className="btn-title" style={{ color: '#3b82f6' }}>Nhớ tốt</span>
-          <span className="btn-sub">4-6 ngày (Phím 3)</span>
+          <span className="btn-sub">{intervalLabel(2)} (Phím 3)</span>
         </button>
 
         <button
@@ -530,7 +534,7 @@ export function FlashcardView({
           title="Phím 4: Quá dễ dàng"
         >
           <span className="btn-title" style={{ color: '#10b981' }}>Rất dễ</span>
-          <span className="btn-sub">&gt; 10 ngày (Phím 4)</span>
+          <span className="btn-sub">{intervalLabel(3)} (Phím 4)</span>
         </button>
       </div>
 
