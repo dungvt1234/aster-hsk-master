@@ -66,7 +66,7 @@ function LoadingViewFallback() {
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => authService.getCurrentUser());
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(() => !authService.isAuthenticated());
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isQuestsOpen, setIsQuestsOpen] = useState(false);
@@ -127,6 +127,9 @@ export function App() {
   useEffect(() => {
     const unsubscribe = authService.subscribe((user) => {
       setCurrentUser(user);
+      if (!authService.isAuthenticated()) {
+        setIsAuthOpen(true);
+      }
       const loadedProg = loadAllProgress(user.id);
       const loadedStat = loadUserStats(LEVEL_COUNTS, user.id);
       setProgress(loadedProg);
@@ -459,10 +462,15 @@ export function App() {
           }}
         />
 
-        {/* Auth Modal (Đăng Ký, Đăng Nhập & Khách VIP) */}
+        {/* Auth Modal (Đăng Ký & Đăng Nhập Bắt Buộc) */}
         <AuthModal
-          isOpen={isAuthOpen}
-          onClose={() => setIsAuthOpen(false)}
+          isOpen={isAuthOpen || !authService.isAuthenticated()}
+          onClose={() => {
+            if (authService.isAuthenticated()) {
+              setIsAuthOpen(false);
+            }
+          }}
+          canClose={authService.isAuthenticated()}
           onSuccess={() => {
             setIsAuthOpen(false);
           }}
@@ -485,6 +493,8 @@ export function App() {
           }}
           onLogout={() => {
             authService.logout();
+            setIsProfileOpen(false);
+            setIsAuthOpen(true);
           }}
         />
 

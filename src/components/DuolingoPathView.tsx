@@ -760,31 +760,31 @@ export function DuolingoPathView({
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'rgba(255, 200, 0, 0.12)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontWeight: 900, color: '#eab308', fontSize: '14px', width: '16px' }}>1</span>
-                <span style={{ fontSize: '18px' }}>⚡</span>
-                <span style={{ fontSize: '13px', fontWeight: 800 }}>Bạn (Học Vượt)</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: '10px', background: 'rgba(255, 200, 0, 0.12)', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
+                <span style={{ fontWeight: 900, color: '#eab308', fontSize: '14px', width: '16px', flexShrink: 0 }}>1</span>
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>⚡</span>
+                <span style={{ fontSize: '13px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Bạn (Học Vượt)</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#eab308' }}>{userXp} XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#eab308', whiteSpace: 'nowrap', flexShrink: 0 }}>{userXp} XP</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'var(--surface-card)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontWeight: 900, color: '#94a3b8', fontSize: '13px', width: '16px' }}>2</span>
-                <span style={{ fontSize: '18px' }}>🦊</span>
-                <span style={{ fontSize: '13px', fontWeight: 700 }}>Lan Anh (蓝英)</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: '10px', background: 'var(--surface-card)', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
+                <span style={{ fontWeight: 900, color: '#94a3b8', fontSize: '13px', width: '16px', flexShrink: 0 }}>2</span>
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>🦊</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Lan Anh (蓝英)</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>135 XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>135 XP</span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', borderRadius: '10px', background: 'var(--surface-card)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontWeight: 900, color: '#94a3b8', fontSize: '13px', width: '16px' }}>3</span>
-                <span style={{ fontSize: '18px' }}>🐼</span>
-                <span style={{ fontSize: '13px', fontWeight: 700 }}>David (大卫)</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: '10px', background: 'var(--surface-card)', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
+                <span style={{ fontWeight: 900, color: '#94a3b8', fontSize: '13px', width: '16px', flexShrink: 0 }}>3</span>
+                <span style={{ fontSize: '18px', flexShrink: 0 }}>🐼</span>
+                <span style={{ fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>David (大卫)</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>110 XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>110 XP</span>
             </div>
           </div>
         </div>

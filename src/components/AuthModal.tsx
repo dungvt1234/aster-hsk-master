@@ -19,9 +19,10 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: (user: UserProfile) => void;
+  canClose?: boolean;
 }
 
-export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, onSuccess, canClose = true }: AuthModalProps) {
   const [tab, setTab] = useState<'login' | 'register'>('register');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -115,7 +116,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         zIndex: 9999,
         padding: '16px',
       }}
-      onClick={onClose}
+      onClick={() => {
+        if (canClose) onClose();
+      }}
     >
       <div
         style={{
@@ -131,28 +134,30 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          type="button"
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'var(--surface-hover)',
-            border: '1px solid var(--border)',
-            borderRadius: '50%',
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: 'var(--text-muted)',
-          }}
-        >
-          <X size={18} />
-        </button>
+        {/* Close Button (Chỉ hiển thị khi đã đăng nhập) */}
+        {canClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'var(--surface-hover)',
+              border: '1px solid var(--border)',
+              borderRadius: '50%',
+              width: '36px',
+              height: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: 'var(--text-muted)',
+            }}
+          >
+            <X size={18} />
+          </button>
+        )}
 
         {/* Header Icon & Brand */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -177,8 +182,22 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           <h3 style={{ margin: '0 0 4px', fontSize: '22px', fontWeight: 900, color: 'var(--text-heading)' }}>
             {tab === 'register' ? 'Tạo Tài Khoản Học Viên' : 'Đăng Nhập Aster HSK'}
           </h3>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '3px 10px', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: '20px', color: '#10b981', fontSize: '11px', fontWeight: 800, margin: '4px 0 8px' }}>
-            🎁 100% MIỄN PHÍ TRỌN ĐỜI CHO MỌI HỌC VIÊN
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '3px 10px',
+              background: !canClose ? 'rgba(2, 132, 199, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+              border: `1px solid ${!canClose ? 'rgba(2, 132, 199, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+              borderRadius: '20px',
+              color: !canClose ? '#0284c7' : '#10b981',
+              fontSize: '11px',
+              fontWeight: 800,
+              margin: '4px 0 8px',
+            }}
+          >
+            {!canClose ? '🔒 YÊU CẦU ĐĂNG KÝ / ĐĂNG NHẬP ĐỂ SỬ DỤNG' : '🎁 100% MIỄN PHÍ TRỌN ĐỜI CHO MỌI HỌC VIÊN'}
           </div>
           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
             Lưu giữ tiến độ vĩnh viễn, bảo vệ chuỗi ngày học 🔥 và đồng bộ trên mọi thiết bị
@@ -441,28 +460,21 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           <span>Tiếp tục với Google / Gmail</span>
         </button>
 
-        {/* Demo 1-Click Login for Fast Testing */}
-        <button
-          type="button"
-          onClick={handleDemoLogin}
+        {/* Reassurance Message */}
+        <div
           style={{
-            width: '100%',
-            padding: '11px',
-            borderRadius: '10px',
-            border: '1px dashed #f59e0b',
-            background: 'rgba(245, 158, 11, 0.08)',
-            color: '#b45309',
-            fontSize: '12px',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
+            padding: '10px 14px',
+            borderRadius: '12px',
+            background: 'var(--surface-hover)',
+            border: '1px solid var(--border)',
+            fontSize: '11.5px',
+            color: 'var(--text-muted)',
+            textAlign: 'center',
+            lineHeight: 1.5,
           }}
         >
-          <Sparkles size={15} color="#d97706" /> Dùng Thử Nhanh Tài Khoản Demo VIP (1-Click)
-        </button>
+          💡 <b>Lưu ý:</b> Học viên cần tạo tài khoản hoặc đăng nhập để mở khóa đầy đủ lộ trình bài học, bảo vệ chuỗi ngày học <b>Streak 🔥</b> và tích lũy <b>Kim cương 💎</b>.
+        </div>
 
         {/* Trust Badges */}
         <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center', gap: '14px', fontSize: '11px', color: 'var(--text-dim)', flexWrap: 'wrap' }}>

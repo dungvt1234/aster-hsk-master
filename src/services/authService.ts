@@ -62,6 +62,15 @@ class AuthService {
     return this.currentUser;
   }
 
+  public isAuthenticated(): boolean {
+    return Boolean(
+      this.currentUser &&
+      !this.currentUser.isGuest &&
+      this.currentUser.id &&
+      !this.currentUser.id.startsWith('guest_')
+    );
+  }
+
   public subscribe(listener: (user: UserProfile) => void): () => void {
     this.listeners.push(listener);
     listener(this.currentUser);
