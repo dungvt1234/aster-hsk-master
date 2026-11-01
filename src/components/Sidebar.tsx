@@ -39,6 +39,7 @@ interface SidebarProps {
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
   onOpenLiveStudy?: () => void;
+  onOpenFeedback?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -62,6 +63,7 @@ export function Sidebar({
   onOpenDailyGoal,
   onOpenFavorites,
   onOpenLiveStudy,
+  onOpenFeedback,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -482,6 +484,36 @@ export function Sidebar({
                   }}
                 />
                 <span>Phòng Học Trực Tuyến 🟢</span>
+              </button>
+            )}
+
+            {onOpenFeedback && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenFeedback();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  gridColumn: '1 / -1',
+                  background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(6, 182, 212, 0.06))',
+                  border: '1.5px solid #0284c7',
+                  color: '#0284c7',
+                  borderRadius: '10px',
+                  padding: '7px 8px',
+                  fontSize: '11.5px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  marginTop: '2px',
+                }}
+                title="Hòm thư góp ý & báo lỗi bài học"
+              >
+                <span>📬</span>
+                <span>Hòm Thư Góp Ý</span>
               </button>
             )}
           </div>

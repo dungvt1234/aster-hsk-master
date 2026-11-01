@@ -28,6 +28,7 @@ interface MobileBottomNavProps {
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
   onOpenLiveStudy?: () => void;
+  onOpenFeedback?: () => void;
 }
 
 export function MobileBottomNav({
@@ -42,6 +43,7 @@ export function MobileBottomNav({
   onOpenDailyGoal,
   onOpenFavorites,
   onOpenLiveStudy,
+  onOpenFeedback,
 }: MobileBottomNavProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -197,6 +199,32 @@ export function MobileBottomNav({
                 >
                   <span style={{ fontSize: '16px' }}>🟢</span>
                   <span>Phòng Live</span>
+                </button>
+              )}
+              {onOpenFeedback && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenFeedback();
+                  }}
+                  style={{
+                    background: 'rgba(2, 132, 199, 0.12)',
+                    border: '1.5px solid #0284c7',
+                    color: '#0284c7',
+                    borderRadius: '12px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>📬</span>
+                  <span>Góp Ý</span>
                 </button>
               )}
               {onOpenLeague && (

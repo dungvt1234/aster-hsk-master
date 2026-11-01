@@ -40,6 +40,7 @@ interface CommandPaletteModalProps {
   onOpenQuests?: () => void;
   onOpenSprint?: () => void;
   onOpenLiveStudy?: () => void;
+  onOpenFeedback?: () => void;
 }
 
 interface ActionItem {
@@ -64,6 +65,7 @@ export function CommandPaletteModal({
   onOpenQuests,
   onOpenSprint,
   onOpenLiveStudy,
+  onOpenFeedback,
 }: CommandPaletteModalProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -249,7 +251,16 @@ export function CommandPaletteModal({
       icon: <Users size={18} color="#16a34a" />,
       action: () => onOpenLiveStudy && onOpenLiveStudy(),
     },
-  ], [currentLevel, onNavigateTab, onSelectLevel, theme, onToggleTheme, onOpenStore, onOpenQuests, onOpenSprint, onOpenLiveStudy]);
+    {
+      id: 'util-feedback',
+      category: 'Tính năng & Tiện ích',
+      title: 'Hòm Thư Góp Ý & Báo Lỗi Bài Học 📬',
+      subtitle: 'Đóng góp ý kiến, đề xuất tính năng mới hoặc báo cáo câu hỏi chưa chuẩn',
+      icon: <span style={{ fontSize: '18px' }}>📬</span>,
+      badge: 'Góp ý',
+      action: () => onOpenFeedback && onOpenFeedback(),
+    },
+  ], [currentLevel, onNavigateTab, onSelectLevel, theme, onToggleTheme, onOpenStore, onOpenQuests, onOpenSprint, onOpenLiveStudy, onOpenFeedback]);
 
   // Tìm kiếm từ vựng trực tiếp khi có query
   const vocabResults: VocabItem[] = useMemo(() => {

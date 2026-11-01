@@ -53,6 +53,7 @@ const HandsfreePodcastModal = lazy(() => import('./components/HandsfreePodcastMo
 const AchievementsModal = lazy(() => import('./components/AchievementsModal').then(m => ({ default: m.AchievementsModal })));
 const DailyGoalModal = lazy(() => import('./components/DailyGoalModal').then(m => ({ default: m.DailyGoalModal })));
 const FavoritesDeckModal = lazy(() => import('./components/FavoritesDeckModal').then(m => ({ default: m.FavoritesDeckModal })));
+const FeedbackModal = lazy(() => import('./components/FeedbackModal').then(m => ({ default: m.FeedbackModal })));
 
 function LoadingViewFallback() {
   return (
@@ -76,6 +77,7 @@ export function App() {
   const [isDailyGoalOpen, setIsDailyGoalOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
   const [isLiveStudyOpen, setIsLiveStudyOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [customReviewCards, setCustomReviewCards] = useState<VocabItem[] | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
@@ -206,6 +208,7 @@ export function App() {
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
         onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+        onOpenFeedback={() => setIsFeedbackOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -227,6 +230,7 @@ export function App() {
           onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
           onOpenFavorites={() => setIsFavoritesOpen(true)}
           onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+          onOpenFeedback={() => setIsFeedbackOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
           onOpenProfile={() => setIsProfileOpen(true)}
@@ -417,6 +421,7 @@ export function App() {
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
         onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+        onOpenFeedback={() => setIsFeedbackOpen(true)}
       />
 
       {/* Modals with Suspense */}
@@ -437,6 +442,7 @@ export function App() {
           onOpenQuests={() => setIsQuestsOpen(true)}
           onOpenSprint={() => setIsSprintOpen(true)}
           onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+          onOpenFeedback={() => setIsFeedbackOpen(true)}
         />
 
         {/* 3-Minute FSRS Memory Sprint Modal */}
@@ -571,6 +577,13 @@ export function App() {
         <LiveStudyRoomModal
           isOpen={isLiveStudyOpen}
           onClose={() => setIsLiveStudyOpen(false)}
+        />
+
+        {/* Hòm Thư Góp Ý & Báo Lỗi Bài Học 📬 */}
+        <FeedbackModal
+          isOpen={isFeedbackOpen}
+          onClose={() => setIsFeedbackOpen(false)}
+          currentLevel={currentLevel}
         />
       </Suspense>
 

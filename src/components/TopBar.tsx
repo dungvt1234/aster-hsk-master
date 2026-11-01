@@ -45,6 +45,7 @@ interface TopBarProps {
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
   onOpenLiveStudy?: () => void;
+  onOpenFeedback?: () => void;
   onToggleMobileMenu?: () => void;
   onOpenCommandPalette?: () => void;
 }
@@ -67,6 +68,7 @@ export function TopBar({
   onOpenDailyGoal,
   onOpenFavorites,
   onOpenLiveStudy,
+  onOpenFeedback,
   onToggleMobileMenu,
   onOpenCommandPalette,
 }: TopBarProps) {
@@ -631,6 +633,33 @@ export function TopBar({
             title="Kích hoạt Bữa Sáng Trí Nhớ FSRS 3 phút"
           >
             <Zap size={14} fill="#ffffff" /> Sprint 3p
+          </button>
+        )}
+
+        {/* Hòm Thư Góp Ý & Báo Lỗi 📬 */}
+        {onOpenFeedback && (
+          <button
+            type="button"
+            onClick={onOpenFeedback}
+            style={{
+              background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.12), rgba(6, 182, 212, 0.08))',
+              border: '1.5px solid #0284c7',
+              color: '#0284c7',
+              borderRadius: '20px',
+              padding: '5px 11px',
+              fontSize: '11.5px',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              cursor: 'pointer',
+              flexShrink: 0,
+              transition: 'all 0.2s ease',
+            }}
+            title="Hòm thư góp ý & báo lỗi bài học cho Aster HSK"
+          >
+            <span>📬</span>
+            <span className="desktop-only">Góp Ý</span>
           </button>
         )}
 

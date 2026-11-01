@@ -194,6 +194,47 @@ class AuthService {
   }
 
   /**
+   * Đăng nhập / Đăng ký 1 chạm bằng Google Account
+   */
+  public async loginWithGoogle(googleProfile?: { email: string; name: string; avatar?: string }): Promise<UserProfile> {
+    const email = googleProfile?.email?.trim().toLowerCase() || 'hocvien.google@gmail.com';
+    const name = googleProfile?.name?.trim() || 'Học Viên Google';
+    const avatar = googleProfile?.avatar || '🌟';
+
+    const users = this.getRegisteredUsers();
+    let record = users[email];
+
+    if (!record) {
+      const newUser: UserProfile = {
+        id: `usr_g_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        name,
+        email,
+        avatar,
+        currentLevel: this.currentUser.currentLevel || 1,
+        streak: Math.max(1, this.currentUser.streak || 1),
+        xp: Math.max(150, this.currentUser.xp || 150),
+        createdAt: new Date().toISOString(),
+        isGuest: false,
+      };
+
+      users[email] = {
+        user: newUser,
+        passwordHash: 'GOOGLE_OAUTH_VERIFIED',
+      };
+      this.saveRegisteredUsers(users);
+      this.migrateGuestDataToUser(newUser.id);
+      this.currentUser = newUser;
+    } else {
+      this.currentUser = { ...record.user, isGuest: false };
+    }
+
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(this.currentUser));
+    localStorage.setItem('aster_user_id', this.currentUser.id);
+    this.notify();
+    return this.currentUser;
+  }
+
+  /**
    * Cập nhật thông tin hồ sơ (Tên, Avatar, Cấp độ HSK)
    */
   public updateProfile(updates: Partial<UserProfile>): UserProfile {
