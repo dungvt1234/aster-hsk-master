@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { authService, UserProfile, AVATAR_PRESETS } from '../services/authService';
 import { soundEffects } from '../services/audioSynthesizer';
-import { buildLearningBackup } from '../services/learningBackup';
+import { LearningBackupPanel } from './LearningBackupPanel';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -37,7 +37,6 @@ export function UserProfileModal({
   onOpenAchievements,
 }: UserProfileModalProps) {
   const [selectedAvatar, setSelectedAvatar] = useState(user.avatar || '🐼');
-  const [syncMsg, setSyncMsg] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -47,20 +46,6 @@ export function UserProfileModal({
     soundEffects.playTap();
   };
 
-  const handleManualSync = () => {
-    try {
-      const file = new Blob([JSON.stringify(buildLearningBackup(localStorage), null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(file);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `aster-tien-do-${new Date().toISOString().slice(0, 10)}.json`;
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setSyncMsg('Đã tạo bản sao tiến độ. Hãy giữ tệp ở nơi an toàn.');
-    } catch {
-      setSyncMsg('Không thể xuất dữ liệu trên trình duyệt này.');
-    }
-  };
 
   return (
     <div
@@ -87,6 +72,8 @@ export function UserProfileModal({
           borderRadius: '24px',
           width: '100%',
           maxWidth: '440px',
+          maxHeight: '90dvh',
+          overflowY: 'auto',
           padding: '28px',
           boxShadow: '0 20px 50px rgba(0, 0, 0, 0.4)',
           position: 'relative',
@@ -290,42 +277,7 @@ export function UserProfileModal({
           </div>
         </div>
 
-        {/* Sync Status Banner / Action */}
-        <div
-          style={{
-            background: 'rgba(2, 132, 199, 0.08)',
-            border: '1px solid rgba(2, 132, 199, 0.25)',
-            borderRadius: '12px',
-            padding: '12px 14px',
-            marginBottom: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Cloud size={18} color="#0284c7" />
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-heading)' }}>
-              {syncMsg || 'Tiến độ chỉ được lưu trên thiết bị này'}
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={handleManualSync}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '8px',
-              border: 'none',
-              background: '#0284c7',
-              color: '#fff',
-              fontSize: '11px',
-              fontWeight: 800,
-              cursor: 'pointer',
-            }}
-          >
-            Xuất tiến độ
-          </button>
-        </div>
+        <LearningBackupPanel />
 
         {/* Guest Warning & Register Prompt */}
         {user.isGuest && (

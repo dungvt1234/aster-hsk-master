@@ -472,7 +472,7 @@ export function Sidebar({
                   cursor: 'pointer',
                   marginTop: '2px',
                 }}
-                title="Mở Phòng Học Trực Tuyến & Cài đặt theo dõi"
+                title="Mở phòng học mô phỏng"
               >
                 <span
                   style={{
@@ -483,7 +483,7 @@ export function Sidebar({
                     boxShadow: '0 0 6px #22c55e',
                   }}
                 />
-                <span>Phòng Học Trực Tuyến 🟢</span>
+                <span>Phòng Học Mô Phỏng</span>
               </button>
             )}
 

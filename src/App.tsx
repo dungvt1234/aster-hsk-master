@@ -4,10 +4,7 @@ import { HSK_VOCABULARY, LEVEL_COUNTS } from './data/hskData';
 import { QUIZ_QUESTIONS, getMockExamByLevel } from './data/cbtData';
 import {
   loadAllProgress,
-  saveAllProgress,
   loadUserStats,
-  saveUserStats,
-  calculateSM2,
 } from './services/srs';
 
 import type { ActiveTab } from './components/Header';
@@ -16,14 +13,13 @@ import { TopBar } from './components/TopBar';
 import { DuolingoPathView } from './components/DuolingoPathView';
 import { FlashcardView } from './components/FlashcardView';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { cloudSync } from './services/cloudSyncService';
+import { recordReview, recordCompletedNodes, daysSince } from './services/studySession';
 import { authService, UserProfile } from './services/authService';
 import { gamificationService } from './services/gamificationService';
 import { leagueService } from './services/leagueService';
 import { dailyGoalService } from './services/dailyGoalService';
 import { favoriteVocabService } from './services/favoriteVocabService';
 import { Analytics } from '@vercel/analytics/react';
-import { LiveStudyRoomModal } from './components/LiveStudyRoomModal';
 import { telemetryService } from './services/telemetryService';
 import { liveStudyPresenceService } from './services/liveStudyPresenceService';
 
@@ -41,6 +37,7 @@ const AISpeakingStudio = lazy(() => import('./components/AISpeakingStudio').then
 const AITutorChatbot = lazy(() => import('./components/AITutorChatbot').then(m => ({ default: m.AITutorChatbot })));
 
 // Modals
+const LiveStudyRoomModal = lazy(() => import('./components/LiveStudyRoomModal').then(m => ({ default: m.LiveStudyRoomModal })));
 const CommandPaletteModal = lazy(() => import('./components/CommandPaletteModal').then(m => ({ default: m.CommandPaletteModal })));
 const MemorySprintModal = lazy(() => import('./components/MemorySprintModal').then(m => ({ default: m.MemorySprintModal })));
 const AuthModal = lazy(() => import('./components/AuthModal').then(m => ({ default: m.AuthModal })));
@@ -82,12 +79,16 @@ export function App() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const handleEarnXp = (amount: number) => {
-    authService.updateProfile({ xp: (currentUser.xp || 0) + amount });
-    setCurrentUser(authService.getCurrentUser());
-    leagueService.addXp(amount);
-    dailyGoalService.addXp(amount);
-    telemetryService.trackEvent('earn_xp', { amount, level: currentLevel });
-    liveStudyPresenceService.recordMyActivity(`vừa tích lũy +${amount} XP!`, currentLevel, currentUser.name || 'Bạn');
+    try {
+      authService.updateProfile({ xp: (authService.getCurrentUser().xp || 0) + amount });
+      setCurrentUser(authService.getCurrentUser());
+      leagueService.addXp(amount);
+      dailyGoalService.addXp(amount);
+      telemetryService.trackEvent('earn_xp', { amount, level: currentLevel });
+      liveStudyPresenceService.recordMyActivity(`vừa tích lũy +${amount} XP!`, currentLevel, currentUser.name || 'Bạn');
+    } catch {
+      setSaveError('Chưa cập nhật được điểm thưởng. Tiến độ bài học đã lưu vẫn được giữ.');
+    }
   };
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -97,6 +98,7 @@ export function App() {
   const [progress, setProgress] = useState<Record<string, CardProgress>>({});
   const [stats, setStats] = useState<UserStats>(() => loadUserStats(LEVEL_COUNTS, authService.getCurrentUser().id));
   const [aiPrompt, setAiPrompt] = useState<string | undefined>();
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return (localStorage.getItem('aster_hsk_theme') as 'light' | 'dark') || 'light';
@@ -135,46 +137,38 @@ export function App() {
     return unsubscribe;
   }, []);
 
-  // Xử lý khi người dùng đánh giá thẻ trong Flashcard (SM-2)
+  const canProtectMissedDay = () => daysSince(loadUserStats(LEVEL_COUNTS, currentUser.id).lastStudyDate) === 2 && gamificationService.getState().streakFreezes > 0;
+
   const handleAnswerCard = (vocabId: string, quality: 0 | 1 | 2 | 3) => {
-    const updatedCard = calculateSM2(progress[vocabId], vocabId, quality);
-    const nextProgress = {
-      ...progress,
-      [vocabId]: updatedCard,
-    };
-    setProgress(nextProgress);
-    saveAllProgress(nextProgress, currentUser.id);
+    try {
+      const protect = canProtectMissedDay();
+      const next = recordReview(vocabId, quality, HSK_VOCABULARY, currentUser.id, protect);
+      setProgress(next.progress);
+      setStats(next.stats);
+      setSaveError(null);
+      if (protect) gamificationService.consumeStreakFreeze();
+      if (quality >= 2) {
+        handleEarnXp(5);
+        gamificationService.updateQuestProgress('practice', 1);
+      }
+      return true;
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Chưa lưu được tiến độ. Hãy thử lại.');
+      return false;
+    }
+  };
 
-    // Cập nhật thống kê người học
-    setStats((prev) => {
-      const today = new Date().toISOString().slice(0, 10);
-      const isNewDay = prev.lastStudyDate !== today;
-      const newStreak = isNewDay ? prev.streak + 1 : prev.streak;
-
-      // Đếm số từ mastered
-      const masteredCount = Object.values(nextProgress).filter(
-        (p) => p.masteryLevel >= 2
-      ).length;
-
-      const nextStats: UserStats = {
-        ...prev,
-        todayReviews: prev.todayReviews + 1,
-        totalMastered: masteredCount,
-        streak: newStreak,
-        lastStudyDate: today,
-      };
-      saveUserStats(nextStats, currentUser.id);
-      return nextStats;
-    });
-
-    // Thưởng XP khi học thẻ thành công
-    if (quality >= 2) {
-      authService.updateProfile({
-        xp: (currentUser.xp || 0) + 5,
-      });
-      setCurrentUser(authService.getCurrentUser());
-      gamificationService.updateQuestProgress('practice', 1);
-      leagueService.addXp(5);
+  const handleCompleteNodes = (ids: string[]) => {
+    try {
+      const protect = canProtectMissedDay();
+      const next = recordCompletedNodes(ids, HSK_VOCABULARY, currentUser.id, protect);
+      setStats(next.stats);
+      setSaveError(null);
+      if (protect) gamificationService.consumeStreakFreeze();
+      return next.completed;
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Chưa lưu được bài học. Hãy thử lại.');
+      return null;
     }
   };
 
@@ -239,12 +233,16 @@ export function App() {
         />
 
         <main className="app-content">
+          {saveError && <div role="alert" style={{ padding: 14, marginBottom: 16, border: '1px solid #dc2626', borderRadius: 12, color: 'var(--text)', background: 'var(--surface)' }}>{saveError}</div>}
           <Suspense fallback={<LoadingViewFallback />}>
             {activeTab === 'duo_path' && (
               <DuolingoPathView
+                key={currentLevel}
                 currentLevel={currentLevel}
                 onSelectLevel={setCurrentLevel}
                 streak={stats.streak}
+                xp={currentUser.xp}
+                onCompleteNodes={handleCompleteNodes}
                 onAddXp={handleEarnXp}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
                 onOpenSprint={() => setIsSprintOpen(true)}
@@ -578,10 +576,12 @@ export function App() {
         />
 
         {/* Phòng Học Trực Tuyến & Cài đặt theo dõi Admin (Live Study Room) 🟢 */}
-        <LiveStudyRoomModal
-          isOpen={isLiveStudyOpen}
-          onClose={() => setIsLiveStudyOpen(false)}
-        />
+        {isLiveStudyOpen && (
+          <LiveStudyRoomModal
+            isOpen={isLiveStudyOpen}
+            onClose={() => setIsLiveStudyOpen(false)}
+          />
+        )}
 
         {/* Hòm Thư Góp Ý & Báo Lỗi Bài Học 📬 */}
         <FeedbackModal

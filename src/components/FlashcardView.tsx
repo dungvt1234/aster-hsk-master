@@ -25,7 +25,7 @@ interface FlashcardViewProps {
   cards: VocabItem[];
   currentLevel: HSKLevel;
   progress: Record<string, CardProgress>;
-  onAnswer: (vocabId: string, quality: 0 | 1 | 2 | 3) => void;
+  onAnswer: (vocabId: string, quality: 0 | 1 | 2 | 3) => boolean | void;
   onOpenFavorites?: () => void;
 }
 
@@ -79,7 +79,7 @@ export function FlashcardView({
         soundEffects.playIncorrect();
       }
 
-      onAnswer(currentCard.id, quality);
+      if (onAnswer(currentCard.id, quality) === false) return;
       setIsFlipped(false);
       setDragOffset({ x: 0, y: 0 });
 

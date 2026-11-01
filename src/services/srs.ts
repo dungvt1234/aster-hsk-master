@@ -1,10 +1,9 @@
 import type { CardProgress, UserStats, HSKLevel } from '../types';
-import { gamificationService } from './gamificationService';
 
 const GLOBAL_PROGRESS_KEY = 'aster_hsk_progress_v1';
 const GLOBAL_STATS_KEY = 'aster_hsk_stats_v1';
 
-function getUserKeys(userId?: string) {
+export function getUserStorageKeys(userId?: string) {
   const uid = userId || localStorage.getItem('aster_user_id');
   if (!uid || uid.startsWith('guest')) {
     return {
@@ -20,7 +19,7 @@ function getUserKeys(userId?: string) {
 
 export function loadAllProgress(userId?: string): Record<string, CardProgress> {
   try {
-    const { progressKey } = getUserKeys(userId);
+    const { progressKey } = getUserStorageKeys(userId);
     let raw = localStorage.getItem(progressKey);
     if (!raw && progressKey !== GLOBAL_PROGRESS_KEY) {
       // Kế thừa tiến độ khách nếu chưa có bản ghi riêng
@@ -34,7 +33,7 @@ export function loadAllProgress(userId?: string): Record<string, CardProgress> {
 
 export function saveAllProgress(progress: Record<string, CardProgress>, userId?: string) {
   try {
-    const { progressKey } = getUserKeys(userId);
+    const { progressKey } = getUserStorageKeys(userId);
     localStorage.setItem(progressKey, JSON.stringify(progress));
   } catch (err) {
     console.error('Lỗi lưu tiến độ SRS:', err);
@@ -43,26 +42,14 @@ export function saveAllProgress(progress: Record<string, CardProgress>, userId?:
 
 export function loadUserStats(totalCounts: Record<HSKLevel, number>, userId?: string): UserStats {
   try {
-    const { statsKey } = getUserKeys(userId);
+    const { statsKey } = getUserStorageKeys(userId);
     let raw = localStorage.getItem(statsKey);
     if (!raw && statsKey !== GLOBAL_STATS_KEY) {
       raw = localStorage.getItem(GLOBAL_STATS_KEY);
     }
-    const today = new Date().toISOString().slice(0, 10);
     if (raw) {
       const stats = JSON.parse(raw) as UserStats;
-      // Kiểm tra streak
-      if (stats.lastStudyDate) {
-        const last = new Date(stats.lastStudyDate);
-        const diffDays = Math.floor((new Date(today).getTime() - last.getTime()) / (1000 * 3600 * 24));
-        if (diffDays > 1) {
-          // Kiểm tra xem có Băng Bảo Vệ Streak để cứu không
-          const savedByFreeze = gamificationService.consumeStreakFreeze();
-          if (!savedByFreeze) {
-            stats.streak = 1; // đứt streak nếu không có băng bảo vệ
-          }
-        }
-      }
+      // Reading statistics must never consume inventory or write to storage.
       return stats;
     }
   } catch {
@@ -85,7 +72,7 @@ export function loadUserStats(totalCounts: Record<HSKLevel, number>, userId?: st
 
 export function saveUserStats(stats: UserStats, userId?: string) {
   try {
-    const { statsKey } = getUserKeys(userId);
+    const { statsKey } = getUserStorageKeys(userId);
     localStorage.setItem(statsKey, JSON.stringify(stats));
   } catch (err) {
     console.error('Lỗi lưu thống kê:', err);
@@ -93,7 +80,7 @@ export function saveUserStats(stats: UserStats, userId?: string) {
 }
 
 /**
- * Thuật toán SuperMemo SM-2 chuẩn
+ * Lịch ôn SRS dựa trên hệ số dễ nhớ và khoảng cách ôn
  * quality: 0 (Quên / Lại), 1 (Khó), 2 (Nhớ tốt), 3 (Dễ)
  */
 export function calculateSM2(

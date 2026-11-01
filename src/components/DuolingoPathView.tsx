@@ -25,10 +25,13 @@ import { FastTrackModal } from './FastTrackModal';
 import { soundEffects } from '../services/audioSynthesizer';
 import { gamificationService, type GamificationState } from '../services/gamificationService';
 import { fireConfetti } from '../utils/confetti';
+import { loadCompletedNodes, roadmapNodeStatus } from '../services/studySession';
 
 interface DuolingoPathViewProps {
   currentLevel: HSKLevel;
   streak: number;
+  xp: number;
+  onCompleteNodes: (ids: string[]) => Set<string> | null;
   onAddXp?: (xp: number) => void;
   onOpenChatAI?: (prompt: string) => void;
   onOpenSprint?: () => void;
@@ -41,6 +44,8 @@ interface DuolingoPathViewProps {
 export function DuolingoPathView({
   currentLevel,
   streak,
+  xp,
+  onCompleteNodes,
   onAddXp,
   onOpenChatAI,
   onOpenSprint,
@@ -52,7 +57,7 @@ export function DuolingoPathView({
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
   const [selectedNodeModal, setSelectedNodeModal] = useState<RoadmapNode | null>(null);
   const [selectedGuidebookUnit, setSelectedGuidebookUnit] = useState<RoadmapUnit | null>(null);
-  const [userXp, setUserXp] = useState(120);
+
 
   const [gameState, setGameState] = useState<GamificationState>(gamificationService.getState());
 
@@ -66,14 +71,7 @@ export function DuolingoPathView({
   });
 
   // Danh sách các Node & Unit đã mở khóa / hoàn thành học vượt
-  const [completedNodeIds, setCompletedNodeIds] = useState<Set<string>>(() => {
-    try {
-      const saved = localStorage.getItem('aster_completed_nodes');
-      return saved ? new Set(JSON.parse(saved)) : new Set<string>();
-    } catch {
-      return new Set<string>();
-    }
-  });
+  const [completedNodeIds, setCompletedNodeIds] = useState<Set<string>>(loadCompletedNodes);
 
   // Modal thử thách học vượt
   const [fastTrackModal, setFastTrackModal] = useState<{
@@ -93,15 +91,7 @@ export function DuolingoPathView({
     localStorage.setItem('aster_fast_track_mode', String(nextVal));
   };
 
-  const getNodeEffectiveStatus = (node: RoadmapNode): 'completed' | 'active' | 'locked' => {
-    if (completedNodeIds.has(node.id) || node.status === 'completed') {
-      return 'completed';
-    }
-    if (fastTrackMode) {
-      return 'active';
-    }
-    return node.status;
-  };
+  const getNodeEffectiveStatus = (node: RoadmapNode) => roadmapNodeStatus(node.id, units.flatMap(unit => unit.nodes.map(n => n.id)), completedNodeIds, fastTrackMode);
 
   const handleNodeClick = (node: RoadmapNode) => {
     soundEffects.playTap();
@@ -118,65 +108,26 @@ export function DuolingoPathView({
   };
 
   const handleLessonCompleted = (earnedXp: number) => {
-    // Áp dụng Double XP nếu còn hiệu lực
-    const isDouble = gamificationService.isDoubleXpActive();
-    const finalXp = isDouble ? earnedXp * 2 : earnedXp;
-
-    setUserXp((prev) => prev + finalXp);
-    if (onAddXp) onAddXp(finalXp);
-
-    // Thưởng 10 Kim Cương 💎
+    if (!activeNode) return false;
+    const completed = onCompleteNodes([activeNode.id]);
+    if (!completed) return false;
+    setCompletedNodeIds(completed);
+    const finalXp = gamificationService.isDoubleXpActive() ? earnedXp * 2 : earnedXp;
+    onAddXp?.(finalXp);
     gamificationService.addGems(10);
-
-    // Cập nhật nhiệm vụ ngày
     gamificationService.updateQuestProgress('lesson', 1);
     gamificationService.updateQuestProgress('xp', finalXp);
-
-    // Hiệu ứng pháo hoa chúc mừng
     fireConfetti({ particleCount: 75, spread: 200 });
-
-    if (activeNode) {
-      const nextCompleted = new Set(completedNodeIds);
-      nextCompleted.add(activeNode.id);
-      setCompletedNodeIds(nextCompleted);
-      localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
-      activeNode.status = 'completed';
-      activeNode.stars = 3;
-    }
     setActiveNode(null);
+    return true;
   };
 
-  // Xử lý khi vượt qua thử thách học vượt
   const handleFastTrackSuccess = (earnedXp: number, unitId?: string) => {
-    setUserXp((prev) => prev + earnedXp);
-    if (onAddXp) onAddXp(earnedXp);
-
-    if (unitId) {
-      // Mở khóa và hoàn thành toàn bộ các bài trong unit đó
-      const targetUnit = units.find((u) => u.id === unitId);
-      if (targetUnit) {
-        const nextCompleted = new Set(completedNodeIds);
-        targetUnit.nodes.forEach((n) => {
-          nextCompleted.add(n.id);
-          n.status = 'completed';
-          n.stars = 3;
-        });
-        setCompletedNodeIds(nextCompleted);
-        localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
-      }
-    } else {
-      // Học vượt cấp độ: Hoàn thành toàn bộ các unit hiện tại
-      const nextCompleted = new Set(completedNodeIds);
-      units.forEach((u) => {
-        u.nodes.forEach((n) => {
-          nextCompleted.add(n.id);
-          n.status = 'completed';
-          n.stars = 3;
-        });
-      });
-      setCompletedNodeIds(nextCompleted);
-      localStorage.setItem('aster_completed_nodes', JSON.stringify(Array.from(nextCompleted)));
-    }
+    const targetUnits = unitId ? units.filter(unit => unit.id === unitId) : units;
+    const completed = onCompleteNodes(targetUnits.flatMap(unit => unit.nodes.map(node => node.id)));
+    if (!completed) return false;
+    setCompletedNodeIds(completed);
+    onAddXp?.(earnedXp);
   };
 
   // Zigzag offsets for the nodes (Duolingo winding path)
@@ -764,9 +715,9 @@ export function DuolingoPathView({
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, overflow: 'hidden' }}>
                 <span style={{ fontWeight: 900, color: '#eab308', fontSize: '14px', width: '16px', flexShrink: 0 }}>1</span>
                 <span style={{ fontSize: '18px', flexShrink: 0 }}>⚡</span>
-                <span style={{ fontSize: '13px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Bạn (Học Vượt)</span>
+                <span style={{ fontSize: '13px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>Bạn</span>
               </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#eab308', whiteSpace: 'nowrap', flexShrink: 0 }}>{userXp} XP</span>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#eab308', whiteSpace: 'nowrap', flexShrink: 0 }}>{xp} XP</span>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 10px', borderRadius: '10px', background: 'var(--surface-card)', gap: '8px' }}>

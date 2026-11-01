@@ -16,7 +16,6 @@ export interface UserProfile {
 }
 
 const ACTIVE_USER_KEY = 'aster_hsk_active_user_v1';
-const USERS_DB_KEY = 'aster_hsk_users_db_v1';
 
 // Danh sách avatar phong cách văn hóa Trung Hoa sinh động
 export const AVATAR_PRESETS = [
@@ -83,23 +82,6 @@ class AuthService {
     this.listeners.forEach((l) => l(this.currentUser));
   }
 
-  private getRegisteredUsers(): Record<string, { user: UserProfile; passwordHash: string }> {
-    try {
-      const raw = localStorage.getItem(USERS_DB_KEY);
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  }
-
-  private saveRegisteredUsers(users: Record<string, { user: UserProfile; passwordHash: string }>) {
-    try {
-      localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
-    } catch (e) {
-      console.error('Lỗi lưu danh sách users:', e);
-    }
-  }
-
   /**
    * Đăng ký tài khoản mới.
    * ĐẶC BIỆT: Tự động kế thừa tiến độ hiện tại để học viên không bị mất streak và từ đã học!
@@ -113,29 +95,6 @@ class AuthService {
   }
 
   /**
-   * Tạo nhanh tài khoản Khách dùng thử VIP để kiểm tra ngay
-   */
-  public loginDemoUser(): UserProfile {
-    const demoUser: UserProfile = {
-      id: 'usr_demo_vip',
-      name: 'Nguyễn Văn Minh (VIP)',
-      email: 'minh.nguyen@aster.com',
-      avatar: '🐉',
-      currentLevel: 2,
-      streak: 7,
-      xp: 1250,
-      createdAt: new Date().toISOString(),
-      isGuest: false,
-    };
-
-    this.currentUser = demoUser;
-    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(demoUser));
-    localStorage.setItem('aster_user_id', demoUser.id);
-    this.notify();
-    return demoUser;
-  }
-
-  /**
    * Đăng nhập / Đăng ký 1 chạm bằng Google Account
    */
   public async loginWithGoogle(_profile?: { email: string; name: string; avatar?: string }): Promise<UserProfile> {
@@ -146,21 +105,10 @@ class AuthService {
    * Cập nhật thông tin hồ sơ (Tên, Avatar, Cấp độ HSK)
    */
   public updateProfile(updates: Partial<UserProfile>): UserProfile {
-    this.currentUser = {
-      ...this.currentUser,
-      ...updates,
-    };
-
-    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(this.currentUser));
-
-    // Nếu đã đăng ký, cập nhật luôn vào DB users
-    if (!this.currentUser.isGuest && this.currentUser.email) {
-      const users = this.getRegisteredUsers();
-      if (users[this.currentUser.email]) {
-        users[this.currentUser.email].user = this.currentUser;
-        this.saveRegisteredUsers(users);
-      }
-    }
+    const next = { ...this.currentUser, ...updates };
+    // Commit before publishing. Legacy credential storage is intentionally untouched.
+    localStorage.setItem(ACTIVE_USER_KEY, JSON.stringify(next));
+    this.currentUser = next;
 
     this.notify();
     return this.currentUser;
@@ -189,21 +137,7 @@ class AuthService {
     return guestUser;
   }
 
-  /**
-   * Kế thừa tiến độ từ Guest sang User mới đăng ký
-   */
-  private migrateGuestDataToUser(userId: string) {
-    try {
-      const currentProgress = localStorage.getItem('aster_hsk_progress_v1');
-      if (currentProgress) {
-        localStorage.setItem(`aster_hsk_user_${userId}_progress`, currentProgress);
-      }
-      const currentStats = localStorage.getItem('aster_hsk_stats_v1');
-      if (currentStats) {
-        localStorage.setItem(`aster_hsk_user_${userId}_stats`, currentStats);
-      }
-    } catch {}
-  }
+
 }
 
 export const authService = new AuthService();

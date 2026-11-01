@@ -47,10 +47,7 @@ class LiveStudyPresenceService {
     this.onlineCount = this.calculateInitialCount();
     this.activities = this.generateInitialActivities();
 
-    // Cập nhật số người online nhẹ nhàng mỗi 25-40s
-    this.timer = setInterval(() => {
-      this.tick();
-    }, 28000);
+
   }
 
   private calculateInitialCount(): number {
@@ -119,9 +116,11 @@ class LiveStudyPresenceService {
 
   public subscribe(listener: (state: LivePresenceState) => void): () => void {
     this.listeners.push(listener);
+    if (!this.timer) this.timer = setInterval(() => this.tick(), 28000);
     listener(this.getState());
     return () => {
       this.listeners = this.listeners.filter((l) => l !== listener);
+      if (!this.listeners.length && this.timer) { clearInterval(this.timer); this.timer = null; }
     };
   }
 

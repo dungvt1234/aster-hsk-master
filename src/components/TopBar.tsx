@@ -25,7 +25,6 @@ import { mistakesService } from '../services/mistakesService';
 import { leagueService } from '../services/leagueService';
 import { dailyGoalService, type DailyGoalState } from '../services/dailyGoalService';
 import { favoriteVocabService } from '../services/favoriteVocabService';
-import { liveStudyPresenceService } from '../services/liveStudyPresenceService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -80,7 +79,6 @@ export function TopBar({
   const [userRank, setUserRank] = useState(() => leagueService.getUserRank());
   const [dailyGoal, setDailyGoal] = useState<DailyGoalState>(() => dailyGoalService.getState());
   const [starredCount, setStarredCount] = useState<number>(() => favoriteVocabService.getCount());
-  const [onlineCount, setOnlineCount] = useState<number>(() => liveStudyPresenceService.getState().onlineCount);
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -98,9 +96,6 @@ export function TopBar({
     const unsubFav = favoriteVocabService.subscribe(() => {
       setStarredCount(favoriteVocabService.getCount());
     });
-    const unsubPresence = liveStudyPresenceService.subscribe((p) => {
-      setOnlineCount(p.onlineCount);
-    });
     return () => {
       unsubSync();
       unsubGame();
@@ -108,7 +103,6 @@ export function TopBar({
       unsubLeague();
       unsubGoal();
       unsubFav();
-      unsubPresence();
     };
   }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -302,7 +296,7 @@ export function TopBar({
             color: '#16a34a',
             transition: 'all 0.2s ease',
           }}
-          title={`Đang có ${onlineCount} bạn cùng học trực tuyến. Nhấp để xem phòng học & hoạt động`}
+          title="Phòng học mô phỏng với dữ liệu minh họa"
         >
           <span
             style={{
@@ -315,10 +309,10 @@ export function TopBar({
             }}
           />
           <span className="stat-number" style={{ color: '#16a34a', fontWeight: 900 }}>
-            {onlineCount}
+            Phòng mẫu
           </span>
           <span className="desktop-only" style={{ fontSize: '11px', fontWeight: 700 }}>
-            Online
+            Mô phỏng
           </span>
         </div>
 
