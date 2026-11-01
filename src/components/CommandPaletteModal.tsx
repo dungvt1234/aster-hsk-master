@@ -20,6 +20,7 @@ import {
   ArrowRight,
   X,
   Compass,
+  Users,
 } from 'lucide-react';
 import type { HSKLevel, VocabItem } from '../types';
 import type { ActiveTab } from './Header';
@@ -38,6 +39,7 @@ interface CommandPaletteModalProps {
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
   onOpenSprint?: () => void;
+  onOpenLiveStudy?: () => void;
 }
 
 interface ActionItem {
@@ -61,6 +63,7 @@ export function CommandPaletteModal({
   onOpenStore,
   onOpenQuests,
   onOpenSprint,
+  onOpenLiveStudy,
 }: CommandPaletteModalProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -238,7 +241,15 @@ export function CommandPaletteModal({
       icon: <Flame size={18} color="#ef4444" />,
       action: () => onOpenSprint && onOpenSprint(),
     },
-  ], [currentLevel, onNavigateTab, onSelectLevel, theme, onToggleTheme, onOpenStore, onOpenQuests, onOpenSprint]);
+    {
+      id: 'util-live-study',
+      category: 'Tính năng & Tiện ích',
+      title: 'Phòng Học Trực Tuyến & Cài Đặt Đo Lường (Live Study) 🟢',
+      subtitle: 'Xem số lượng học viên online và cấu hình Google Analytics / Telegram',
+      icon: <Users size={18} color="#16a34a" />,
+      action: () => onOpenLiveStudy && onOpenLiveStudy(),
+    },
+  ], [currentLevel, onNavigateTab, onSelectLevel, theme, onToggleTheme, onOpenStore, onOpenQuests, onOpenSprint, onOpenLiveStudy]);
 
   // Tìm kiếm từ vựng trực tiếp khi có query
   const vocabResults: VocabItem[] = useMemo(() => {

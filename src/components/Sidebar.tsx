@@ -38,6 +38,7 @@ interface SidebarProps {
   onOpenAchievements?: () => void;
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
+  onOpenLiveStudy?: () => void;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
 }
@@ -60,6 +61,7 @@ export function Sidebar({
   onOpenAchievements,
   onOpenDailyGoal,
   onOpenFavorites,
+  onOpenLiveStudy,
   isOpenMobile,
   onCloseMobile,
 }: SidebarProps) {
@@ -442,6 +444,44 @@ export function Sidebar({
                 title="Mở Phòng Truyền Thống 12 Huy Hiệu"
               >
                 <span>🎖️</span> <span>Phòng Huy Hiệu</span>
+              </button>
+            )}
+
+            {onOpenLiveStudy && (
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenLiveStudy();
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                style={{
+                  gridColumn: '1 / -1',
+                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(16, 185, 129, 0.08))',
+                  border: '1.5px solid #22c55e',
+                  color: '#16a34a',
+                  borderRadius: '10px',
+                  padding: '7px 8px',
+                  fontSize: '11.5px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer',
+                  marginTop: '2px',
+                }}
+                title="Mở Phòng Học Trực Tuyến & Cài đặt theo dõi"
+              >
+                <span
+                  style={{
+                    width: '7px',
+                    height: '7px',
+                    borderRadius: '50%',
+                    background: '#22c55e',
+                    boxShadow: '0 0 6px #22c55e',
+                  }}
+                />
+                <span>Phòng Học Trực Tuyến 🟢</span>
               </button>
             )}
           </div>

@@ -22,6 +22,10 @@ import { gamificationService } from './services/gamificationService';
 import { leagueService } from './services/leagueService';
 import { dailyGoalService } from './services/dailyGoalService';
 import { favoriteVocabService } from './services/favoriteVocabService';
+import { Analytics } from '@vercel/analytics/react';
+import { LiveStudyRoomModal } from './components/LiveStudyRoomModal';
+import { telemetryService } from './services/telemetryService';
+import { liveStudyPresenceService } from './services/liveStudyPresenceService';
 
 // Code-Splitting: Lazy loading heavy views and secondary studios
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -71,6 +75,7 @@ export function App() {
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isDailyGoalOpen, setIsDailyGoalOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
+  const [isLiveStudyOpen, setIsLiveStudyOpen] = useState(false);
   const [customReviewCards, setCustomReviewCards] = useState<VocabItem[] | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
@@ -79,6 +84,8 @@ export function App() {
     setCurrentUser(authService.getCurrentUser());
     leagueService.addXp(amount);
     dailyGoalService.addXp(amount);
+    telemetryService.trackEvent('earn_xp', { amount, level: currentLevel });
+    liveStudyPresenceService.recordMyActivity(`vừa tích lũy +${amount} XP!`, currentLevel, currentUser.name || 'Bạn');
   };
 
   const [currentLevel, setCurrentLevel] = useState<HSKLevel>(1); // Mặc định mở HSK 1 với lộ trình Duolingo
@@ -198,6 +205,7 @@ export function App() {
         onOpenAchievements={() => setIsAchievementsOpen(true)}
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
+        onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
       />
@@ -218,6 +226,7 @@ export function App() {
           onOpenPodcast={() => setIsPodcastOpen(true)}
           onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
           onOpenFavorites={() => setIsFavoritesOpen(true)}
+          onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
           onOpenProfile={() => setIsProfileOpen(true)}
@@ -407,6 +416,7 @@ export function App() {
         onOpenAchievements={() => setIsAchievementsOpen(true)}
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
+        onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
       />
 
       {/* Modals with Suspense */}
@@ -426,6 +436,7 @@ export function App() {
           onOpenStore={() => setIsStoreOpen(true)}
           onOpenQuests={() => setIsQuestsOpen(true)}
           onOpenSprint={() => setIsSprintOpen(true)}
+          onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
         />
 
         {/* 3-Minute FSRS Memory Sprint Modal */}
@@ -555,7 +566,16 @@ export function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         />
+
+        {/* Phòng Học Trực Tuyến & Cài đặt theo dõi Admin (Live Study Room) 🟢 */}
+        <LiveStudyRoomModal
+          isOpen={isLiveStudyOpen}
+          onClose={() => setIsLiveStudyOpen(false)}
+        />
       </Suspense>
+
+      {/* Vercel Web Analytics tự động thu thập lưu lượng truy cập */}
+      <Analytics />
     </div>
   );
 }

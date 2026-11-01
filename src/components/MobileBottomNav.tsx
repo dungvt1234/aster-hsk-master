@@ -27,6 +27,7 @@ interface MobileBottomNavProps {
   onOpenAchievements?: () => void;
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
+  onOpenLiveStudy?: () => void;
 }
 
 export function MobileBottomNav({
@@ -40,6 +41,7 @@ export function MobileBottomNav({
   onOpenAchievements,
   onOpenDailyGoal,
   onOpenFavorites,
+  onOpenLiveStudy,
 }: MobileBottomNavProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
@@ -169,8 +171,34 @@ export function MobileBottomNav({
               </button>
             )}
 
-            {/* Quick Action Badges (League, Podcast, Mistakes, Achievements, Daily Goal, Favorites) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '14px' }}>
+            {/* Quick Action Badges (Live, League, Podcast, Mistakes, Achievements, Daily Goal, Favorites) */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(76px, 1fr))', gap: '6px', marginBottom: '14px' }}>
+              {onOpenLiveStudy && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+                    onOpenLiveStudy();
+                  }}
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.14)',
+                    border: '1.5px solid #10b981',
+                    color: '#059669',
+                    borderRadius: '12px',
+                    padding: '8px 4px',
+                    fontSize: '11px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span style={{ fontSize: '16px' }}>🟢</span>
+                  <span>Phòng Live</span>
+                </button>
+              )}
               {onOpenLeague && (
                 <button
                   type="button"

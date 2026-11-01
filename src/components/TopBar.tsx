@@ -25,6 +25,7 @@ import { mistakesService } from '../services/mistakesService';
 import { leagueService } from '../services/leagueService';
 import { dailyGoalService, type DailyGoalState } from '../services/dailyGoalService';
 import { favoriteVocabService } from '../services/favoriteVocabService';
+import { liveStudyPresenceService } from '../services/liveStudyPresenceService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -43,6 +44,7 @@ interface TopBarProps {
   onOpenPodcast?: () => void;
   onOpenDailyGoal?: () => void;
   onOpenFavorites?: () => void;
+  onOpenLiveStudy?: () => void;
   onToggleMobileMenu?: () => void;
   onOpenCommandPalette?: () => void;
 }
@@ -64,6 +66,7 @@ export function TopBar({
   onOpenPodcast,
   onOpenDailyGoal,
   onOpenFavorites,
+  onOpenLiveStudy,
   onToggleMobileMenu,
   onOpenCommandPalette,
 }: TopBarProps) {
@@ -75,6 +78,7 @@ export function TopBar({
   const [userRank, setUserRank] = useState(() => leagueService.getUserRank());
   const [dailyGoal, setDailyGoal] = useState<DailyGoalState>(() => dailyGoalService.getState());
   const [starredCount, setStarredCount] = useState<number>(() => favoriteVocabService.getCount());
+  const [onlineCount, setOnlineCount] = useState<number>(() => liveStudyPresenceService.getState().onlineCount);
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -92,6 +96,9 @@ export function TopBar({
     const unsubFav = favoriteVocabService.subscribe(() => {
       setStarredCount(favoriteVocabService.getCount());
     });
+    const unsubPresence = liveStudyPresenceService.subscribe((p) => {
+      setOnlineCount(p.onlineCount);
+    });
     return () => {
       unsubSync();
       unsubGame();
@@ -99,6 +106,7 @@ export function TopBar({
       unsubLeague();
       unsubGoal();
       unsubFav();
+      unsubPresence();
     };
   }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -274,6 +282,42 @@ export function TopBar({
         >
           <Gift size={13} color="#10b981" />
           <span>100% MIỄN PHÍ</span>
+        </div>
+
+        {/* Live Study Presence Indicator (🟢 X Bạn Online) */}
+        <div
+          className="topbar-stat-pill live-presence-pill"
+          onClick={onOpenLiveStudy}
+          style={{
+            cursor: onOpenLiveStudy ? 'pointer' : 'default',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '4px 10px',
+            borderRadius: '20px',
+            background: 'rgba(34, 197, 94, 0.12)',
+            border: '1.5px solid rgba(34, 197, 94, 0.4)',
+            color: '#16a34a',
+            transition: 'all 0.2s ease',
+          }}
+          title={`Đang có ${onlineCount} bạn cùng học trực tuyến. Nhấp để xem phòng học & hoạt động`}
+        >
+          <span
+            style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#22c55e',
+              boxShadow: '0 0 8px #22c55e',
+              display: 'inline-block',
+            }}
+          />
+          <span className="stat-number" style={{ color: '#16a34a', fontWeight: 900 }}>
+            {onlineCount}
+          </span>
+          <span className="desktop-only" style={{ fontSize: '11px', fontWeight: 700 }}>
+            Online
+          </span>
         </div>
 
         {/* Streak Flame & Shield */}
