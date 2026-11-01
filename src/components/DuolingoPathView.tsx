@@ -26,6 +26,7 @@ import { soundEffects } from '../services/audioSynthesizer';
 import { gamificationService, type GamificationState } from '../services/gamificationService';
 import { fireConfetti } from '../utils/confetti';
 import { loadCompletedNodes, roadmapNodeStatus } from '../services/studySession';
+import { GreetingsPilot } from './GreetingsPilot';
 
 interface DuolingoPathViewProps {
   currentLevel: HSKLevel;
@@ -54,6 +55,7 @@ export function DuolingoPathView({
   onOpenStore,
   onOpenQuests,
 }: DuolingoPathViewProps) {
+  const [showPilot, setShowPilot] = useState(false);
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
   const [selectedNodeModal, setSelectedNodeModal] = useState<RoadmapNode | null>(null);
   const [selectedGuidebookUnit, setSelectedGuidebookUnit] = useState<RoadmapUnit | null>(null);
@@ -139,6 +141,8 @@ export function DuolingoPathView({
 
   return (
     <div className="duo-path-layout">
+      {(import.meta as any).env?.DEV && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)} style={{ margin: 12 }}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+      {(import.meta as any).env?.DEV && showPilot && <GreetingsPilot onClose={() => setShowPilot(false)} />}
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
         {/* Next-Gen Interactive Action Strip */}

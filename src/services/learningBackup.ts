@@ -3,7 +3,7 @@ const EXACT_KEYS = new Set([
   'aster_completed_nodes', 'aster_fast_track_mode', 'aster_favorite_vocab_v1',
   'aster_achievements_v1', 'aster_daily_goal_v1', 'aster_league_state', 'aster_mistakes_notebook',
   'aster_hsk_audio_completed_v1', 'aster_hsk_course_active_v1', 'aster_hsk_grammar_completed_v1',
-  'aster_practiced_hanzi', 'aster_writing_auto_advance', 'aster_hsk_theme',
+  'aster_practiced_hanzi', 'aster_writing_auto_advance', 'aster_hsk_theme', 'aster_pilot_hsk1_greetings_v1',
 ]);
 const PREFIX_KEYS = ['aster_gamification_', 'aster_starter_claimed_'];
 const USER_PROGRESS_KEY = /^aster_hsk_user_.+_(progress|stats)$/;
@@ -34,6 +34,7 @@ function validStoredValue(key: string, raw: string): boolean {
   if (key === 'aster_fast_track_mode' || key === 'aster_writing_auto_advance' || key.startsWith('aster_starter_claimed_')) return raw === 'true' || raw === 'false';
   let value: any;
   try { value = JSON.parse(raw); } catch { return false; }
+  if (key === 'aster_pilot_hsk1_greetings_v1') return record(value) && value.completed === true && count(value.correct) && count(value.total) && value.correct <= value.total && typeof value.completedAt === 'string' && Number.isFinite(Date.parse(value.completedAt));
   if (key === 'aster_hsk_active_user_v1') return record(value) &&
     ['id', 'name', 'email', 'avatar', 'createdAt'].every((field) => typeof value[field] === 'string') &&
     /^[a-zA-Z0-9_-]{1,160}$/.test(value.id) && [1, 2, 3, 4].includes(value.currentLevel) &&
