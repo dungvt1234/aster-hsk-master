@@ -26,7 +26,6 @@ export function PathLearningFocus({ level = 1, nodes, completed, freeMode, onSel
     <progress className="learning-progress" value={learned.length} max={Math.max(1,nodes.length)} aria-label={`Tiến độ HSK ${level}`} />
     <div className="path-focus-actions">
       {onOpenMistakes && <button type="button" onClick={onOpenMistakes}>Ôn câu đã sai</button>}
-      <a href="#hsk1-practice">Bài đã học và bài ôn</a>
     </div>
     <details id="hsk1-practice" className="path-focus-details">
       <summary>Bài đã học và bài ôn</summary>

@@ -90,3 +90,16 @@
  .path-tool-buttons button { min-height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) { .learning-shortcut { transition: none; } }
+@media (max-width: 768px) {
+ .app-topbar { display: grid; grid-template-columns: minmax(0,1fr) auto; }
+ .topbar-right-controls > * { display: none !important; }
+ .topbar-right-controls > .topbar-command-search-btn,
+ .topbar-right-controls > .level-mobile-select-wrap { display: flex !important; }
+ .level-mobile-select { width: 80px; max-width: 80px; min-height: 40px; font-size: 12px; padding-left: 9px; }
+ .topbar-heading { overflow: hidden; }
+ .topbar-mobile-menu-btn { width: 36px; height: 40px; }
+ .duo-mascot-fab { display: none !important; }
+ .path-learning-focus { padding: 20px 18px; }
+ .path-focus-actions { margin-top: 12px; }
+ .path-focus-details { margin-top: 12px; }
+}
