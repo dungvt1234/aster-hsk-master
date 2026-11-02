@@ -27,6 +27,7 @@ import { gamificationService, type GamificationState } from '../services/gamific
 import { fireConfetti } from '../utils/confetti';
 import { loadCompletedNodes, roadmapNodeStatus } from '../services/studySession';
 import { GreetingsPilot } from './GreetingsPilot';
+import { PathLearningFocus } from './PathLearningFocus';
 
 interface DuolingoPathViewProps {
   currentLevel: HSKLevel;
@@ -40,6 +41,7 @@ interface DuolingoPathViewProps {
   onSelectLevel?: (lvl: HSKLevel) => void;
   onOpenStore?: () => void;
   onOpenQuests?: () => void;
+  onOpenMistakes?: () => void;
 }
 
 export function DuolingoPathView({
@@ -54,6 +56,7 @@ export function DuolingoPathView({
   onSelectLevel,
   onOpenStore,
   onOpenQuests,
+  onOpenMistakes,
 }: DuolingoPathViewProps) {
   const [showPilot, setShowPilot] = useState(false);
   const [activeNode, setActiveNode] = useState<RoadmapNode | null>(null);
@@ -93,7 +96,9 @@ export function DuolingoPathView({
     localStorage.setItem('aster_fast_track_mode', String(nextVal));
   };
 
-  const getNodeEffectiveStatus = (node: RoadmapNode) => roadmapNodeStatus(node.id, units.flatMap(unit => unit.nodes.map(n => n.id)), completedNodeIds, fastTrackMode);
+  const orderedNodes = units.flatMap(unit => unit.nodes);
+  const orderedIds = orderedNodes.map(node => node.id);
+  const getNodeEffectiveStatus = (node: RoadmapNode) => roadmapNodeStatus(node.id, orderedIds, completedNodeIds, fastTrackMode);
 
   const handleNodeClick = (node: RoadmapNode) => {
     soundEffects.playTap();
@@ -140,205 +145,22 @@ export function DuolingoPathView({
   };
 
   return (
-    <div className="duo-path-layout">
-      {(import.meta as any).env?.DEV && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)} style={{ margin: 12 }}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+    <div className={`duo-path-layout ${currentLevel === 1 ? 'hsk1-study-layout' : ''}`}>
       {(import.meta as any).env?.DEV && showPilot && <GreetingsPilot onClose={() => setShowPilot(false)} />}
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
-        {/* Next-Gen Interactive Action Strip */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '12px',
-            marginBottom: '16px',
-          }}
-        >
-          {/* Action 1: 3-Min Memory Sprint */}
-          {onOpenSprint && (
-            <div
-              onClick={onOpenSprint}
-              style={{
-                background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.1))',
-                border: '1.5px solid rgba(245, 158, 11, 0.4)',
-                borderRadius: '16px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 2px 10px rgba(245, 158, 11, 0.15)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
-                    background: '#f59e0b',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Zap size={20} fill="#fff" />
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
-                    Bữa Sáng Trí Nhớ 3p ⚡
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    10 câu SRS chống quên nhanh
-                  </div>
-                </div>
-              </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#f59e0b' }}>Bắt Đầu ➔</span>
-            </div>
-          )}
-
-          {/* Action 2: Hanzi Arena Speed Match */}
-          {onNavigateTab && (
-            <div
-              onClick={() => onNavigateTab('arena')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(249, 115, 22, 0.1))',
-                border: '1.5px solid rgba(239, 68, 68, 0.4)',
-                borderRadius: '16px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 2px 10px rgba(239, 68, 68, 0.15)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
-                    background: '#ef4444',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Flame size={20} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
-                    Đấu Trường 60s 🎮
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Ghép thẻ tốc độ & rương báu
-                  </div>
-                </div>
-              </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#ef4444' }}>Chiến ➔</span>
-            </div>
-          )}
-
-          {/* Action 3: Hanzi Writing Studio */}
-          {onNavigateTab && (
-            <div
-              onClick={() => onNavigateTab('writing')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(217, 70, 239, 0.1))',
-                border: '1.5px solid rgba(236, 72, 153, 0.4)',
-                borderRadius: '16px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 2px 10px rgba(236, 72, 153, 0.15)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
-                    background: '#ec4899',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Sparkles size={20} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
-                    Tập Viết Chữ Hán 🖌️
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Mễ Tự Cách & Bút thuận 3P
-                  </div>
-                </div>
-              </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#ec4899' }}>Vẽ Ngay ➔</span>
-            </div>
-          )}
-
-          {/* Action 4: AI Voice & Speaking Studio */}
-          {onNavigateTab && (
-            <div
-              onClick={() => onNavigateTab('speaking')}
-              style={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1))',
-                border: '1.5px solid rgba(16, 185, 129, 0.4)',
-                borderRadius: '16px',
-                padding: '14px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: '0 2px 10px rgba(16, 185, 129, 0.15)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    borderRadius: '10px',
-                    background: '#10b981',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Target size={20} />
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-heading)' }}>
-                    Luyện Nói AI 🎙️
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                    Chấm điểm phát âm & Khẩu ngữ
-                  </div>
-                </div>
-              </div>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#10b981' }}>Luyện ➔</span>
-            </div>
-          )}
-        </div>
-
+        {currentLevel === 1 && <PathLearningFocus nodes={orderedNodes} completed={completedNodeIds} freeMode={fastTrackMode} onSelect={handleNodeClick} onOpenMistakes={onOpenMistakes} />}
+        {(import.meta as any).env?.DEV && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+        <details className="path-secondary-tools" open={currentLevel !== 1 ? true : undefined}>
+          <summary>Công cụ luyện tập và học vượt</summary>
+          <div className="path-tool-buttons">
+            {onOpenSprint && <button type="button" onClick={onOpenSprint}>Ôn thẻ từ nhanh</button>}
+            {onNavigateTab && <>
+              <button type="button" onClick={() => onNavigateTab('arena')}>Ghép thẻ tốc độ</button>
+              <button type="button" onClick={() => onNavigateTab('writing')}>Tập viết chữ Hán</button>
+              <button type="button" onClick={() => onNavigateTab('speaking')}>Công cụ luyện nói</button>
+            </>}
+          </div>
         {/* =========================================================================
             CHẾ ĐỘ HỌC VƯỢT (FAST-TRACK MASTER STRIP)
            ========================================================================= */}
@@ -477,9 +299,11 @@ export function DuolingoPathView({
           </div>
         </div>
 
+        </details>
+
         {units.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-            <h3>Đang đồng bộ lộ trình HSK {currentLevel}...</h3>
+            <h3>Chưa có lộ trình HSK {currentLevel} trên thiết bị.</h3>
             <p>Vui lòng chuyển qua tab Giáo Trình hoặc HSK 1 - 2 để trải nghiệm lộ trình đầy đủ.</p>
           </div>
         ) : (
@@ -597,6 +421,8 @@ export function DuolingoPathView({
 
       {/* Right Sidebar: Gamification, Daily Quests, Leaderboard & Streak */}
       <aside className="duo-path-sidebar">
+        <details className="path-secondary-tools" open={currentLevel !== 1 ? true : undefined}>
+          <summary>Phần thưởng và hoạt động bổ trợ</summary>
         {/* Daily Mystery Chest (Rương Bí Mật Hàng Ngày) */}
         {gamificationService.canOpenMysteryChest() ? (
           <div
@@ -781,6 +607,7 @@ export function DuolingoPathView({
             </div>
           </div>
         </div>
+        </details>
       </aside>
 
       {/* Node Preview Popup Card */}

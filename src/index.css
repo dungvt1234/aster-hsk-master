@@ -5221,3 +5221,23 @@ button {
 @media (prefers-reduced-motion: reduce) { .pilot-dialog, .pilot-dialog * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 
 .pilot-dialog ul { padding-left: 22px; margin: 12px 0; }
+
+/* Focus the HSK1 path on the next lesson; secondary tools stay available. */
+.path-learning-focus { padding: 22px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); color: var(--text); line-height: 1.6; }
+.path-learning-focus h2 { font-size: 24px; margin: 8px 0; }
+.path-focus-eyebrow { color: var(--text-muted); font-size: 12px; letter-spacing: .1em; font-weight: 700; }
+.path-focus-title { font-size: 20px; font-weight: 700; }
+.path-learning-focus button, .path-tool-buttons button { padding: 10px 14px; min-height: 44px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-card); color: var(--text); font: inherit; cursor: pointer; text-align: left; }
+.path-learning-focus .path-focus-primary { background: var(--primary); color: white; font-weight: 700; margin: 10px 0; }
+.path-learning-focus button:disabled { opacity: .6; cursor: default; }
+.path-focus-actions, .path-tool-buttons { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+.path-focus-actions a { display: flex; align-items: center; min-height: 44px; color: var(--text); text-decoration: underline; }
+.path-focus-details summary, .path-secondary-tools > summary { min-height: 44px; padding: 12px 0; cursor: pointer; font-weight: 700; }
+.path-focus-details { scroll-margin-top: 100px; }
+.path-focus-details ul { list-style: none; padding: 0; }
+.path-focus-details li { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.path-focus-details li p { font-size: 14px; margin-top: 6px; }
+.path-secondary-tools { min-width: 0; border: 1px solid var(--border); border-radius: 16px; padding: 8px 16px; background: var(--surface); color: var(--text); }
+.hsk1-study-layout :is(button, a, summary):focus-visible { outline: 3px solid var(--info); outline-offset: 3px; }
+@media (max-width: 900px) { .hsk1-study-layout .duo-path-sidebar { display: block; position: static; } }
+@media (prefers-reduced-motion: reduce) { .hsk1-study-layout *, .hsk1-study-layout *::before, .hsk1-study-layout *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

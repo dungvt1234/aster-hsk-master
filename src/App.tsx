@@ -248,6 +248,7 @@ export function App() {
                 onOpenSprint={() => setIsSprintOpen(true)}
                 onOpenStore={() => setIsStoreOpen(true)}
                 onOpenQuests={() => setIsQuestsOpen(true)}
+                onOpenMistakes={() => setIsMistakesOpen(true)}
                 onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
               />
             )}

@@ -31,7 +31,9 @@ jobs:
       - name: Check greeting pilot in mobile and desktop Chromium
         env:
           PLAYWRIGHT_MODULE_DIR: ${{ runner.temp }}/pilot-browser/node_modules/playwright
-        run: node tests/browser/greetingsPilot.smoke.mjs
+        run: |
+          node tests/browser/greetingsPilot.smoke.mjs
+          node tests/browser/pathFocus.smoke.mjs
       - name: Keep pilot browser screenshots
         if: always()
         uses: actions/upload-artifact@v4
