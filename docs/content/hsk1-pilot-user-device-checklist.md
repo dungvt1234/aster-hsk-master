@@ -1,6 +1,6 @@
 # Bài mẫu HSK 1 — kịch bản thử người mới và thiết bị thật
 
-Trạng thái: **PENDING**, chưa có người học, chuyên gia hoặc thiết bị thật tham gia đợt xác minh này. Đây là phiếu trống để nghiệm thu, không phải kết quả thử. Người chuẩn bị: Codex; mốc thiết kế `f234909b156c2a2e8119d529e8e110e10fe1b675`, 2026-11-02.
+Trạng thái: **PENDING**, chưa có người học, chuyên gia hoặc thiết bị thật tham gia đợt xác minh này. Đây là phiếu trống để nghiệm thu, không phải kết quả thử. Người chuẩn bị: Codex; mốc thiết kế `f234909b156c2a2e8119d529e8e110e10fe1b675`, 2026-11-02. Gói A đổi hai ngữ cảnh hướng dẫn; dùng candidate/commit mới nhất ghi trong báo cáo Gói A–B khi điền phiếu, không nghiệm thu trên câu cũ. Thử khả năng áp dụng sang câu tự làm khác ngữ cảnh.
 
 ## Chuẩn bị
 

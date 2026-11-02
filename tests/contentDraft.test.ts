@@ -26,3 +26,15 @@ test('pilot questions and examples link to defined learning points and valid ans
   }
   for (const example of lesson.examples) { assert.ok(points.has(example.pointId)); assert.ok(example.hanzi && example.pinyin && example.meaning); }
 });
+
+
+test('guided contexts cannot repeat the same independent question and answer for their learning point', () => {
+  for (const guided of lesson.guidedExercises) {
+    const independent = lesson.exercises.filter((q: any) => q.pointId === guided.pointId);
+    assert.ok(independent.length, guided.id);
+    for (const q of independent) {
+      assert.notEqual(guided.prompt, q.prompt, guided.id);
+      assert.notEqual(guided.options[guided.answerIndex], q.options[q.answerIndex], guided.id);
+    }
+  }
+});

@@ -30,8 +30,8 @@ function self() {
   click('Học bài mẫu');
   assert.ok(screen.getByText('Từ và cách dùng'));
   click('Luyện có hướng dẫn');
-  answer('您好！', 'Câu tiếp theo');
-  answer('没关系。', 'Bắt đầu tự làm');
+  answer('你好！', 'Câu tiếp theo');
+  answer('对不起。', 'Bắt đầu tự làm');
 }
 function complete(wrong = false) {
   self();

@@ -11,3 +11,5 @@ Thumbs.db
 .vercel
 
 artifacts/pilot-browser/
+
+dist-pilot-preview/

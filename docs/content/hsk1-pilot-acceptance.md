@@ -1,5 +1,7 @@
 # Nghiệm thu bài mẫu HSK 1 — Bước A, B và phần độc lập C
 
+> Biên bản lượt nghiệm thu tại f234909/75abc30. Gói A sau đó đã sửa hai ngữ cảnh hướng dẫn và giải thích pinyin; kết quả mới, preview/protection và bản nháp Unit0 xem [báo cáo Gói A–B](hsk1-unit-plan-package-a-b.md). Không dùng dòng mô tả nội dung cũ dưới đây để ký duyệt candidate mới.
+
 Ngày thực hiện: **2026-11-02 (Việt Nam)**. Người thực hiện: **Codex, agent kỹ thuật/chuẩn bị hồ sơ**; không tự nhận là chuyên gia tiếng Trung hoặc người học thử.
 
 Nhánh: `refactor/learning-safety-a5bb852`; baseline được kiểm tra `f234909b156c2a2e8119d529e8e110e10fe1b675`. PR #1 open/draft; checkout đầu sạch, fast-forward từ a45be77 chỉ thêm kế hoạch mới; không có AGENTS.md trong checkout. Đã đọc kế hoạch nghiệm thu mới và đối chiếu sáu tài liệu trong §2 với mã hiện tại; nội dung sáu tài liệu không đổi so với lượt bàn giao trước.

@@ -89,7 +89,7 @@
     {
       "id": "p-tones",
       "title": "Viết nǐ hǎo, đọc gần như ní hǎo",
-      "explanation": "你好 được ghi pinyin là nǐ hǎo. Khi nói liền hai âm tiết thanh 3, âm đầu được đọc thành thanh 2. Phân biệt cách ghi thanh gốc với cách đọc trong câu.",
+      "explanation": "Pinyin dùng chữ cái Latin để ghi cách đọc tiếng Trung. Dấu ˇ trong nǐ và hǎo là dấu thanh 3. 你好 được ghi theo thanh gốc là nǐ hǎo; khi nói liền hai âm tiết thanh 3, âm đầu đọc thành thanh 2, gần như ní hǎo. Đây chỉ là một quy tắc cần dùng trong bài, chưa phải toàn bộ phát âm.",
       "vocabIds": [
         "v-nihao"
       ]
@@ -183,7 +183,8 @@
     "Phần cảm ơn chuyển sang bản mẫu bài 2; tránh gộp nhiều mục tiêu vào bài đầu.",
     "Các ví dụ và giải thích tiếng Việt trong bản nháp được biên soạn lại, không nhập toàn bộ slide.",
     "Chưa đánh dấu đã kiểm duyệt chuyên môn; cần đối chiếu pinyin, phát âm và quyền dùng tài nguyên trước khi xuất bản.",
-    "Giai đoạn 3: hai câu có hướng dẫn và bốn câu tự làm, gồm một câu nghe; kết quả pilot độc lập với lộ trình/XP. Chưa duyệt ngôn ngữ và tài nguyên để xuất bản."
+    "Giai đoạn 3: hai câu có hướng dẫn và bốn câu tự làm, gồm một câu nghe; kết quả pilot độc lập với lộ trình/XP. Chưa duyệt ngôn ngữ và tài nguyên để xuất bản.",
+    "Gói A theo kế hoạch từng unit: đổi hai ngữ cảnh có hướng dẫn và đáp án để không trùng nguyên câu tự làm; giữ toàn bộ ID và trạng thái pending. Giải thích pinyin theo điều kiện người mới."
   ],
   "prerequisites": [
     "Chưa cần biết tiếng Trung. Hãy xem chữ Hán, pinyin và nghĩa trước khi tự làm.",
@@ -193,30 +194,30 @@
     {
       "id": "guided-greet",
       "type": "multiple_choice",
-      "prompt": "Muốn chào lịch sự một người lớn tuổi, bạn chọn câu nào?",
+      "prompt": "Bạn gặp một người bạn cùng tuổi. Chọn lời chào thông thường.",
       "options": [
-        "您好！",
-        "你们好！",
+        "你好！",
+        "没关系。",
         "对不起。"
       ],
       "answerIndex": 0,
-      "explanation": "您好 là cách chào thể hiện sự kính trọng. 你们好 dùng để chào nhiều người.",
+      "explanation": "你好 dùng để chào một người. 没关系 đáp lời xin lỗi; 对不起 dùng để xin lỗi.",
       "pointId": "p-greet",
-      "hint": "您好 dùng để chào lịch sự một người."
+      "hint": "你好 là lời chào thông thường với một người."
     },
     {
       "id": "guided-apology",
       "type": "multiple_choice",
-      "prompt": "Một người nói 对不起. Bạn muốn đáp không sao, nên chọn câu nào?",
+      "prompt": "Bạn vô ý làm phiền người khác. Muốn nói xin lỗi, bạn chọn câu nào?",
       "options": [
-        "你好。",
-        "没关系。",
-        "您。"
+        "您好！",
+        "对不起。",
+        "你们好！"
       ],
       "answerIndex": 1,
-      "explanation": "没关系 là cách đáp không sao trong tình huống này.",
+      "explanation": "对不起 là lời xin lỗi. Khi nghe lời xin lỗi, người kia có thể đáp 没关系.",
       "pointId": "p-apology",
-      "hint": "Nhớ cặp 对不起 → 没关系: xin lỗi → không sao."
+      "hint": "Khi mình gây phiền hoặc mắc lỗi, có thể nói 对不起."
     }
   ]
 }

@@ -29,6 +29,9 @@ import { loadCompletedNodes, roadmapNodeStatus } from '../services/studySession'
 import { GreetingsPilot } from './GreetingsPilot';
 import { PathLearningFocus } from './PathLearningFocus';
 
+// Preview mode is an explicit build choice, not authentication or deployment protection.
+const pilotEnabled = (import.meta as any).env?.DEV || ((import.meta as any).env?.MODE === 'hsk1-preview' && (import.meta as any).env?.VITE_HSK1_PILOT_PREVIEW === 'true');
+
 interface DuolingoPathViewProps {
   currentLevel: HSKLevel;
   streak: number;
@@ -146,11 +149,11 @@ export function DuolingoPathView({
 
   return (
     <div className={`duo-path-layout ${currentLevel === 1 ? 'hsk1-study-layout' : ''}`}>
-      {(import.meta as any).env?.DEV && showPilot && <GreetingsPilot onClose={() => setShowPilot(false)} />}
+      {pilotEnabled && showPilot && <GreetingsPilot onClose={() => setShowPilot(false)} />}
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
         {currentLevel === 1 && <PathLearningFocus nodes={orderedNodes} completed={completedNodeIds} freeMode={fastTrackMode} onSelect={handleNodeClick} onOpenMistakes={onOpenMistakes} />}
-        {(import.meta as any).env?.DEV && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+        {pilotEnabled && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
         <details className="path-secondary-tools" open={currentLevel !== 1 ? true : undefined}>
           <summary>Công cụ luyện tập và học vượt</summary>
           <div className="path-tool-buttons">

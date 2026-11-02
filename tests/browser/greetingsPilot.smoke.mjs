@@ -55,7 +55,7 @@ try {
     await click('Học bài mẫu');
     await geometry(); await page.screenshot({ path: `${output}/${width}-learn.png` });
     await click('Luyện có hướng dẫn'); // Playwright scrolls to this button at the bottom of the teaching section.
-    await answer('您好！', 'Câu tiếp theo'); await answer('没关系。', 'Bắt đầu tự làm');
+    await answer('你好！', 'Câu tiếp theo'); await answer('对不起。', 'Bắt đầu tự làm');
     await page.keyboard.press('Escape');
     await page.getByRole('heading', { name: 'Thoát bài đang học?' }).waitFor();
     await page.keyboard.press('Shift+Tab');
