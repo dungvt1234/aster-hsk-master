@@ -806,6 +806,15 @@ export function DuolingoPathView({
               </p>
             </div>
 
+            {selectedNodeModal.id === 'node-hsk1-0-1' && (
+              <section aria-label="Học trước khi luyện tập" style={{ marginTop: 14, padding: 14, borderRadius: 12, background: 'var(--surface-card)', color: 'var(--text)' }}>
+                <strong>Bắt đầu từ đây</strong>
+                <p>Tiếng Trung dùng chữ Hán và pinyin để ghi cách đọc. Dấu trên pinyin cho biết thanh điệu.</p>
+                <p>一 yī — 1 · 二 èr — 2 · 三 sān — 3 · 四 sì — 4 · 五 wǔ — 5</p>
+                <button type="button" onClick={() => soundEffects.speakChinese('一 二 三 四 五', 0.7)}>🔊 Nghe số 1–5 (giọng thiết bị)</button>
+                <p>Hãy xem và nghe trước, sau đó bắt đầu bài luyện bên dưới.</p>
+              </section>
+            )}
             <div className="popup-reward-badge">
               <Zap size={16} color="#FFC800" /> Phần thưởng: +{selectedNodeModal.xpReward} XP
             </div>

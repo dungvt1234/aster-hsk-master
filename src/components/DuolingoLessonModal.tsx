@@ -476,16 +476,16 @@ export function DuolingoLessonModal({
                       >
                         🐢
                       </button>
-                      <span className="duo-chinese-stimulus">
+                      {(status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && <span className="duo-chinese-stimulus">
                         {highlightGrammarInChinese(
                           currentChallenge.chineseAudioText,
                           currentChallenge.grammarHighlights || []
                         )}
-                      </span>
+                      </span>}
                     </div>
 
                     {/* Tone-Colored Pinyin Highlight Badge */}
-                    {currentChallenge.pinyinAudioText && (
+                    {currentChallenge.pinyinAudioText && (status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && (
                       <div className="duo-stimulus-pinyin-badge">
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, marginRight: '4px' }}>
                           Phát âm:
@@ -498,7 +498,7 @@ export function DuolingoLessonModal({
               )}
 
               {/* Pinyin Tone Legend Helper */}
-              {currentChallenge.pinyinAudioText && (
+              {currentChallenge.pinyinAudioText && (status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && (
                 <div style={{ margin: '-10px 0 16px', display: 'flex', justifyContent: 'center' }}>
                   <ToneLegend compact={true} />
                 </div>

@@ -67,6 +67,8 @@ test('complete the real first lesson and reload its saved completion', async () 
   click('KIỂM TRA'); click('TIẾP TỤC');
   click(/Số 3/); click('KIỂM TRA'); click('TIẾP TỤC');
   click(/wǔ - Số 5/); click('KIỂM TRA'); click('TIẾP TỤC');
+  click(/Số 2 \(èr\)/); click('KIỂM TRA'); click('TIẾP TỤC');
+  click(/^1\s*四$/); click('KIỂM TRA'); click('TIẾP TỤC');
   assert.equal(earned, 0);
   click(/TIẾP TỤC HỌC TẬP/);
   assert.equal(earned, node.xpReward);
@@ -97,6 +99,8 @@ test('the app saves a completed lesson and XP, then restores the path on remount
   await screen.findByRole('heading', { name: 'Lộ Trình HSK 1' });
   assert.equal(screen.queryByRole('dialog', {name: 'Học trên thiết bị này'}), null);
   click('Số đếm 1 đến 5 - 一 · 二 · 三 · 四 · 五');
+  assert.ok(screen.getByLabelText('Học trước khi luyện tập'));
+  assert.ok(screen.getByRole('button', { name: /Nghe số 1–5/ }));
   click(/BẮT ĐẦU HỌC/);
   for (const [left, right] of [['一','Số 1'], ['二','Số 2'], ['三','Số 3'], ['四','Số 4']]) { click(left); click(right); }
   click('KIỂM TRA'); click('TIẾP TỤC');
@@ -104,6 +108,8 @@ test('the app saves a completed lesson and XP, then restores the path on remount
   click('KIỂM TRA'); click('TIẾP TỤC');
   click(/Số 3/); click('KIỂM TRA'); click('TIẾP TỤC');
   click(/wǔ - Số 5/); click('KIỂM TRA'); click('TIẾP TỤC');
+  click(/Số 2 \(èr\)/); click('KIỂM TRA'); click('TIẾP TỤC');
+  click(/^1\s*四$/); click('KIỂM TRA'); click('TIẾP TỤC');
   click(/TIẾP TỤC HỌC TẬP/);
   const nodeId = HSK1_ROADMAP_UNITS[0].nodes[0].id;
   assert.ok(JSON.parse(localStorage.getItem('aster_completed_nodes')!).includes(nodeId));
@@ -131,5 +137,19 @@ test('greeting pilot grades answers and preserves a local result after reopening
   cleanup();
   render(React.createElement(GreetingsPilot, { onClose() {} }));
   assert.ok(screen.getByText(/đã hoàn thành bài mẫu/));
+  cleanup();
+});
+
+test('listening and sentence-building answers are hidden until checked', async () => {
+  const node = HSK1_ROADMAP_UNITS[0].nodes[0];
+  const listening = node.challenges.find(c => c.type === 'listen_choose')!;
+  const view = render(React.createElement(DuolingoLessonModal, {title: 'Nghe', challenges: [listening], xpReward: 0, onClose() {}, onComplete() {}}));
+  assert.equal(view.container.querySelector('.duo-chinese-stimulus'), null);
+  click(/Số 3/); click('KIỂM TRA');
+  assert.equal(view.container.querySelector('.duo-chinese-stimulus')?.textContent, '三');
+  cleanup();
+  const wordBank = node.challenges.find(c => c.type === 'word_bank')!;
+  const view2 = render(React.createElement(DuolingoLessonModal, {title: 'Ghép', challenges: [wordBank], xpReward: 0, onClose() {}, onComplete() {}}));
+  assert.equal(view2.container.querySelector('.duo-chinese-stimulus'), null);
   cleanup();
 });

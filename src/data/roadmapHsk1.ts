@@ -65,6 +65,18 @@ export const HSK1_ROADMAP_UNITS: RoadmapUnit[] = [
             correctAnswer: 'wǔ - Số 5',
             explanation: '五 (wǔ, thanh 3) nghĩa là số 5 (Ngũ).',
           },
+          {
+            id: 'c-0-1-5', type: 'multiple_choice',
+            prompt: 'Chữ 二 (èr) là số mấy?',
+            options: ['Số 2 (èr)', 'Số 3 (sān)', 'Số 5 (wǔ)'], correctAnswer: 'Số 2 (èr)',
+            explanation: '二 đọc là èr và nghĩa là số 2.',
+          },
+          {
+            id: 'c-0-1-6', type: 'multiple_choice',
+            prompt: 'Số 4 được viết bằng chữ Hán nào?',
+            options: ['四', '一', '三'], correctAnswer: '四',
+            explanation: '四 (sì) là số 4.',
+          },
         ],
       },
       {
@@ -209,6 +221,18 @@ export const HSK1_ROADMAP_UNITS: RoadmapUnit[] = [
             tokens: ['老师', '好', '你', '您'],
             correctTokens: ['老师', '好'],
             explanation: 'Công thức chào người bề trên / chức danh: Chức danh + 好 (Ví dụ: 老师好!).',
+          },
+          {
+            id: 'c-1-1-3', type: 'multiple_choice',
+            prompt: 'Chào một người lớn tuổi một cách lịch sự, bạn nói gì?',
+            options: ['您好！', '对不起。', '再见！'], correctAnswer: '您好！',
+            explanation: '您好 (nín hǎo) là cách chào lịch sự.',
+          },
+          {
+            id: 'c-1-1-4', type: 'multiple_choice',
+            prompt: 'Muốn cảm ơn người khác, bạn chọn câu nào?',
+            options: ['谢谢！', '对不起。', '再见！'], correctAnswer: '谢谢！',
+            explanation: '谢谢 (xièxie) nghĩa là cảm ơn.',
           },
         ],
       },
