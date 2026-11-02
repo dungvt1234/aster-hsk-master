@@ -1,5 +1,7 @@
 # Thực hiện kế hoạch theo unit — Gói A và chuẩn bị Gói B
 
+> Cập nhật sau khi cấp quyền Vercel: đã có preview READY được bảo vệ, source bc2a61d. Xem [báo cáo preview](hsk1-protected-preview.md) và cách mở. Các dòng BLOCKED 403 bên dưới là lịch sử Gói A–B trước khi quyền được cấp; không còn là trạng thái quyền hiện tại.
+
 Ngày: 2026-11-02 (Việt Nam). Người thực hiện: Codex, agent kỹ thuật/biên tập bản nháp. Kế hoạch áp dụng: [hoàn thiện HSK1 theo từng unit](../ke-hoach-hoan-thien-hsk1-theo-unit.md), §12.
 
 Baseline: `5e6ef1b2d386c13386d70b8037ea8a3ab7f50ed8`; nhánh `refactor/learning-safety-a5bb852`; PR #1 open/draft lúc bắt đầu. Head được kiểm tra qua GitHub và checkout fast-forward; không có AGENTS.md trong checkout. Một tệp chưa rõ nguồn gốc trong working tree được giữ nguyên, không đọc/sửa/xóa hoặc đưa vào commit. Không sử dụng nó để tạo bản triển khai.
