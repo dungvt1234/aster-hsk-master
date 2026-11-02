@@ -5237,3 +5237,10 @@ button {
 .hsk1-study-layout :is(button, a, summary):focus-visible { outline: 3px solid var(--info); outline-offset: 3px; }
 @media (max-width: 900px) { .hsk1-study-layout .duo-path-sidebar { display: block; position: static; } }
 @media (prefers-reduced-motion: reduce) { .hsk1-study-layout *, .hsk1-study-layout *::before, .hsk1-study-layout *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+/* Learning navigation must remain reachable on short screens. */
+.app-sidebar { scrollbar-width: thin; }
+.sidebar-brand-wrapper, .sidebar-footer { flex-shrink: 0; }
+.app-topbar { height: auto; flex-wrap: wrap; gap: 10px; padding-top: 10px; padding-bottom: 10px; }
+.topbar-right-controls { min-width: 0; max-width: 100%; flex-wrap: wrap; flex-shrink: 1; }
+.app-content { box-sizing: border-box; min-width: 0; }

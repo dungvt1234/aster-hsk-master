@@ -352,26 +352,6 @@ export function TopBar({
           </span>
         </div>
 
-        {/* Hearts */}
-        <div
-          className="topbar-stat-pill hearts"
-          style={{ cursor: 'default' }}
-          title={
-            gamificationService.isInfiniteHeartsActive()
-              ? `Bất tử tim đang bật (${gamificationService.getInfiniteHeartsMinutesRemaining()}m)`
-              : 'Trái tim học tập (10/10). Nhấp để nạp thêm'
-          }
-        >
-          <Heart
-            size={16}
-            fill={gamificationService.isInfiniteHeartsActive() ? '#fbbf24' : '#FF4B4B'}
-            color={gamificationService.isInfiniteHeartsActive() ? '#d97706' : '#FF4B4B'}
-          />
-          <span className="stat-number">
-            {gamificationService.isInfiniteHeartsActive() ? '∞' : '10/10'}
-          </span>
-        </div>
-
         {/* Sổ Tay Lỗi Sai (Mistakes Notebook) */}
         <div
           className="topbar-stat-pill mistakes"
