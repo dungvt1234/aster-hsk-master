@@ -199,7 +199,7 @@ export function TopBar({
 
         <div className="topbar-heading">
           <h1 className="topbar-title">{pageInfo.title}</h1>
-          <p className="topbar-subtitle">{pageInfo.subtitle}</p>
+
         </div>
       </div>
 
@@ -546,6 +546,7 @@ export function TopBar({
         {user ? (
           <button
             type="button"
+            className="study-profile-control"
             onClick={onOpenProfile}
             style={{
               display: 'flex',

@@ -194,8 +194,11 @@ export function Sidebar({
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
+              <React.Fragment key={item.id}>
+              {item.id === 'duo_path' && <p className="study-nav-group">HỌC TẬP</p>}
+              {item.id === 'flashcards' && <p className="study-nav-group">LUYỆN TẬP</p>}
+              {item.id === 'books' && <p className="study-nav-group">TÀI LIỆU</p>}
               <button
-                key={item.id}
                 type="button"
                 aria-current={isActive ? 'page' : undefined}
                 className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
@@ -215,6 +218,7 @@ export function Sidebar({
                 </div>
                 <span className="nav-label">{item.label}</span>
               </button>
+              </React.Fragment>
             );
           })}
         </nav>

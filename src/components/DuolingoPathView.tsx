@@ -154,7 +154,7 @@ export function DuolingoPathView({
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
         {<PathLearningFocus level={currentLevel} nodes={orderedNodes} completed={completedNodeIds} freeMode={fastTrackMode} onSelect={handleNodeClick} onOpenMistakes={onOpenMistakes} />}
-        {pilotEnabled && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+        {pilotEnabled && currentLevel === 1 && <button type="button" aria-label="Thử bài mẫu: Chào hỏi và xin lỗi" className="study-pilot-link" onClick={() => setShowPilot(true)}>Bản học thử: Chào hỏi và xin lỗi</button>}
         {onNavigateTab && <LearningShortcuts onNavigate={onNavigateTab} />}
         <details className="path-secondary-tools">
           <summary>Công cụ luyện tập và học vượt</summary>
