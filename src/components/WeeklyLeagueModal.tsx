@@ -74,7 +74,7 @@ export function WeeklyLeagueModal({
             </div>
             <div>
               <div className="league-tier-tag" style={{ color: tierInfo.color }}>
-                GIẢI ĐẤU TUẦN DUOLINGO
+                GIẢI ĐẤU TUẦN · MÔ PHỎNG
               </div>
               <h2 className="league-tier-name">{tierInfo.name}</h2>
             </div>

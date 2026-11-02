@@ -15,7 +15,6 @@ import {
 import type { DuolingoChallenge, HSKLevel } from '../types';
 import { soundEffects } from '../services/audioSynthesizer';
 import { gamificationService } from '../services/gamificationService';
-import { explainMistakeWithAI } from '../services/geminiService';
 import { mistakesService } from '../services/mistakesService';
 import {
   renderColoredPinyin,
@@ -29,7 +28,7 @@ interface DuolingoLessonModalProps {
   xpReward: number;
   level?: HSKLevel;
   onClose: () => void;
-  onComplete: (earnedXp: number) => void;
+  onComplete: (earnedXp: number) => boolean | void;
   onAskAI?: (prompt: string, context: string) => void;
 }
 
@@ -77,6 +76,7 @@ export function DuolingoLessonModal({
   // Grading state
   const [status, setStatus] = useState<'answering' | 'correct' | 'incorrect'>('answering');
   const [isCompleted, setIsCompleted] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [totalCorrect, setTotalCorrect] = useState(0);
 
   const currentChallenge = challengeQueue[currentIndex];
@@ -211,7 +211,7 @@ export function DuolingoLessonModal({
 
   // Check answer
   const handleCheckAnswer = () => {
-    if (!currentChallenge) return;
+    if (!currentChallenge || status !== 'answering') return;
 
     let isCorrect = false;
 
@@ -273,15 +273,21 @@ export function DuolingoLessonModal({
       ? (currentChallenge.correctTokens || []).join(' ')
       : (currentChallenge.correctAnswer || '');
 
-    const expl = await explainMistakeWithAI({
-      level,
-      prompt: currentChallenge.prompt,
-      userAnswer: userAnsStr,
-      correctAnswer: correctAnsStr,
-      explanation: currentChallenge.explanation,
-    });
-    setAiExplanation(expl);
-    setIsLoadingAiExplanation(false);
+    try {
+      const { explainMistakeWithAI } = await import('../services/geminiService');
+      const expl = await explainMistakeWithAI({
+        level,
+        prompt: currentChallenge.prompt,
+        userAnswer: userAnsStr,
+        correctAnswer: correctAnsStr,
+        explanation: currentChallenge.explanation,
+      });
+      setAiExplanation(expl);
+    } catch {
+      setAiExplanation('Chưa tải được phần giải thích. Bạn có thể xem đáp án và giải thích của bài ở phía trên.');
+    } finally {
+      setIsLoadingAiExplanation(false);
+    }
   };
 
   // Move to next challenge
@@ -338,11 +344,14 @@ export function DuolingoLessonModal({
           <button
             type="button"
             className="duo-btn duo-btn-primary duo-btn-large"
-            onClick={() => onComplete(xpReward)}
+            onClick={() => {
+              if (onComplete(xpReward) === false) setSaveError('Chưa lưu được bài học. Hãy kiểm tra dung lượng trình duyệt và thử lại.');
+            }}
             style={{ width: '100%', marginTop: '20px' }}
           >
             TIẾP TỤC HỌC TẬP <ArrowRight size={18} />
           </button>
+          {saveError && <p role="alert">{saveError}</p>}
         </div>
       </div>
     );
@@ -467,16 +476,16 @@ export function DuolingoLessonModal({
                       >
                         🐢
                       </button>
-                      <span className="duo-chinese-stimulus">
+                      {(status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && <span className="duo-chinese-stimulus">
                         {highlightGrammarInChinese(
                           currentChallenge.chineseAudioText,
                           currentChallenge.grammarHighlights || []
                         )}
-                      </span>
+                      </span>}
                     </div>
 
                     {/* Tone-Colored Pinyin Highlight Badge */}
-                    {currentChallenge.pinyinAudioText && (
+                    {currentChallenge.pinyinAudioText && (status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && (
                       <div className="duo-stimulus-pinyin-badge">
                         <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, marginRight: '4px' }}>
                           Phát âm:
@@ -489,7 +498,7 @@ export function DuolingoLessonModal({
               )}
 
               {/* Pinyin Tone Legend Helper */}
-              {currentChallenge.pinyinAudioText && (
+              {currentChallenge.pinyinAudioText && (status !== 'answering' || !['listen_choose', 'word_bank'].includes(currentChallenge.type)) && (
                 <div style={{ margin: '-10px 0 16px', display: 'flex', justifyContent: 'center' }}>
                   <ToneLegend compact={true} />
                 </div>
@@ -606,9 +615,9 @@ export function DuolingoLessonModal({
               <button
                 type="button"
                 className="duo-btn duo-btn-skip"
-                onClick={handleContinue}
+                onClick={handleCheckAnswer}
               >
-                BỎ QUA
+                CHƯA BIẾT
               </button>
               <button
                 type="button"
@@ -647,7 +656,9 @@ export function DuolingoLessonModal({
                   <p className="feedback-desc">
                     {currentChallenge?.type === 'word_bank'
                       ? `Đáp án đúng: ${(currentChallenge.correctTokens || []).join(' ')}`
-                      : `Đáp án đúng: ${currentChallenge?.correctAnswer}`}
+                      : currentChallenge?.type === 'match_pairs'
+                        ? `Đáp án đúng: ${currentChallenge.matchPairs?.map(pair => `${pair.left} → ${pair.right}`).join(', ')}`
+                        : `Đáp án đúng: ${currentChallenge?.correctAnswer}`}
                   </p>
                   <p className="feedback-subdesc">{currentChallenge?.explanation}</p>
 

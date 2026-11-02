@@ -25,7 +25,6 @@ import { mistakesService } from '../services/mistakesService';
 import { leagueService } from '../services/leagueService';
 import { dailyGoalService, type DailyGoalState } from '../services/dailyGoalService';
 import { favoriteVocabService } from '../services/favoriteVocabService';
-import { liveStudyPresenceService } from '../services/liveStudyPresenceService';
 
 interface TopBarProps {
   currentLevel: HSKLevel;
@@ -80,7 +79,6 @@ export function TopBar({
   const [userRank, setUserRank] = useState(() => leagueService.getUserRank());
   const [dailyGoal, setDailyGoal] = useState<DailyGoalState>(() => dailyGoalService.getState());
   const [starredCount, setStarredCount] = useState<number>(() => favoriteVocabService.getCount());
-  const [onlineCount, setOnlineCount] = useState<number>(() => liveStudyPresenceService.getState().onlineCount);
 
   useEffect(() => {
     const unsubSync = cloudSync.subscribe((s) => setSyncStatus(s));
@@ -98,9 +96,6 @@ export function TopBar({
     const unsubFav = favoriteVocabService.subscribe(() => {
       setStarredCount(favoriteVocabService.getCount());
     });
-    const unsubPresence = liveStudyPresenceService.subscribe((p) => {
-      setOnlineCount(p.onlineCount);
-    });
     return () => {
       unsubSync();
       unsubGame();
@@ -108,7 +103,6 @@ export function TopBar({
       unsubLeague();
       unsubGoal();
       unsubFav();
-      unsubPresence();
     };
   }, [currentLevel]);
   const levels: { level: HSKLevel; label: string; color: string; note?: string }[] = [
@@ -163,7 +157,7 @@ export function TopBar({
       case 'cbt':
         return {
           title: `Phòng Thi CBT`,
-          subtitle: 'Mô phỏng 100% giao diện thi chứng chỉ máy tính chính thức của Hanban',
+          subtitle: 'Đề luyện tập mô phỏng để làm quen với hình thức thi',
         };
       case 'books':
         return {
@@ -302,7 +296,7 @@ export function TopBar({
             color: '#16a34a',
             transition: 'all 0.2s ease',
           }}
-          title={`Đang có ${onlineCount} bạn cùng học trực tuyến. Nhấp để xem phòng học & hoạt động`}
+          title="Phòng học mô phỏng với dữ liệu minh họa"
         >
           <span
             style={{
@@ -315,10 +309,10 @@ export function TopBar({
             }}
           />
           <span className="stat-number" style={{ color: '#16a34a', fontWeight: 900 }}>
-            {onlineCount}
+            Phòng mẫu
           </span>
           <span className="desktop-only" style={{ fontSize: '11px', fontWeight: 700 }}>
-            Online
+            Mô phỏng
           </span>
         </div>
 
@@ -572,11 +566,11 @@ export function TopBar({
           title={
             syncStatus.lastSyncedAt
               ? `Đồng bộ đám mây thành công lúc ${syncStatus.lastSyncedAt}`
-              : 'Dữ liệu được bảo vệ an toàn trên thiết bị và tự động sao lưu đám mây'
+              : 'Tiến độ chỉ lưu trong trình duyệt này. Chưa có sao lưu đám mây.'
           }
         >
           <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
-          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Cloud Safe'}</span>
+          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Lưu trên thiết bị'}</span>
         </div>
 
         {/* Lo-Fi Ambient Study Beats Player Toggle */}
@@ -630,7 +624,7 @@ export function TopBar({
               transition: 'transform 0.15s ease',
               flexShrink: 0,
             }}
-            title="Kích hoạt Bữa Sáng Trí Nhớ FSRS 3 phút"
+            title="Kích hoạt Bữa Sáng Trí Nhớ 3 phút"
           >
             <Zap size={14} fill="#ffffff" /> Sprint 3p
           </button>
@@ -667,7 +661,7 @@ export function TopBar({
         {user ? (
           <button
             type="button"
-            onClick={user.isGuest && onOpenAuth ? onOpenAuth : onOpenProfile}
+            onClick={onOpenProfile}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -682,11 +676,11 @@ export function TopBar({
               fontWeight: 800,
               boxShadow: 'var(--card-shadow)',
             }}
-            title={user.isGuest ? 'Bấm để tạo tài khoản hoặc đăng nhập' : `Tài khoản của ${user.name}`}
+            title="Xem hồ sơ và xuất tiến độ"
           >
             <span style={{ fontSize: '16px' }}>{user.avatar || '🐼'}</span>
             <span>
-              {user.isGuest ? 'Đăng nhập' : user.name.split(' ').slice(-1)[0]}
+              {user.isGuest ? 'Tiến độ' : user.name.split(' ').slice(-1)[0]}
             </span>
           </button>
         ) : null}

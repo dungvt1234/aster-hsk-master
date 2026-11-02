@@ -5,5 +5,6 @@
       "source": "/((?!.*\\.[\\w]+$).*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "buildCommand": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then VITE_HSK1_PILOT_PREVIEW=true npm run build -- --mode hsk1-preview; else npm run build; fi"
 }

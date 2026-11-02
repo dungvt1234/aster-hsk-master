@@ -1,0 +1,44 @@
+name: Learning checks
+on:
+  pull_request:
+  push:
+    branches: [master]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm ci
+        working-directory: backend
+      - run: npm run build
+        working-directory: backend
+      - name: Install browser test tools outside project dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/pilot-browser" --no-package-lock --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/pilot-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check greeting pilot in mobile and desktop Chromium
+        env:
+          PLAYWRIGHT_MODULE_DIR: ${{ runner.temp }}/pilot-browser/node_modules/playwright
+        run: |
+          node tests/browser/greetingsPilot.smoke.mjs
+          node tests/browser/pathFocus.smoke.mjs
+          node tests/browser/pilotBuildBoundary.smoke.mjs
+      - name: Keep pilot browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-browser-screenshots
+          path: artifacts/pilot-browser/
+          if-no-files-found: ignore

@@ -71,51 +71,19 @@ app.get('/healthz', (_req: Request, res: Response) => {
       rss: Math.round(mem.rss / 1024 / 1024),
       heapUsed: Math.round(mem.heapUsed / 1024 / 1024),
     },
-    clusterTarget: '100,000 CCU Ready',
+    mode: 'prototype',
   });
 });
 
 // 2. CLOUD SYNC: ĐỒNG BỘ TIẾN ĐỘ FSRS & LỊCH SỬ HỌC TẬP
-app.post('/api/v1/sync/progress', (req: Request, res: Response) => {
-  const { userId = 'guest-user', progress, stats, completedTracks, completedGrammar } = req.body;
-
-  // In production, this stores batch to PostgreSQL via PgBouncer
-  // Here we acknowledge with server timestamp for conflict resolution
-  const serverTimestamp = new Date().toISOString();
-
-  res.status(200).json({
-    status: 'SYNCED',
-    userId,
-    serverTimestamp,
-    reconciledCount: Object.keys(progress || {}).length,
-    message: 'Tiến độ học tập và thẻ FSRS đã được lưu trữ an toàn trên đám mây Aster Cloud.',
-  });
+app.post('/api/v1/sync/progress', (_req: Request, res: Response) => {
+  res.status(503).json({ error: 'SYNC_UNAVAILABLE', message: 'Đồng bộ chưa được hỗ trợ. Dữ liệu vẫn ở trên thiết bị.' });
 });
 
 // 3. ASYNCHRONOUS CBT EXAM SUBMISSION (XỬ LÝ 100.000 BÀI NỘP TRONG 2 PHÚT)
 // HTTP 202 Accepted: Đẩy vào Queue tức thì mà không khóa Database!
-app.post('/api/v1/cbt/submit', (req: Request, res: Response) => {
-  const { examId, userId = 'anonymous', answers, startedAt, tabSwitchCount = 0 } = req.body;
-
-  if (!examId || !answers) {
-    return res.status(400).json({ error: 'MISSING_PAYLOAD', message: 'Thiếu thông tin bài thi hoặc câu trả lời.' });
-  }
-
-  const submissionId = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-
-  // Simulating immediate asynchronous dispatch to Kafka
-  res.status(202).json({
-    status: 'ACCEPTED',
-    submissionId,
-    examId,
-    queueState: 'ENQUEUED_IN_KAFKA',
-    message: 'Bài thi đã được hệ thống Aster Kafka tiếp nhận an toàn và đang được tự động chấm điểm.',
-    estimatedGradingTimeMs: 1200,
-    antiCheatCheck: {
-      tabSwitchesRecorded: tabSwitchCount,
-      flagged: tabSwitchCount > 3,
-    },
-  });
+app.post('/api/v1/cbt/submit', (_req: Request, res: Response) => {
+  res.status(503).json({ error: 'SUBMISSION_UNAVAILABLE', message: 'Nộp bài lên máy chủ chưa được hỗ trợ.' });
 });
 
 // 4. AI TUTOR PROXY VỚI SEMANTIC CACHE (TIẾT KIỆM 80% CHI PHÍ GEMINI)
@@ -132,7 +100,7 @@ app.post('/api/v1/ai/tutor', async (req: Request, res: Response) => {
   if (cachedResponse) {
     return res.status(200).json({
       status: 'SUCCESS',
-      source: 'SEMANTIC_CACHE',
+      source: 'LOCAL_EXAMPLE_CACHE',
       latencyMs: 5,
       costUSD: 0,
       answer: cachedResponse,
@@ -156,7 +124,7 @@ app.post('/api/v1/ai/tutor', async (req: Request, res: Response) => {
 
   return res.status(200).json({
     status: 'SUCCESS',
-    source: 'AI_INFERENCE_ENGINE',
+    source: 'LOCAL_EXAMPLE',
     latencyMs: 140,
     answer: simulatedAnswer,
   });
@@ -165,5 +133,5 @@ app.post('/api/v1/ai/tutor', async (req: Request, res: Response) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`[Aster HSK Backend] Enterprise High-Availability API running on port ${PORT}`);
-  console.log(`[Architecture] 100,000 CCU Ready · PgBouncer Pooler · Redis Cluster · Kafka Queue Ingestion`);
+
 });

@@ -127,7 +127,7 @@ export function LiveStudyRoomModal({ isOpen, onClose }: LiveStudyRoomModalProps)
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, margin: 0 }}>
-                  Phòng Học Trực Tuyến
+                  Phòng Học Mô Phỏng
                 </h3>
                 <span
                   style={{
@@ -150,7 +150,7 @@ export function LiveStudyRoomModal({ isOpen, onClose }: LiveStudyRoomModalProps)
                       boxShadow: '0 0 6px #4ade80',
                     }}
                   />
-                  Live
+                  Mô phỏng
                 </span>
               </div>
               <p
@@ -161,7 +161,7 @@ export function LiveStudyRoomModal({ isOpen, onClose }: LiveStudyRoomModalProps)
                   fontWeight: 500,
                 }}
               >
-                Cộng đồng học viên Aster HSK đang tích cực rèn luyện
+                Số lượng và hoạt động là dữ liệu minh họa, không phải người đang học thật.
               </p>
             </div>
           </div>
@@ -231,7 +231,7 @@ export function LiveStudyRoomModal({ isOpen, onClose }: LiveStudyRoomModalProps)
               {presence.onlineCount}
             </div>
             <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>
-              Đang cùng học
+              Số lượng minh họa
             </div>
           </div>
 

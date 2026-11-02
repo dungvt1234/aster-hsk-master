@@ -12,19 +12,9 @@ export interface SyncStatus {
 }
 
 class CloudSyncService {
-  private apiBaseUrl: string;
-  private status: SyncStatus = {
-    state: 'synced',
-    lastSyncedAt: null,
-    pendingChanges: 0,
-  };
+  private status: SyncStatus = { state: 'offline', lastSyncedAt: null, pendingChanges: 0 };
   private listeners: ((status: SyncStatus) => void)[] = [];
-  private syncTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  constructor() {
-    // In local development or production, points to configured backend or relative proxy
-    this.apiBaseUrl = (import.meta as any).env?.VITE_API_URL || 'https://api.aster-hsk.vn';
-  }
+  private apiBaseUrl = (import.meta as any).env?.VITE_API_URL || '';
 
   public subscribe(listener: (status: SyncStatus) => void): () => void {
     this.listeners.push(listener);
@@ -41,65 +31,10 @@ class CloudSyncService {
   /**
    * Đánh dấu có thay đổi dữ liệu cần đồng bộ lên đám mây (Debounced 3s)
    */
-  public triggerSync(payload: {
-    progress: Record<string, any>;
-    stats: any;
-    completedTracks?: string[];
-    completedGrammar?: string[];
-  }) {
-    this.status.pendingChanges += 1;
-    this.status.state = 'syncing';
+  public triggerSync(_payload: { progress: Record<string, any>; stats: any; completedTracks?: string[]; completedGrammar?: string[] }) {
+    // No verified remote persistence exists. Keep existing local data untouched.
+    this.status = { state: 'offline', lastSyncedAt: null, pendingChanges: 0 };
     this.notify();
-
-    if (this.syncTimeout) {
-      clearTimeout(this.syncTimeout);
-    }
-
-    this.syncTimeout = setTimeout(() => {
-      this.executeSync(payload);
-    }, 3000);
-  }
-
-  private async executeSync(payload: any) {
-    try {
-      // Thử đồng bộ với backend nếu có mạng
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-      const res = await fetch(`${this.apiBaseUrl}/api/v1/sync/progress`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem('aster_user_id') || 'guest-learner',
-          ...payload,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        this.status = {
-          state: 'synced',
-          lastSyncedAt: new Date().toLocaleTimeString('vi-VN'),
-          pendingChanges: 0,
-        };
-      } else {
-        // Server trả lỗi, lưu trữ offline an toàn
-        this.status.state = 'offline';
-      }
-    } catch {
-      // Không có internet hoặc backend chưa bật, giữ chế độ an toàn Offline-First
-      this.status = {
-        state: 'offline',
-        lastSyncedAt: this.status.lastSyncedAt,
-        pendingChanges: 0,
-      };
-    } finally {
-      this.notify();
-    }
   }
 
   /**
@@ -123,7 +58,7 @@ class CloudSyncService {
         return {
           status: 'ACCEPTED',
           submissionId: data.submissionId,
-          message: 'Bài thi đã được đệm vào hàng đợi Kafka để chấm điểm tự động an toàn!',
+          message: 'Bài nộp đã được tiếp nhận.',
         };
       }
     } catch {

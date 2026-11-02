@@ -95,7 +95,7 @@ export function CommandPaletteModal({
       id: 'nav-flashcards',
       category: 'Điều hướng',
       title: 'Flashcards 3D Spaced Repetition',
-      subtitle: 'Ôn tập thẻ từ vựng với thuật toán ghi nhớ SM-2 / FSRS',
+      subtitle: 'Ôn tập thẻ từ vựng với thuật toán ghi nhớ SRS',
       icon: <Sparkles size={18} color="#a855f7" />,
       action: () => onNavigateTab('flashcards'),
     },
