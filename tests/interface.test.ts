@@ -123,23 +123,6 @@ test('the app saves a completed lesson and XP, then restores the path on remount
   cleanup();
 });
 
-test('greeting pilot grades answers and preserves a local result after reopening', async () => {
-  localStorage.clear();
-  const { GreetingsPilot } = await import('../src/components/GreetingsPilot');
-  render(React.createElement(GreetingsPilot, { onClose() {} }));
-  click('Làm 4 câu luyện tập');
-  for (const answer of ['您好！', '你们好！', '没关系。', 'nǐ hǎo']) {
-    click(answer); click('Kiểm tra');
-    assert.ok(screen.getByText('Chính xác.'));
-    if (answer === 'nǐ hǎo') click('Lưu kết quả'); else click('Câu tiếp theo');
-  }
-  assert.ok(screen.getByText(/Trả lời đúng 4 \/ 4 câu/));
-  cleanup();
-  render(React.createElement(GreetingsPilot, { onClose() {} }));
-  assert.ok(screen.getByText(/đã hoàn thành bài mẫu/));
-  cleanup();
-});
-
 test('listening and sentence-building answers are hidden until checked', async () => {
   const node = HSK1_ROADMAP_UNITS[0].nodes[0];
   const listening = node.challenges.find(c => c.type === 'listen_choose')!;

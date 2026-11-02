@@ -5194,3 +5194,28 @@ button {
   background: var(--border);
   border-radius: 4px;
 }
+
+/* Giai đoạn 3: bài mẫu nội bộ, chỉ áp dụng trong .pilot-dialog. */
+.pilot-dialog { position: fixed; inset: 0; z-index: 10000; overflow-y: auto; overscroll-behavior: contain; padding: 24px 16px max(32px, env(safe-area-inset-bottom)); background: var(--background, #f6f7f9); color: var(--text, #172b35); }
+.pilot-shell { max-width: 660px; margin: 0 auto; line-height: 1.65; overflow-wrap: anywhere; }
+.pilot-dialog h1 { font-size: clamp(25px, 6vw, 36px); line-height: 1.25; }
+.pilot-dialog h2 { font-size: 21px; margin-top: 24px; }
+.pilot-dialog h3 { font-size: 19px; }
+.pilot-dialog button { min-height: 46px; max-width: 100%; padding: 10px 16px; border: 2px solid var(--border, #b9c9d0); border-radius: 12px; background: var(--surface, #fff); color: inherit; font: inherit; cursor: pointer; }
+.pilot-dialog button:disabled { opacity: .65; cursor: default; }
+.pilot-dialog :focus-visible { outline: 3px solid #0284c7; outline-offset: 4px; }
+.pilot-dialog .pilot-primary { display: block; margin: 20px 0 12px; background: var(--primary, #087e8b); color: #fff; border-color: transparent; font-weight: 700; }
+.pilot-eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: 12px; font-weight: 700; margin-top: 24px; }
+.pilot-meta { font-size: 13px; color: var(--text-muted, #526572); }
+.pilot-card { padding: 16px 18px; border: 1px solid var(--border, #b9c9d0); border-radius: 16px; margin: 16px 0; background: var(--surface, #fff); }
+.pilot-card h3 { margin: 0; }
+.pilot-options { display: grid; gap: 12px; margin: 24px 0 16px; }
+.pilot-options button { text-align: left; }
+.pilot-options button[aria-pressed="true"] { border-color: #0284c7; box-shadow: inset 0 0 0 1px #0284c7; }
+.pilot-hint { padding: 16px; border-left: 4px solid #0284c7; background: var(--surface, #fff); }
+.pilot-source { margin: 32px 0 8px; padding-top: 16px; border-top: 1px solid var(--border, #b9c9d0); font-size: 13px; }
+.pilot-source summary { cursor: pointer; padding: 8px 0; }
+.pilot-exit { max-width: 500px; margin: 15vh auto; padding: 24px; border: 2px solid var(--border, #b9c9d0); border-radius: 16px; background: var(--surface, #fff); }
+.pilot-exit button { display: block; width: 100%; margin-top: 16px; }
+.pilot-shell[inert] { display: none; }
+@media (prefers-reduced-motion: reduce) { .pilot-dialog, .pilot-dialog * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

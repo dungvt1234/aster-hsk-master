@@ -127,16 +127,17 @@
     },
     {
       "id": "q-group",
-      "type": "multiple_choice",
-      "prompt": "Bạn bước vào nhóm bạn. Câu nào phù hợp để chào cả nhóm?",
+      "type": "listen_choose",
+      "prompt": "Nghe lời chào và chọn nghĩa đúng.",
       "options": [
-        "没关系。",
-        "你们好！",
-        "对不起。"
+        "Không sao",
+        "Chào các bạn",
+        "Xin lỗi"
       ],
       "answerIndex": 1,
-      "explanation": "你们好 có nghĩa là chào các bạn.",
-      "pointId": "p-greet"
+      "explanation": "你们好 (nǐmen hǎo) là lời chào dành cho nhiều người.",
+      "pointId": "p-greet",
+      "audioText": "你们好"
     },
     {
       "id": "q-apology",
@@ -166,12 +167,12 @@
     }
   ],
   "audio": {
-    "kind": "not-attached",
-    "status": "pending-source-matching",
-    "note": "Không coi giọng đọc tự động là bản thu người thật. Chưa gán MP3 từ bộ 301 câu hoặc HSK khác."
+    "kind": "device-tts",
+    "status": "device-dependent",
+    "note": "Dùng giọng tiếng Trung có sẵn trên thiết bị. Chưa có bản thu người thật; chưa xác minh chất lượng phát âm trên điện thoại. Không gán MP3 từ bộ sách khác."
   },
   "integration": {
-    "mode": "not-bundled",
+    "mode": "dev-only-pilot",
     "existingTargets": [
       "src/data/grammarDataHsk1.ts:01",
       "src/data/roadmapHsk1.ts:unit-hsk1-1"
@@ -181,6 +182,41 @@
   "editorialNotes": [
     "Phần cảm ơn chuyển sang bản mẫu bài 2; tránh gộp nhiều mục tiêu vào bài đầu.",
     "Các ví dụ và giải thích tiếng Việt trong bản nháp được biên soạn lại, không nhập toàn bộ slide.",
-    "Chưa đánh dấu đã kiểm duyệt chuyên môn; cần đối chiếu pinyin, phát âm và quyền dùng tài nguyên trước khi xuất bản."
+    "Chưa đánh dấu đã kiểm duyệt chuyên môn; cần đối chiếu pinyin, phát âm và quyền dùng tài nguyên trước khi xuất bản.",
+    "Giai đoạn 3: hai câu có hướng dẫn và bốn câu tự làm, gồm một câu nghe; kết quả pilot độc lập với lộ trình/XP. Chưa duyệt ngôn ngữ và tài nguyên để xuất bản."
+  ],
+  "prerequisites": [
+    "Chưa cần biết tiếng Trung. Hãy xem chữ Hán, pinyin và nghĩa trước khi tự làm.",
+    "Bài nghe cần trình duyệt có giọng tiếng Trung; đây là giọng đọc thiết bị, chưa có bản thu người thật."
+  ],
+  "guidedExercises": [
+    {
+      "id": "guided-greet",
+      "type": "multiple_choice",
+      "prompt": "Muốn chào lịch sự một người lớn tuổi, bạn chọn câu nào?",
+      "options": [
+        "您好！",
+        "你们好！",
+        "对不起。"
+      ],
+      "answerIndex": 0,
+      "explanation": "您好 là cách chào thể hiện sự kính trọng. 你们好 dùng để chào nhiều người.",
+      "pointId": "p-greet",
+      "hint": "您好 dùng để chào lịch sự một người."
+    },
+    {
+      "id": "guided-apology",
+      "type": "multiple_choice",
+      "prompt": "Một người nói 对不起. Bạn muốn đáp không sao, nên chọn câu nào?",
+      "options": [
+        "你好。",
+        "没关系。",
+        "您。"
+      ],
+      "answerIndex": 1,
+      "explanation": "没关系 là cách đáp không sao trong tình huống này.",
+      "pointId": "p-apology",
+      "hint": "Nhớ cặp 对不起 → 没关系: xin lỗi → không sao."
+    }
   ]
 }

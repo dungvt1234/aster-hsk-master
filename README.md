@@ -28,3 +28,5 @@ Backend thử nghiệm: `cd backend && npm ci && npm run build && npm start`. AP
 `npm test` kiểm tra xuất/nhập dữ liệu, từ chối tệp lỗi, hoàn tác khi hết dung lượng, điểm luyện tập, lịch ôn và thống kê, trạng thái lộ trình, và luồng tương tác của bài số đếm đầu tiên bằng DOM mô phỏng. Kiểm thử này chưa thay thế kiểm tra trên Safari/iPhone, Chrome/Android hoặc kiểm tra microphone/âm thanh thật.
 
 Số người và hoạt động trong phòng học là mô phỏng. Không dùng chúng để đánh giá số người dùng thật. GitHub Actions được cấu hình chạy kiểm thử và build trên mỗi Pull Request; trạng thái CI phải được kiểm tra trước khi gộp mã.
+
+Bài mẫu nội bộ Giai đoạn 3: chạy `npm run dev`, trong HSK 1 chọn **Thử bài mẫu: Chào hỏi và xin lỗi**. Bài lưu kết quả riêng, không cộng XP hay thay tiến độ lộ trình. Xem phạm vi, kiểm thử và giới hạn tại [báo cáo bài mẫu](docs/content/hsk1-phase3-pilot-review.md).

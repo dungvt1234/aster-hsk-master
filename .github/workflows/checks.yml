@@ -24,3 +24,18 @@ jobs:
         working-directory: backend
       - run: npm run build
         working-directory: backend
+      - name: Install browser test tools outside project dependencies
+        run: |
+          npm install --prefix "$RUNNER_TEMP/pilot-browser" --no-package-lock --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/pilot-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check greeting pilot in mobile and desktop Chromium
+        env:
+          PLAYWRIGHT_MODULE_DIR: ${{ runner.temp }}/pilot-browser/node_modules/playwright
+        run: node tests/browser/greetingsPilot.smoke.mjs
+      - name: Keep pilot browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-browser-screenshots
+          path: artifacts/pilot-browser/
+          if-no-files-found: ignore

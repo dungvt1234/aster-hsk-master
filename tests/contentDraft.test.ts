@@ -7,17 +7,18 @@ test('pilot remains an unpublished draft with traceable source and unverified au
   assert.equal(lesson.status, 'draft');
   assert.equal(lesson.publication.enabled, false);
   assert.equal(lesson.publication.languageReview, 'pending');
-  assert.equal(lesson.audio.kind, 'not-attached');
+  assert.equal(lesson.audio.kind, 'device-tts');
+  assert.equal(lesson.audio.status, 'device-dependent');
   for (const source of lesson.sources) { assert.ok(new URL(source.url)); assert.ok(source.anchors.length); }
 });
 
 test('pilot questions and examples link to defined learning points and valid answers', () => {
   const points = new Set(lesson.points.map((p: any) => p.id));
   const vocab = new Set(lesson.vocabulary.map((v: any) => v.id));
-  const ids = [...lesson.points, ...lesson.vocabulary, ...lesson.exercises, ...lesson.examples].map((v: any) => v.id);
+  const ids = [...lesson.points, ...lesson.vocabulary, ...lesson.exercises, ...lesson.guidedExercises, ...lesson.examples].map((v: any) => v.id);
   assert.equal(new Set(ids).size, ids.length);
   for (const point of lesson.points) for (const id of point.vocabIds) assert.ok(vocab.has(id));
-  for (const question of lesson.exercises) {
+  for (const question of [...lesson.guidedExercises, ...lesson.exercises]) {
     assert.ok(points.has(question.pointId));
     assert.equal(new Set(question.options).size, question.options.length);
     assert.ok(Number.isInteger(question.answerIndex) && question.answerIndex >= 0 && question.answerIndex < question.options.length);

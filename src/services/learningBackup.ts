@@ -1,3 +1,5 @@
+import { validPilotResult } from './greetingsPilotResult';
+
 const EXACT_KEYS = new Set([
   'aster_hsk_active_user_v1', 'aster_user_id', 'aster_hsk_progress_v1', 'aster_hsk_stats_v1',
   'aster_completed_nodes', 'aster_fast_track_mode', 'aster_favorite_vocab_v1',
@@ -34,7 +36,7 @@ function validStoredValue(key: string, raw: string): boolean {
   if (key === 'aster_fast_track_mode' || key === 'aster_writing_auto_advance' || key.startsWith('aster_starter_claimed_')) return raw === 'true' || raw === 'false';
   let value: any;
   try { value = JSON.parse(raw); } catch { return false; }
-  if (key === 'aster_pilot_hsk1_greetings_v1') return record(value) && value.completed === true && count(value.correct) && count(value.total) && value.correct <= value.total && typeof value.completedAt === 'string' && Number.isFinite(Date.parse(value.completedAt));
+  if (key === 'aster_pilot_hsk1_greetings_v1') return validPilotResult(value);
   if (key === 'aster_hsk_active_user_v1') return record(value) &&
     ['id', 'name', 'email', 'avatar', 'createdAt'].every((field) => typeof value[field] === 'string') &&
     /^[a-zA-Z0-9_-]{1,160}$/.test(value.id) && [1, 2, 3, 4].includes(value.currentLevel) &&
