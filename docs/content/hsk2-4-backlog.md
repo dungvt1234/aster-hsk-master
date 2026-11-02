@@ -8,14 +8,14 @@ Mốc dữ liệu: `1cb7315924c98ee0bf776283016df17f4bef6e06`, nhánh `refactor/
 
 | Unit / bằng chứng | Chặng | Câu | Chặng 1 câu | Nghe chọn | Việc cần rà tiếp |
 |---|---:|---:|---:|---:|---|
-| `unit-hsk2-1` — Unit 1: Mua sắm & Đời sống hàng ngày (购物与生活) [L0](../../src/data/roadmapHsk2.ts#L0) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-2` — Unit 2: Hỏi đường & Phương tiện giao thông (问路与交通) [L0](../../src/data/roadmapHsk2.ts#L0) | 4 | 6 | 2 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-3` — Unit 3: Khí hậu 4 mùa & Sức khỏe (天气与健康) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-4` — Unit 4: Thể thao & Giải trí (运动与爱好) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-5` — Unit 5: Thuê nhà & Không gian sống (租房与居住) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-6` — Unit 6: Sinh nhật & Chúc mừng (生日与祝贺) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-7` — Unit 7: Du lịch cuối tuần & Trải nghiệm (周末旅游) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk2-8` — Unit 8: Văn phòng & Công việc thường nhật (办公室与日常工作) [L0](../../src/data/roadmapHsk2.ts#L0) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-1` — Unit 1: Mua sắm & Đời sống hàng ngày (购物与生活) [L5](../../src/data/roadmapHsk2.ts#L5) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-2` — Unit 2: Hỏi đường & Phương tiện giao thông (问路与交通) [L226](../../src/data/roadmapHsk2.ts#L226) | 4 | 6 | 2 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-3` — Unit 3: Khí hậu 4 mùa & Sức khỏe (天气与健康) [L421](../../src/data/roadmapHsk2.ts#L421) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-4` — Unit 4: Thể thao & Giải trí (运动与爱好) [L701](../../src/data/roadmapHsk2.ts#L701) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-5` — Unit 5: Thuê nhà & Không gian sống (租房与居住) [L983](../../src/data/roadmapHsk2.ts#L983) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-6` — Unit 6: Sinh nhật & Chúc mừng (生日与祝贺) [L1263](../../src/data/roadmapHsk2.ts#L1263) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-7` — Unit 7: Du lịch cuối tuần & Trải nghiệm (周末旅游) [L1545](../../src/data/roadmapHsk2.ts#L1545) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk2-8` — Unit 8: Văn phòng & Công việc thường nhật (办公室与日常工作) [L1824](../../src/data/roadmapHsk2.ts#L1824) | 5 | 9 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
 
 Chặng chỉ có một câu (không tự kết luận không đạt): `node-hsk2-1-4`, `node-hsk2-2-3`, `node-hsk2-2-4`, `node-hsk2-3-5`, `node-hsk2-4-5`, `node-hsk2-5-5`, `node-hsk2-6-5`, `node-hsk2-7-5`, `node-hsk2-8-5`.
 
@@ -25,14 +25,14 @@ Chặng chỉ có một câu (không tự kết luận không đạt): `node-hsk
 
 | Unit / bằng chứng | Chặng | Câu | Chặng 1 câu | Nghe chọn | Việc cần rà tiếp |
 |---|---:|---:|---:|---:|---|
-| `unit-hsk3-1` — Unit 1: Phỏng vấn & Lập kế hoạch (面试与规划) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 13 | 0 | 3 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-2` — Unit 2: Du lịch, Sân bay & Khách sạn (旅行与住宿) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 11 | 0 | 2 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-3` — Unit 3: Môi trường công sở & Thảo luận (职场办公) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 10 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-4` — Unit 4: Tính cách, Cảm xúc & Giao lưu (性格与情感) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-5` — Unit 5: Ẩm thực 8 trường phái & Đi ăn nhà hàng (八大菜系与点餐) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-6` — Unit 6: Mua sắm Online & Chuyển phát nhanh (网购与快递) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-7` — Unit 7: Thể hình & Lối sống lành mạnh (健身与健康) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk3-8` — Unit 8: Bảo vệ môi trường & Đời sống xanh (绿色生活与环保) [L0](../../src/data/roadmapHsk3.ts#L0) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-1` — Unit 1: Phỏng vấn & Lập kế hoạch (面试与规划) [L5](../../src/data/roadmapHsk3.ts#L5) | 4 | 13 | 0 | 3 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-2` — Unit 2: Du lịch, Sân bay & Khách sạn (旅行与住宿) [L316](../../src/data/roadmapHsk3.ts#L316) | 4 | 11 | 0 | 2 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-3` — Unit 3: Môi trường công sở & Thảo luận (职场办公) [L594](../../src/data/roadmapHsk3.ts#L594) | 4 | 10 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-4` — Unit 4: Tính cách, Cảm xúc & Giao lưu (性格与情感) [L857](../../src/data/roadmapHsk3.ts#L857) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-5` — Unit 5: Ẩm thực 8 trường phái & Đi ăn nhà hàng (八大菜系与点餐) [L1107](../../src/data/roadmapHsk3.ts#L1107) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-6` — Unit 6: Mua sắm Online & Chuyển phát nhanh (网购与快递) [L1357](../../src/data/roadmapHsk3.ts#L1357) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-7` — Unit 7: Thể hình & Lối sống lành mạnh (健身与健康) [L1609](../../src/data/roadmapHsk3.ts#L1609) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk3-8` — Unit 8: Bảo vệ môi trường & Đời sống xanh (绿色生活与环保) [L1847](../../src/data/roadmapHsk3.ts#L1847) | 4 | 9 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
 
 Chặng chỉ có một câu (không tự kết luận không đạt): `node-hsk3-3-4`, `node-hsk3-4-4`, `node-hsk3-5-4`, `node-hsk3-6-4`, `node-hsk3-7-4`, `node-hsk3-8-4`.
 
@@ -42,14 +42,14 @@ Chặng chỉ có một câu (không tự kết luận không đạt): `node-hsk
 
 | Unit / bằng chứng | Chặng | Câu | Chặng 1 câu | Nghe chọn | Việc cần rà tiếp |
 |---|---:|---:|---:|---:|---|
-| `unit-hsk4-1` — Unit 1: Cấu trúc liên từ logic & Câu phức (逻辑连词与复句) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-2` — Unit 2: Kinh doanh & Thương mại (商业谈判与合作) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-3` — Unit 3: Đời sống số & Môi trường sinh thái (数字生活与生态) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-4` — Unit 4: Triết lý nhân sinh & Thành ngữ (人生哲学与成语) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-5` — Unit 5: Tuyển dụng & Thăng tiến sự nghiệp (职业发展与晋升) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-6` — Unit 6: Tài chính cá nhân & Ngân hàng (个人财务与投资) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-7` — Unit 7: Trí tuệ nhân tạo & Công nghệ (人工智能与未来科技) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
-| `unit-hsk4-8` — Unit 8: Nghệ thuật giao tiếp & Tâm lý ứng xử (人际交往与沟通艺术) [L0](../../src/data/roadmapHsk4.ts#L0) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-1` — Unit 1: Cấu trúc liên từ logic & Câu phức (逻辑连词与复句) [L5](../../src/data/roadmapHsk4.ts#L5) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-2` — Unit 2: Kinh doanh & Thương mại (商业谈判与合作) [L247](../../src/data/roadmapHsk4.ts#L247) | 4 | 8 | 1 | 1 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-3` — Unit 3: Đời sống số & Môi trường sinh thái (数字生活与生态) [L485](../../src/data/roadmapHsk4.ts#L485) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-4` — Unit 4: Triết lý nhân sinh & Thành ngữ (人生哲学与成语) [L708](../../src/data/roadmapHsk4.ts#L708) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-5` — Unit 5: Tuyển dụng & Thăng tiến sự nghiệp (职业发展与晋升) [L928](../../src/data/roadmapHsk4.ts#L928) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-6` — Unit 6: Tài chính cá nhân & Ngân hàng (个人财务与投资) [L1150](../../src/data/roadmapHsk4.ts#L1150) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-7` — Unit 7: Trí tuệ nhân tạo & Công nghệ (人工智能与未来科技) [L1372](../../src/data/roadmapHsk4.ts#L1372) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
+| `unit-hsk4-8` — Unit 8: Nghệ thuật giao tiếp & Tâm lý ứng xử (人际交往与沟通艺术) [L1595](../../src/data/roadmapHsk4.ts#L1595) | 4 | 7 | 1 | 0 | Mục tiêu, dạy trước hỏi, đáp án hợp lý, mức khó, nguồn và audio |
 
 Chặng chỉ có một câu (không tự kết luận không đạt): `node-hsk4-1-4`, `node-hsk4-2-4`, `node-hsk4-3-4`, `node-hsk4-4-4`, `node-hsk4-5-4`, `node-hsk4-6-4`, `node-hsk4-7-4`, `node-hsk4-8-4`.
 
