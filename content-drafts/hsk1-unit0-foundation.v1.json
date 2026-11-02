@@ -1,0 +1,348 @@
+{
+  "id": "draft-hsk1-unit0-foundation-v1",
+  "status": "draft",
+  "publication": {
+    "enabled": false,
+    "languageReview": "pending",
+    "assetRights": "unverified"
+  },
+  "integration": {
+    "mode": "not-bundled",
+    "progressMigration": "none",
+    "runtimeChanges": false
+  },
+  "baseline": "5e6ef1b2d386c13386d70b8037ea8a3ab7f50ed8",
+  "sources": [
+    {
+      "id": "V",
+      "path": "src/data/hskData.ts",
+      "scope": "level 1 numbers, internal only; not independent curriculum validation"
+    },
+    {
+      "id": "U0",
+      "path": "src/data/unitGuidebookData.ts",
+      "scope": "unit-hsk1-0; internal examples and rules"
+    },
+    {
+      "id": "G01",
+      "path": "src/data/grammarDataHsk1.ts",
+      "scope": "01 pinyin/tones; requires language review"
+    },
+    {
+      "id": "S1",
+      "url": "https://docs.google.com/presentation/d/1tHJE-3G-83SAlmWYs14XBOlKZ1zVwVaA/edit",
+      "scope": "prior text extraction: syllables/tones and selected number characters only; no full Unit0 verification; rights pending"
+    }
+  ],
+  "foundation": {
+    "id": "draft-u0-reading-intro",
+    "storedAsNewNode": false,
+    "goal": "Phân biệt chữ Hán, pinyin, nghĩa và dấu thanh; biết cách xem/nghe mẫu đã học.",
+    "steps": [
+      "Chữ Hán là cách viết: ví dụ 一. Pinyin là cách ghi cách đọc bằng chữ cái Latin: yī. Nghĩa trong bài này là số 1.",
+      "Dấu thanh trên pinyin giúp ghi cách đọc. Có bốn thanh cơ bản; thanh nhẹ thường không có dấu. Đây là phần làm quen, chưa phải học xong phát âm.",
+      "Xem bốn mẫu âm mā/má/mǎ/mà để nhận ra dấu; nghe mẫu sau khi người duyệt xác nhận TTS đọc đúng. Các mẫu này dùng minh họa âm, không phải bài dạy từ mới.",
+      "Thanh nhẹ cần nghe trong ngữ cảnh; đề xuất ví dụ 妈妈 māma (mẹ) có âm thứ hai nhẹ, phải giải thích từ trước khi dùng.",
+      "Người học thử phân biệt chữ 一, pinyin yī và nghĩa số 1; sau đó mới tới bảng số."
+    ],
+    "toneModels": [
+      {
+        "pinyin": "mā",
+        "label": "Thanh 1"
+      },
+      {
+        "pinyin": "má",
+        "label": "Thanh 2"
+      },
+      {
+        "pinyin": "mǎ",
+        "label": "Thanh 3"
+      },
+      {
+        "pinyin": "mà",
+        "label": "Thanh 4"
+      },
+      {
+        "pinyin": "ma",
+        "label": "Âm nhẹ minh họa, phải nghe trong ngữ cảnh"
+      }
+    ],
+    "constraints": [
+      "Không ép học hết 21/23 thanh mẫu hoặc mọi vận mẫu trong phần này.",
+      "Không dùng TTS làm bằng chứng phát âm chuẩn; không gán audio theo số track.",
+      "Giải thích phân loại thanh mẫu/thanh nhẹ và pinyin phải chờ chuyên môn."
+    ]
+  },
+  "lessons": [
+    {
+      "targetNodeId": "node-hsk1-0-1",
+      "goal": "Nhận diện, nghe và sắp xếp số 1–5 trong phạm vi đã học.",
+      "prerequisites": [
+        "Đã xem phần chữ Hán/pinyin/nghĩa và dấu thanh ở bản nháp nền tảng."
+      ],
+      "vocabulary": [
+        {
+          "hanzi": "一",
+          "pinyin": "yī",
+          "meaning": "Số 1"
+        },
+        {
+          "hanzi": "二",
+          "pinyin": "èr",
+          "meaning": "Số 2"
+        },
+        {
+          "hanzi": "三",
+          "pinyin": "sān",
+          "meaning": "Số 3"
+        },
+        {
+          "hanzi": "四",
+          "pinyin": "sì",
+          "meaning": "Số 4"
+        },
+        {
+          "hanzi": "五",
+          "pinyin": "wǔ",
+          "meaning": "Số 5"
+        }
+      ],
+      "teaching": [
+        "Mỗi dòng cho chữ, pinyin và số tương ứng. Xem/nghe từng số rồi ghép lại dãy 1–5.",
+        "Không gọi người học thành thạo chỉ từ một lượt đúng."
+      ],
+      "examples": [
+        {
+          "hanzi": "一、二、三",
+          "pinyin": "yī, èr, sān",
+          "meaning": "Một, hai, ba."
+        },
+        {
+          "hanzi": "四、五",
+          "pinyin": "sì, wǔ",
+          "meaning": "Bốn, năm."
+        }
+      ],
+      "guided": [
+        {
+          "id": "draft-u0-1-guided-a",
+          "prompt": "Nối 一 và 五 với số tương ứng; có bảng mẫu bên cạnh.",
+          "answer": "一 → 1; 五 → 5"
+        },
+        {
+          "id": "draft-u0-1-guided-b",
+          "prompt": "Nhìn mẫu 1–5 và tìm số còn thiếu trong 1, 2, …, 4, 5.",
+          "answer": "三 — sān — số 3"
+        }
+      ],
+      "existingChallengeIds": [
+        "c-0-1-1",
+        "c-0-1-2",
+        "c-0-1-3",
+        "c-0-1-4",
+        "c-0-1-5",
+        "c-0-1-6"
+      ],
+      "proposedChanges": [
+        "Rà c-0-1-1: hiện chỉ ghép 1–4; có thể thêm cặp 五 nếu phù hợp mục tiêu sau duyệt, không tạo ID trùng cặp khác.",
+        "c-0-1-5 có pinyin ở prompt/lựa chọn; xác định mục tiêu hiểu nghĩa hoặc nhận diện chữ, tránh chỉ khớp èr."
+      ],
+      "review": "Luyện lại từng chữ/âm nhầm; báo riêng điểm tự làm và lượt ôn, không lặp vô hạn."
+    },
+    {
+      "targetNodeId": "node-hsk1-0-2",
+      "goal": "Nhận diện, nghe và sắp xếp số 6–10.",
+      "prerequisites": [
+        "Nhận diện số 1–5; biết chỗ nghe lại và cách chọn đáp án."
+      ],
+      "vocabulary": [
+        {
+          "hanzi": "六",
+          "pinyin": "liù",
+          "meaning": "Số 6"
+        },
+        {
+          "hanzi": "七",
+          "pinyin": "qī",
+          "meaning": "Số 7"
+        },
+        {
+          "hanzi": "八",
+          "pinyin": "bā",
+          "meaning": "Số 8"
+        },
+        {
+          "hanzi": "九",
+          "pinyin": "jiǔ",
+          "meaning": "Số 9"
+        },
+        {
+          "hanzi": "十",
+          "pinyin": "shí",
+          "meaning": "Số 10"
+        }
+      ],
+      "teaching": [
+        "Giới thiệu từng số 六/七/八/九/十 kèm pinyin/nghĩa trước câu hỏi.",
+        "So sánh dãy 6–10 với 1–5 bằng nghĩa số, không học bằng vị trí nút."
+      ],
+      "examples": [
+        {
+          "hanzi": "六、七、八",
+          "pinyin": "liù, qī, bā",
+          "meaning": "Sáu, bảy, tám."
+        },
+        {
+          "hanzi": "九、十",
+          "pinyin": "jiǔ, shí",
+          "meaning": "Chín, mười."
+        }
+      ],
+      "guided": [
+        {
+          "id": "draft-u0-2-guided-a",
+          "prompt": "Nhìn bảng mẫu, chọn 六 ứng với 6 hay 9.",
+          "answer": "6"
+        },
+        {
+          "id": "draft-u0-2-guided-b",
+          "prompt": "Nghe 十 sau khi đã được học; hiện gợi ý shí.",
+          "answer": "10"
+        }
+      ],
+      "existingChallengeIds": [
+        "c-0-2-1",
+        "c-0-2-2",
+        "c-0-2-3"
+      ],
+      "proposedChanges": [
+        "Giữ mục tiêu nghe 八 ở phần tự làm khác mẫu nghe 十 có gợi ý.",
+        "Không dùng giải thích văn hóa may mắn làm bằng chứng người học nhớ nghĩa số."
+      ],
+      "review": "Nếu nhầm 六/九 hoặc 七/十, quay về bảng chữ–âm–số rồi làm lại một lượt có giới hạn."
+    },
+    {
+      "targetNodeId": "node-hsk1-0-3",
+      "goal": "Hiểu và ghép số 11–99 theo mẫu chục và đơn vị đã dạy.",
+      "prerequisites": [
+        "Đã học 1–10; nhận ra 十 và các chữ số đơn vị."
+      ],
+      "vocabulary": [
+        {
+          "hanzi": "十一",
+          "pinyin": "shíyī",
+          "meaning": "Số 11"
+        },
+        {
+          "hanzi": "二十",
+          "pinyin": "èrshí",
+          "meaning": "Số 20"
+        },
+        {
+          "hanzi": "三十五",
+          "pinyin": "sānshíwǔ",
+          "meaning": "Số 35"
+        }
+      ],
+      "teaching": [
+        "11–19: 十 + đơn vị. 20–99: hàng chục + 十, thêm đơn vị khi khác 0.",
+        "Dạy 十四 và 二十七 bằng ví dụ; tự làm vẫn lấy 15 và 99 hiện có để đổi ngữ cảnh.",
+        "Chưa có phần dạy 100 hoặc hỏi giá trong phạm vi này; đề xuất bỏ 一百/giá khỏi nhãn mô tả sau khi được duyệt."
+      ],
+      "examples": [
+        {
+          "hanzi": "十四",
+          "pinyin": "shísì",
+          "meaning": "14 = mười + bốn."
+        },
+        {
+          "hanzi": "二十七",
+          "pinyin": "èrshíqī",
+          "meaning": "27 = hai chục + bảy."
+        }
+      ],
+      "guided": [
+        {
+          "id": "draft-u0-3-guided-a",
+          "prompt": "Theo mẫu 10 + 4, ghép số 14.",
+          "answer": "十四"
+        },
+        {
+          "id": "draft-u0-3-guided-b",
+          "prompt": "Theo mẫu hàng chục + 十, viết số 20.",
+          "answer": "二十"
+        }
+      ],
+      "existingChallengeIds": [
+        "c-0-3-1",
+        "c-0-3-2"
+      ],
+      "proposedChanges": [
+        "Rà nhãn hiện có 一百 không được hỏi/dạy. Không sửa runtime trong gói chuẩn bị.",
+        "Bài ghép tự dịch/số theo yêu cầu không có nút đọc toàn đáp án; nếu là bài nghe–ghép phải ghi rõ mục tiêu nghe."
+      ],
+      "review": "Giải thích đúng chỗ 十 và số đơn vị; mỗi câu sai ôn một lượt, không coi hai câu là bằng chứng bao phủ mọi số."
+    },
+    {
+      "targetNodeId": "node-hsk1-0-4",
+      "goal": "Ôn nhận diện một số chữ số đã học, giữ vai trò mở khóa cũ.",
+      "prerequisites": [
+        "Đã được dạy số 1–10; bài trước mở khóa theo cơ chế hiện tại."
+      ],
+      "vocabulary": [
+        {
+          "hanzi": "三",
+          "pinyin": "sān",
+          "meaning": "Số 3"
+        },
+        {
+          "hanzi": "七",
+          "pinyin": "qī",
+          "meaning": "Số 7"
+        },
+        {
+          "hanzi": "八",
+          "pinyin": "bā",
+          "meaning": "Số 8"
+        },
+        {
+          "hanzi": "十",
+          "pinyin": "shí",
+          "meaning": "Số 10"
+        }
+      ],
+      "teaching": [
+        "Nhắc cách quay về bảng số khi chưa nhớ; không dạy kiến thức mới bất ngờ trong bài ôn."
+      ],
+      "examples": [
+        {
+          "hanzi": "三、七",
+          "pinyin": "sān, qī",
+          "meaning": "3 và 7; ví dụ ôn chữ đã học."
+        }
+      ],
+      "guided": [],
+      "existingChallengeIds": [
+        "c-0-4-1"
+      ],
+      "proposedChanges": [
+        "Chỉ nhãn ôn nhận diện số, không gọi kiểm tra tổng hợp hay thành thạo.",
+        "Đề xuất bài tự làm với biến thể khác ví dụ hoặc thêm câu có mục tiêu nếu cần sau thử; chưa chuyển cúp thành tùy chọn."
+      ],
+      "review": "Nêu các số nhầm và chỗ ôn; không tạo thêm completion hoặc thưởng do tự đánh dấu hoàn thành."
+    }
+  ],
+  "audio": {
+    "kind": "device-tts-proposal",
+    "status": "pending-real-device-review",
+    "recordingAttached": false
+  },
+  "requiredTestsBeforeRuntime": [
+    "correct/wrong/no selection; distinguish guided/self and one review pass",
+    "missing/error/late/timeout speech, answer hidden",
+    "save success/error/retry, exit/reload, old backups",
+    "new/partial/sparse/completed/free-mode/replay; original IDs/unlocks/XP/SRS unchanged",
+    "320/390/1280 px, keyboard/focus/reduced motion, real iOS/Android when available"
+  ],
+  "replayPolicy": "Runtime replay currently uses the original completion/reward callbacks; no reward policy changes or auto-completion in this draft."
+}
