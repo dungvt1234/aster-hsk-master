@@ -13,13 +13,14 @@ Object.defineProperty(globalThis, 'localStorage', { value: dom.window.localStora
 Object.defineProperty(globalThis, 'IS_REACT_ACT_ENVIRONMENT', { value: true, configurable: true, writable: true });
 Object.defineProperty(globalThis, 'SpeechSynthesisUtterance', { value: class { text: string; constructor(text: string) { this.text = text; } }, configurable: true });
 let audio = 'ok';
+let pendingUtterance: any;
 const spoken: string[] = [];
 Object.defineProperty(dom.window, 'speechSynthesis', { configurable: true, value: {
   cancel() {},
   getVoices() { return audio === 'missing' ? [] : [{ lang: 'zh-CN', name: 'test' }]; },
-  speak(utterance: any) { spoken.push(utterance.text); if (audio === 'error') utterance.onerror(); else utterance.onend(); },
+  speak(utterance: any) { spoken.push(utterance.text); if (audio === 'pending') { pendingUtterance = utterance; return; } if (audio === 'error') utterance.onerror(); else utterance.onend(); },
 } });
-const { render, fireEvent, screen, cleanup } = await import('@testing-library/react');
+const { render, fireEvent, screen, cleanup, act } = await import('@testing-library/react');
 const { GreetingsPilot } = await import('../src/components/GreetingsPilot');
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name, exact: true }));
 const answer = (choice: string, next: string) => { click(choice); click('Kiểm tra'); click(next); };
@@ -140,4 +141,53 @@ test('malformed saved result is not silently overwritten and legacy/new results 
   assert.equal(validPilotResult({ ...saved, reviewCorrect: 3, reviewTotal: 2 }), false);
   assert.equal(validPilotResult({ ...saved, reviewCorrect: 1, reviewTotal: 1 }), false);
   assert.equal(validPilotResult({ ...saved, correct: 1.5 }), false);
+});
+
+
+test('unavailable speech API and speech timeout keep listening ungraded without replacing old progress', () => {
+  localStorage.setItem(PILOT_RESULT_KEY, JSON.stringify(saved));
+  mount(); self(); answer('您好！', 'Câu tiếp theo'); click('Chào các bạn');
+  const descriptor = Object.getOwnPropertyDescriptor(window, 'speechSynthesis')!;
+  Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: undefined });
+  try {
+    click('Nghe câu hỏi (giọng thiết bị)');
+    assert.ok(screen.getByText(/Trình duyệt chưa hỗ trợ giọng đọc/));
+    assert.equal((screen.getByRole('button', { name: 'Kiểm tra' }) as HTMLButtonElement).disabled, true);
+  } finally { Object.defineProperty(window, 'speechSynthesis', descriptor); }
+  audio = 'pending';
+  const originalTimer = globalThis.setTimeout;
+  let timeout: (() => void) | undefined;
+  globalThis.setTimeout = ((callback: () => void) => { timeout = callback; return 0; }) as any;
+  try { click('Nghe câu hỏi (giọng thiết bị)'); } finally { globalThis.setTimeout = originalTimer; }
+  assert.ok(timeout); act(() => timeout!());
+  assert.ok(screen.getByText(/Chưa phát được âm thanh/));
+  act(() => pendingUtterance.onend()); // A late browser callback after timeout must not unlock grading.
+  assert.equal((screen.getByRole('button', { name: 'Kiểm tra' }) as HTMLButtonElement).disabled, true);
+  assert.deepEqual(JSON.parse(localStorage.getItem(PILOT_RESULT_KEY)!), saved);
+});
+
+test('canceling pending speech on exit cannot reveal or unlock the listening answer', () => {
+  mount(); self(); answer('您好！', 'Câu tiếp theo');
+  audio = 'pending'; click('Nghe câu hỏi (giọng thiết bị)');
+  click('← Thoát bài mẫu'); act(() => pendingUtterance.onend());
+  click('Tiếp tục bài đang làm'); click('Chào các bạn');
+  assert.equal((screen.getByRole('button', { name: 'Kiểm tra' }) as HTMLButtonElement).disabled, true);
+  assert.equal(screen.queryByText(/nǐmen/), null);
+  assert.equal(localStorage.getItem(PILOT_RESULT_KEY), null);
+});
+
+test('all four wrong answers get exactly one review pass and reload drops only unsaved work', () => {
+  localStorage.setItem(PILOT_RESULT_KEY, JSON.stringify(saved));
+  const view = mount(); self(); answer('对不起。', 'Câu tiếp theo');
+  click('Nghe câu hỏi (giọng thiết bị)'); answer('Không sao', 'Câu tiếp theo');
+  answer('你好。', 'Câu tiếp theo'); answer('ní hǎo', 'Xong phần tự làm');
+  click('Ôn câu vừa sai'); answer('对不起。', 'Câu tiếp theo');
+  click('Nghe câu hỏi (giọng thiết bị)'); answer('Không sao', 'Câu tiếp theo');
+  answer('你好。', 'Câu tiếp theo'); answer('ní hǎo', 'Xem kết quả');
+  assert.ok(screen.getByText('Đúng lần đầu: 0 / 4 câu.'));
+  assert.ok(screen.getByText('Ôn lại: 0 / 4 câu đúng.'));
+  assert.ok(screen.getByText(/Đã học — cần ôn thêm/));
+  view.unmount(); mount();
+  assert.ok(screen.getByText('Đúng lần đầu: 2 / 4 câu.'));
+  assert.deepEqual(JSON.parse(localStorage.getItem(PILOT_RESULT_KEY)!), saved);
 });
