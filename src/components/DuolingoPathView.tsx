@@ -27,6 +27,7 @@ import { gamificationService, type GamificationState } from '../services/gamific
 import { fireConfetti } from '../utils/confetti';
 import { loadCompletedNodes, roadmapNodeStatus } from '../services/studySession';
 import { GreetingsPilot } from './GreetingsPilot';
+import { LearningShortcuts } from './LearningShortcuts';
 import { PathLearningFocus } from './PathLearningFocus';
 
 // Preview mode is an explicit build choice, not authentication or deployment protection.
@@ -152,8 +153,9 @@ export function DuolingoPathView({
       {pilotEnabled && showPilot && <GreetingsPilot onClose={() => setShowPilot(false)} />}
       {/* Center: The Winding Learning Roadmap Path */}
       <div className="duo-path-center">
-        {currentLevel === 1 && <PathLearningFocus nodes={orderedNodes} completed={completedNodeIds} freeMode={fastTrackMode} onSelect={handleNodeClick} onOpenMistakes={onOpenMistakes} />}
+        {<PathLearningFocus level={currentLevel} nodes={orderedNodes} completed={completedNodeIds} freeMode={fastTrackMode} onSelect={handleNodeClick} onOpenMistakes={onOpenMistakes} />}
         {pilotEnabled && currentLevel === 1 && <button type="button" onClick={() => setShowPilot(true)}>Thử bài mẫu: Chào hỏi và xin lỗi</button>}
+        {onNavigateTab && <LearningShortcuts onNavigate={onNavigateTab} />}
         <details className="path-secondary-tools">
           <summary>Công cụ luyện tập và học vượt</summary>
           <div className="path-tool-buttons">

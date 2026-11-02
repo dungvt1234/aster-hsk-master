@@ -10,14 +10,17 @@ let browser;
 await mkdir('artifacts/pilot-browser',{recursive:true});
 try {
  browser=await chromium.launch({headless:true});
- for(const width of [390,1280]) {
+ for(const width of [320,390,768,1280]) {
   const page=await browser.newPage({viewport:{width,height:844}});
   await page.goto('http://127.0.0.1:4176');
   await page.locator('.sidebar-nav').waitFor({state:'attached'});
+  await page.getByRole('region',{name:'Tài liệu và kỹ năng'}).waitFor();
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'page should fit viewport');
+  await page.screenshot({path:`artifacts/pilot-browser/${width}-study-home.png`});
   assert.equal(await page.getByText('Đấu Trường Game',{exact:true}).count(),0);
   assert.equal(await page.locator('.topbar-stat-pill.gems, .live-presence-pill').count(),0);
-  for(const label of ['Giáo Trình HSK 1','Tủ Sách PDF Gốc','Phát Âm Pinyin','Tập Viết Chữ Hán','Luyện Nói AI']) {
-   if(width<768) await page.getByRole('button',{name:'Mở Menu',exact:true}).click();
+  for(const label of ['Giáo Trình HSK 1','Tủ Sách PDF Gốc','Phát Âm Pinyin','Tập Viết Chữ Hán','Luyện Nói']) {
+   if(width<=768) await page.getByRole('button',{name:'Mở Menu',exact:true}).click();
    const button=page.locator('.sidebar-nav').getByRole('button',{name:label,exact:true});
    await button.scrollIntoViewIfNeeded();
    await button.click();

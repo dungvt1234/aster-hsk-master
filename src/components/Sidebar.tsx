@@ -96,7 +96,7 @@ export function Sidebar({
     },
     {
       id: 'speaking',
-      label: 'Luyện Nói AI',
+      label: 'Luyện Nói',
       icon: <Mic size={20} />,
       color: '#10b981',
       badge: 'Speech 🎙️',
@@ -109,7 +109,7 @@ export function Sidebar({
     },
     {
       id: 'flashcards',
-      label: 'Flashcards 3D',
+      label: 'Ôn thẻ từ',
       icon: <Sparkles size={20} />,
       color: '#a855f7',
     },
@@ -172,7 +172,7 @@ export function Sidebar({
             </div>
             <div className="brand-info">
               <h2 className="brand-title">Aster HSK</h2>
-              <span className="brand-subtitle">DUOLINGO MODE</span>
+              <span className="brand-subtitle">HỌC TIẾNG TRUNG</span>
             </div>
           </div>
 
@@ -190,13 +190,14 @@ export function Sidebar({
         </div>
 
         {/* Main Nav Links */}
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" aria-label="Menu học tập">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 type="button"
+                aria-current={isActive ? 'page' : undefined}
                 className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
                 onClick={() => handleItemClick(item.id)}
                 style={{

@@ -148,9 +148,10 @@ export function MobileBottomNav({
           <div className="mobile-action-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="sheet-drag-handle" />
             <div className="sheet-header">
-              <span className="sheet-title">Chức năng & Tiện ích Aster HSK</span>
+              <span className="sheet-title">Tài liệu & công cụ học</span>
               <button
                 type="button"
+                aria-label="Đóng công cụ học"
                 className="sheet-close-btn"
                 onClick={() => setIsSheetOpen(false)}
               >
@@ -364,13 +365,14 @@ export function MobileBottomNav({
       )}
 
       {/* Main Bottom Bar */}
-      <nav className="mobile-bottom-nav">
+      <nav className="mobile-bottom-nav" aria-label="Điều hướng chính">
         {mainTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              aria-current={isActive ? 'page' : undefined}
               className={`mobile-nav-btn ${isActive ? 'active' : ''}`}
               onClick={() => handleSelectTab(tab.id)}
               style={{
@@ -396,6 +398,8 @@ export function MobileBottomNav({
         <button
           type="button"
           className={`mobile-nav-btn ${isMoreActive ? 'active' : ''}`}
+          aria-expanded={isSheetOpen}
+          aria-label="Mở thêm công cụ học"
           onClick={() => setIsSheetOpen((prev) => !prev)}
           style={{ color: isMoreActive ? 'var(--primary)' : 'var(--text-dim)' }}
         >

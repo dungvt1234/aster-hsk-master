@@ -126,17 +126,17 @@ export function TopBar({
         };
       case 'pinyin':
         return {
-          title: 'Hán Ngữ Ngữ Âm & Phát Âm Pinyin 🗣️',
+          title: 'Phát âm pinyin',
           subtitle: 'Bảng 23 thanh mẫu, 36 vận mẫu, 5 thanh điệu, quy tắc biến âm và phòng luyện nghe chuẩn Bắc Kinh',
         };
       case 'writing':
         return {
-          title: 'Studio Tập Viết Chữ Hán 🖌️',
+          title: 'Tập viết chữ Hán',
           subtitle: 'Bàn vẽ cảm ứng Mễ Tự Cách (米字格) rèn trí nhớ cơ bắp và bút thuận chuẩn',
         };
       case 'speaking':
         return {
-          title: 'Studio Luyện Nói & Khẩu Ngữ AI 🎙️',
+          title: 'Luyện nói',
           subtitle: 'Chấm điểm phát âm thời gian thực, rèn ngữ điệu Bắc Kinh và phản xạ khẩu ngữ HSK 1 - 4',
         };
       case 'course':
@@ -146,7 +146,7 @@ export function TopBar({
         };
       case 'flashcards':
         return {
-          title: `Flashcards 3D`,
+          title: `Ôn thẻ từ`,
           subtitle: 'Ghi nhớ từ vựng dài hạn với thuật toán ngắt quãng Spaced Repetition (SRS)',
         };
       case 'quiz':
