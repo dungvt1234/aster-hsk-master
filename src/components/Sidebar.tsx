@@ -81,13 +81,6 @@ export function Sidebar({
       color: '#58CC02',
     },
     {
-      id: 'arena',
-      label: 'Đấu Trường Game',
-      icon: <Gamepad2 size={20} />,
-      color: '#f59e0b',
-      badge: 'Chơi & Học',
-    },
-    {
       id: 'pinyin',
       label: 'Phát Âm Pinyin',
       icon: <Volume2 size={20} />,
@@ -229,59 +222,7 @@ export function Sidebar({
         <div className="sidebar-footer">
           {/* Quick Access: Quests 🎁 & Diamond Shop 💎 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
-            {onOpenQuests && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenQuests();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08))',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                  color: '#d97706',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Nhiệm Vụ Ngày & Rương May Mắn"
-              >
-                <span>🎁</span> <span>Rương Báu</span>
-              </button>
-            )}
 
-            {onOpenStore && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenStore();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(2, 132, 199, 0.08))',
-                  border: '1px solid rgba(14, 165, 233, 0.3)',
-                  color: '#0284c7',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Cửa Hàng Kim Cương 💎"
-              >
-                <span>💎</span> <span>Cửa Hàng</span>
-              </button>
-            )}
 
             {onOpenMistakes && (
               <button
@@ -312,32 +253,6 @@ export function Sidebar({
               </button>
             )}
 
-            {onOpenLeague && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenLeague();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'rgba(234, 179, 8, 0.08)',
-                  border: '1px solid rgba(234, 179, 8, 0.25)',
-                  color: '#ca8a04',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Bảng Xếp Hạng Giải Đấu Tuần"
-              >
-                <span>🏆</span> <span>Giải Đấu</span>
-              </button>
-            )}
 
             {onOpenPodcast && (
               <button
@@ -449,43 +364,6 @@ export function Sidebar({
               </button>
             )}
 
-            {onOpenLiveStudy && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenLiveStudy();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  gridColumn: '1 / -1',
-                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(16, 185, 129, 0.08))',
-                  border: '1.5px solid #22c55e',
-                  color: '#16a34a',
-                  borderRadius: '10px',
-                  padding: '7px 8px',
-                  fontSize: '11.5px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                  marginTop: '2px',
-                }}
-                title="Mở phòng học mô phỏng"
-              >
-                <span
-                  style={{
-                    width: '7px',
-                    height: '7px',
-                    borderRadius: '50%',
-                    background: '#22c55e',
-                    boxShadow: '0 0 6px #22c55e',
-                  }}
-                />
-                <span>Phòng Học Mô Phỏng</span>
-              </button>
-            )}
 
             {onOpenFeedback && (
               <button

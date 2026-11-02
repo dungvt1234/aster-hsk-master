@@ -280,48 +280,11 @@ export function TopBar({
           <span>100% MIỄN PHÍ</span>
         </div>
 
-        {/* Live Study Presence Indicator (🟢 X Bạn Online) */}
-        <div
-          className="topbar-stat-pill live-presence-pill"
-          onClick={onOpenLiveStudy}
-          style={{
-            cursor: onOpenLiveStudy ? 'pointer' : 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '4px 10px',
-            borderRadius: '20px',
-            background: 'rgba(34, 197, 94, 0.12)',
-            border: '1.5px solid rgba(34, 197, 94, 0.4)',
-            color: '#16a34a',
-            transition: 'all 0.2s ease',
-          }}
-          title="Phòng học mô phỏng với dữ liệu minh họa"
-        >
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#22c55e',
-              boxShadow: '0 0 8px #22c55e',
-              display: 'inline-block',
-            }}
-          />
-          <span className="stat-number" style={{ color: '#16a34a', fontWeight: 900 }}>
-            Phòng mẫu
-          </span>
-          <span className="desktop-only" style={{ fontSize: '11px', fontWeight: 700 }}>
-            Mô phỏng
-          </span>
-        </div>
-
         {/* Streak Flame & Shield */}
         <div
           className="topbar-stat-pill streak"
-          onClick={onOpenQuests}
-          style={{ cursor: onOpenQuests ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '5px' }}
-          title="Chuỗi ngày học liên tục. Nhấp để xem Nhiệm Vụ & Rương Bí Mật"
+          style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+          title="Chuỗi ngày học liên tục"
         >
           <Flame size={16} fill="#FF9600" color="#FF9600" />
           <span className="stat-number">{streak}</span>
@@ -389,44 +352,10 @@ export function TopBar({
           </span>
         </div>
 
-        {/* Gems & Store Trigger */}
-        <div
-          className="topbar-stat-pill gems"
-          onClick={onOpenStore}
-          style={{
-            cursor: onOpenStore ? 'pointer' : 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            background: 'rgba(14, 165, 233, 0.1)',
-            border: '1px solid rgba(14, 165, 233, 0.25)',
-          }}
-          title="Kim Cương 💎 tích lũy. Nhấp để mở Cửa Hàng Vật Phẩm"
-        >
-          <Gem size={15} fill="#1CB0F6" color="#1CB0F6" />
-          <span className="stat-number">{gameState.gems}</span>
-          {gamificationService.isDoubleXpActive() && (
-            <span
-              style={{
-                fontSize: '9px',
-                background: '#f59e0b',
-                color: '#ffffff',
-                padding: '1px 4px',
-                borderRadius: '6px',
-                fontWeight: 900,
-              }}
-              title={`Đang kích hoạt Double XP (${gamificationService.getDoubleXpMinutesRemaining()}m)`}
-            >
-              2X
-            </span>
-          )}
-        </div>
-
         {/* Hearts */}
         <div
           className="topbar-stat-pill hearts"
-          onClick={onOpenStore}
-          style={{ cursor: onOpenStore ? 'pointer' : 'default' }}
+          style={{ cursor: 'default' }}
           title={
             gamificationService.isInfiniteHeartsActive()
               ? `Bất tử tim đang bật (${gamificationService.getInfiniteHeartsMinutesRemaining()}m)`
@@ -497,30 +426,6 @@ export function TopBar({
         >
           <Star size={14} fill={starredCount > 0 ? '#eab308' : 'none'} color={starredCount > 0 ? '#eab308' : 'var(--text-muted)'} />
           <span>{starredCount > 0 ? `${starredCount} Đã Lưu` : '0 Đã Lưu'}</span>
-        </div>
-
-        {/* Giải Đấu Tuần (Weekly League 🏆) */}
-        <div
-          className="topbar-stat-pill league"
-          onClick={onOpenLeague}
-          style={{
-            cursor: onOpenLeague ? 'pointer' : 'default',
-            background: 'rgba(234, 179, 8, 0.12)',
-            border: '1.5px solid #eab308',
-            color: '#ca8a04',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            padding: '5px 11px',
-            borderRadius: '20px',
-            fontSize: '11.5px',
-            fontWeight: 800,
-            transition: 'all 0.2s ease',
-          }}
-          title={`Bảng xếp hạng tuần: ${leagueTier.name} (Bạn đang xếp hạng #${userRank})`}
-        >
-          <span>{leagueTier.badge}</span>
-          <span>#{userRank} {leagueTier.name}</span>
         </div>
 
         {/* Chế độ Nghe Rảnh Tay (Hands-free Podcast 🎧) */}

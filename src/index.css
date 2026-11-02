@@ -115,7 +115,8 @@ button {
   border-right: 2px solid var(--border);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  overflow-y: auto;
   padding: 24px 16px 16px;
   z-index: 40;
   box-sizing: border-box;
@@ -181,16 +182,11 @@ button {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
-  overflow-y: auto;
+  flex: 0 0 auto;
   padding-right: 2px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
-.sidebar-nav::-webkit-scrollbar {
-  display: none;
-}
+
 
 .sidebar-nav-btn {
   display: flex;
@@ -1730,7 +1726,7 @@ button {
    ========================================================================== */
 .duo-path-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 350px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 36px;
   max-width: 1120px;
   margin: 0 auto;
