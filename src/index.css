@@ -5196,7 +5196,7 @@ button {
 }
 
 /* Giai đoạn 3: bài mẫu nội bộ, chỉ áp dụng trong .pilot-dialog. */
-.pilot-dialog { position: fixed; inset: 0; z-index: 10000; overflow-y: auto; overscroll-behavior: contain; padding: 24px 16px max(32px, env(safe-area-inset-bottom)); background: var(--background, #f6f7f9); color: var(--text, #172b35); }
+.pilot-dialog { position: fixed; inset: 0; z-index: 10000; overflow-y: auto; overscroll-behavior: contain; padding: 24px 16px max(32px, env(safe-area-inset-bottom)); background: var(--bg, #f6f7f9); color: var(--text, #172b35); }
 .pilot-shell { max-width: 660px; margin: 0 auto; line-height: 1.65; overflow-wrap: anywhere; }
 .pilot-dialog h1 { font-size: clamp(25px, 6vw, 36px); line-height: 1.25; }
 .pilot-dialog h2 { font-size: 21px; margin-top: 24px; }
@@ -5219,3 +5219,5 @@ button {
 .pilot-exit button { display: block; width: 100%; margin-top: 16px; }
 .pilot-shell[inert] { display: none; }
 @media (prefers-reduced-motion: reduce) { .pilot-dialog, .pilot-dialog * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+.pilot-dialog ul { padding-left: 22px; margin: 12px 0; }

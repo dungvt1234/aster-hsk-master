@@ -17,7 +17,8 @@ try {
   for (const width of [320, 390, 1280]) {
     const context = await browser.newContext({ viewport: { width, height: width < 500 ? 844 : 800 },
       isMobile: width < 500, hasTouch: width < 500, reducedMotion: 'reduce' });
-    await context.addInitScript(() => {
+    await context.addInitScript(({ dark }) => {
+      localStorage.setItem('aster_hsk_theme', dark ? 'dark' : 'light');
       window.__pilotAudio = 'ok';
       window.SpeechSynthesisUtterance = class { constructor(text) { this.text = text; } };
       Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: {
@@ -25,7 +26,7 @@ try {
         cancel() {}, speak(utterance) { queueMicrotask(() => utterance.onend?.()); },
       } });
       if (!localStorage.getItem('aster_completed_nodes')) localStorage.setItem('aster_completed_nodes', '["node-hsk1-0-1"]');
-    });
+    }, { dark: width === 390 });
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -34,6 +35,16 @@ try {
     const geometry = async () => {
       const box = await page.locator('.pilot-dialog').evaluate(el => ({ width: el.clientWidth, scroll: el.scrollWidth }));
       assert.ok(box.scroll <= box.width + 1, `horizontal overflow at ${width}`);
+      const contrast = await page.locator('.pilot-dialog').evaluate(el => {
+        const style = getComputedStyle(el);
+        const luminance = css => {
+          const channels = css.match(/[\d.]+/g).slice(0, 3).map(Number).map(c => c / 255).map(c => c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+          return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+        };
+        const a = luminance(style.color), b = luminance(style.backgroundColor);
+        return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+      });
+      assert.ok(contrast >= 4.5, `body text contrast at ${width}: ${contrast}`);
       const sizes = await page.locator('.pilot-dialog button:visible').evaluateAll(buttons => buttons.map(el => el.getBoundingClientRect().height));
       assert.ok(sizes.every(height => height >= 44), `tap target at ${width}`);
     };
@@ -42,6 +53,7 @@ try {
     const untouched = await page.evaluate(key => Object.fromEntries(Object.keys(localStorage).filter(k => k !== key).map(k => [k, localStorage.getItem(k)])), key);
     await geometry(); await page.screenshot({ path: `${output}/${width}-intro.png` });
     await click('Học bài mẫu');
+    await geometry(); await page.screenshot({ path: `${output}/${width}-learn.png` });
     await click('Luyện có hướng dẫn'); // Playwright scrolls to this button at the bottom of the teaching section.
     await answer('您好！', 'Câu tiếp theo'); await answer('没关系。', 'Bắt đầu tự làm');
     await page.keyboard.press('Escape');

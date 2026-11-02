@@ -46,7 +46,7 @@ Tái dùng bản biên tập `content-drafts/hsk1-greetings.v1.json`, nguồn b�
 
 Chromium không có sẵn trong môi trường local; lần tải bằng Playwright thất bại do gói tải không phải ZIP hợp lệ. Dev server chạy được ở 127.0.0.1; chưa chạy browser local. Không ghi ca browser local là PASS.
 
-Workflow hiện có được bổ sung bước cài Playwright **1.62.1** vào thư mục tạm của runner, không đổi dependency/lockfile ứng dụng. Script `tests/browser/greetingsPilot.smoke.mjs` chạy Vite DEV và Chromium ở **320px, 390px, 1280px**, kiểm tra hành trình dạy/hướng dẫn/tự làm/nghe lỗi/ôn/lưu lỗi/thử lại/tải lại, Tab/Escape, nút ≥44px, không cuộn ngang, reduced motion và không đổi key tiến độ khác. Audio là stub có chủ ý: chỉ xác minh giao diện và đường xử lý, không kiểm tra phát âm thật.
+Workflow hiện có được bổ sung bước cài Playwright **1.62.1** vào thư mục tạm của runner, không đổi dependency/lockfile ứng dụng. Script `tests/browser/greetingsPilot.smoke.mjs` chạy Vite DEV và Chromium ở **320px, 390px, 1280px** (390px dùng dark theme), kiểm tra hành trình dạy/hướng dẫn/tự làm/nghe lỗi/ôn/lưu lỗi/thử lại/tải lại, Tab/Escape, nút ≥44px, không cuộn ngang, tương phản chữ chính ≥4.5:1, reduced motion và không đổi key tiến độ khác. Audio là stub có chủ ý: chỉ xác minh giao diện và đường xử lý, không kiểm tra phát âm thật.
 
 Chạy lại script sau khi có Chromium:
 
@@ -56,7 +56,7 @@ npm install --prefix /tmp/aster-pilot-browser --no-package-lock playwright@1.62.
 PLAYWRIGHT_MODULE_DIR=/tmp/aster-pilot-browser/node_modules/playwright node tests/browser/greetingsPilot.smoke.mjs
 ```
 
-Workflow giữ screenshot từng kích thước ở artifact `pilot-browser-screenshots`. Kết quả browser/CI phải đọc trên commit cuối và báo ở bàn giao; việc thêm script không tự chứng minh browser đã PASS.
+Workflow giữ screenshot từng kích thước ở artifact `pilot-browser-screenshots`. Lượt CI đầu (commit `b7f614c`) đã PASS cả ba kích thước và giữ 9 ảnh; đã xem ảnh phần mở đầu mobile, câu nghe mobile và kết quả desktop. Bổ sung kiểm tra dark theme/tương phản và ảnh phần học trong lần chốt; kết quả trên commit cuối được báo ở bàn giao. Việc thêm script không tự chứng minh browser đã PASS.
 
 ### Chưa xác nhận
 
