@@ -554,7 +554,7 @@ export function TopBar({
           <button
             type="button"
             className="study-profile-control"
-            onClick={onOpenProfile}
+            onClick={user.isGuest ? onOpenAuth : onOpenProfile}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -569,11 +569,12 @@ export function TopBar({
               fontWeight: 800,
               boxShadow: 'var(--card-shadow)',
             }}
-            title="Xem hồ sơ và xuất tiến độ"
+            title={user.isGuest ? 'Đăng nhập để đồng bộ tiến độ' : 'Xem tài khoản và trạng thái đồng bộ'}
+            aria-label={user.isGuest ? 'Đăng nhập hoặc tạo tài khoản' : `Mở tài khoản ${user.name}`}
           >
             <span style={{ fontSize: '16px' }}>{user.avatar || '🐼'}</span>
-            <span>
-              {user.isGuest ? 'Tiến độ' : user.name.split(' ').slice(-1)[0]}
+            <span className="study-profile-label">
+              {user.isGuest ? 'Đăng nhập' : user.name.split(' ').slice(-1)[0]}
             </span>
           </button>
         ) : null}

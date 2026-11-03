@@ -156,13 +156,15 @@ body, button, input, select, textarea { font-family: var(--font-sans); }
 .duo-mascot-fab { background: #164E43 !important; box-shadow: 0 3px 12px #164E4320 !important; }
 .study-pilot-link { align-self: flex-start; border: 1px dashed var(--border); border-radius: 8px; padding: 9px 14px; color: var(--text-muted); font-size: 12px; background: transparent; }
 @media (max-width: 1100px) and (min-width: 769px) {
- .topbar-command-search-btn .desktop-only, .study-profile-control { display: none !important; }
+ .topbar-command-search-btn .desktop-only { display: none !important; }
  .topbar-title { font-size: 16px; }
  .app-topbar { padding: 12px 18px; gap: 10px; }
 }
 @media (max-width: 768px) {
  .app-topbar { min-height: 64px; padding: 10px 14px; }
  .topbar-title { font-size: 14px; font-weight: 600; }
+ .topbar-right-controls > .topbar-command-search-btn { display: none !important; }
+ .topbar-right-controls > .study-profile-control { display: flex !important; min-height: 40px; padding: 7px 10px !important; border-radius: 11px !important; }
  .path-learning-focus { grid-template-columns: minmax(0,1fr) 72px; column-gap: 12px; padding: 20px 18px 8px; }
  .path-learning-focus h2 { font-size: 23px; margin: 8px 0 14px; }
  .path-learning-focus .path-focus-title { font-size: 17px; line-height: 1.5; }
@@ -181,6 +183,10 @@ body, button, input, select, textarea { font-family: var(--font-sans); }
  .learning-shortcut strong { font-size: 13px; }
  .learning-section-heading h2 { font-size: 18px; }
  .sidebar-nav-btn { min-height: 44px; }
+}
+@media (max-width: 360px) {
+ .study-profile-label { display: none; }
+ .topbar-right-controls > .study-profile-control { width: 40px; justify-content: center; padding: 7px !important; }
 }
 .topbar-heading { max-width: 100%; }
 @media (min-width: 769px) { .topbar-left-group { flex: 1; min-width: 160px; } .topbar-right-controls { flex: 0 1 auto; } }

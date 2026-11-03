@@ -16,6 +16,11 @@ try {
   await page.locator('.sidebar-nav').waitFor({state:'attached'});
   await page.getByRole('region',{name:'Tài liệu và kỹ năng'}).waitFor();
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'page should fit viewport');
+  const login=page.getByRole('button',{name:'Đăng nhập hoặc tạo tài khoản',exact:true});
+  assert.ok(await login.isVisible(),'login entry point should be visible');
+  await login.click();
+  await page.getByRole('heading',{name:'Đăng nhập để học tiếp',exact:true}).waitFor();
+  await page.getByRole('button',{name:'Đóng',exact:true}).click();
   await page.screenshot({path:`artifacts/pilot-browser/${width}-study-home.png`});
   assert.equal(await page.getByText('Đấu Trường Game',{exact:true}).count(),0);
   assert.equal(await page.locator('.topbar-stat-pill.gems, .live-presence-pill').count(),0);
