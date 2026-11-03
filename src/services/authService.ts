@@ -129,7 +129,10 @@ class AuthService {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
-      options: { data: { full_name: name.trim(), avatar: '🐼', current_level: 1 } },
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: { full_name: name.trim(), avatar: '🐼', current_level: 1 },
+      },
     });
     if (error) throw error;
     if (!data.session || !data.user) return { user: null, confirmationRequired: true };
