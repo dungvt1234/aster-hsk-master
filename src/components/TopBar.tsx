@@ -451,11 +451,18 @@ export function TopBar({
           title={
             syncStatus.lastSyncedAt
               ? `Đồng bộ đám mây thành công lúc ${syncStatus.lastSyncedAt}`
-              : 'Tiến độ chỉ lưu trong trình duyệt này. Chưa có sao lưu đám mây.'
+              : user && !user.isGuest
+                ? syncStatus.message || 'Đang chuẩn bị đồng bộ tiến độ.'
+                : 'Tiến độ đang được lưu trên thiết bị này.'
           }
         >
-          <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
-          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Lưu trên thiết bị'}</span>
+          <Cloud size={14} color={syncStatus.state === 'error' ? '#b84a38' : syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
+          <span>{
+            !user || user.isGuest ? 'Lưu trên thiết bị' :
+              syncStatus.state === 'syncing' ? 'Đang đồng bộ…' :
+                syncStatus.state === 'synced' ? 'Đã đồng bộ' :
+                  syncStatus.state === 'error' ? 'Chờ đồng bộ' : 'Ngoại tuyến'
+          }</span>
         </div>
 
         {/* Lo-Fi Ambient Study Beats Player Toggle */}

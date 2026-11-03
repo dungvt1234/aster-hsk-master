@@ -21,6 +21,7 @@ import { dailyGoalService } from './services/dailyGoalService';
 import { favoriteVocabService } from './services/favoriteVocabService';
 import { Analytics } from '@vercel/analytics/react';
 import { telemetryService } from './services/telemetryService';
+import { cloudSync } from './services/cloudSyncService';
 
 // Code-Splitting: Lazy loading heavy views and secondary studios
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -75,6 +76,7 @@ export function App() {
       leagueService.addXp(amount);
       dailyGoalService.addXp(amount);
       telemetryService.trackEvent('earn_xp', { amount, level: currentLevel });
+      cloudSync.triggerSync();
     } catch {
       setSaveError('Chưa cập nhật được điểm thưởng. Tiến độ bài học đã lưu vẫn được giữ.');
     }
@@ -123,7 +125,18 @@ export function App() {
       setProgress(loadedProg);
       setStats(loadedStat);
     });
+    void authService.initialize();
     return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const reloadCloudState = () => {
+      const user = authService.getCurrentUser();
+      setProgress(loadAllProgress(user.id));
+      setStats(loadUserStats(LEVEL_COUNTS, user.id));
+    };
+    window.addEventListener('aster:cloud-restored', reloadCloudState);
+    return () => window.removeEventListener('aster:cloud-restored', reloadCloudState);
   }, []);
 
   const canProtectMissedDay = () => daysSince(loadUserStats(LEVEL_COUNTS, currentUser.id).lastStudyDate) === 2 && gamificationService.getState().streakFreezes > 0;
@@ -134,6 +147,7 @@ export function App() {
       const next = recordReview(vocabId, quality, HSK_VOCABULARY, currentUser.id, protect);
       setProgress(next.progress);
       setStats(next.stats);
+      cloudSync.triggerSync();
       setSaveError(null);
       if (protect) gamificationService.consumeStreakFreeze();
       if (quality >= 2) {
@@ -152,6 +166,7 @@ export function App() {
       const protect = canProtectMissedDay();
       const next = recordCompletedNodes(ids, HSK_VOCABULARY, currentUser.id, protect);
       setStats(next.stats);
+      cloudSync.triggerSync();
       setSaveError(null);
       if (protect) gamificationService.consumeStreakFreeze();
       return next.completed;
