@@ -185,8 +185,8 @@ body, button, input, select, textarea { font-family: var(--font-sans); }
  .sidebar-nav-btn { min-height: 44px; }
 }
 @media (max-width: 360px) {
- .study-profile-label { display: none; }
- .topbar-right-controls > .study-profile-control { width: 40px; justify-content: center; padding: 7px !important; }
+ .topbar-right-controls > .level-mobile-select-wrap { display: none !important; }
+ .topbar-right-controls > .study-profile-control { display: flex !important; }
 }
 .topbar-heading { max-width: 100%; }
 @media (min-width: 769px) { .topbar-left-group { flex: 1; min-width: 160px; } .topbar-right-controls { flex: 0 1 auto; } }
