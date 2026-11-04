@@ -34,6 +34,7 @@ import { HSK2_GRAMMAR_DETAILS, GrammarPoint } from '../data/grammarData';
 import { HSK1_GRAMMAR_DETAILS } from '../data/grammarDataHsk1';
 import { HSK3_GRAMMAR_DETAILS } from '../data/grammarDataHsk3';
 import { HSK4_GRAMMAR_DETAILS } from '../data/grammarDataHsk4';
+import { HSK1_TEXTBOOK_PLAN, type Hsk1PracticeSkill } from '../data/hsk1TextbookPlan';
 import {
   highlightGrammarInChinese,
   renderColoredPinyin,
@@ -74,6 +75,18 @@ const HSK1_LESSONS: Lesson[] = [
   { id: 'hsk1-14', number: '14', titleCn: '我看了一个电影', titlePinyin: 'Wǒ kàn le yí gè diànyǐng', titleVi: 'Tôi đã xem một bộ phim (Trợ từ động thái 了 & Phó từ 都)', tracks: [] },
   { id: 'hsk1-15', number: '15', titleCn: '大兴机场见！', titlePinyin: 'Dàxīng jīchǎng jiàn!', titleVi: 'Hẹn gặp ở sân bay Đại Hưng! (Câu phức liên kết 还/也)', tracks: [] },
 ];
+
+const HSK1_GRAMMAR_COUNT = Object.values(HSK1_GRAMMAR_DETAILS).reduce(
+  (total, lesson) => total + lesson.grammarPoints.length,
+  0
+);
+
+const HSK1_SKILL_LABELS: Record<Hsk1PracticeSkill, string> = {
+  listen: 'Nghe',
+  speak: 'Nói',
+  read: 'Đọc',
+  write: 'Viết',
+};
 
 const HSK2_LESSONS: Lesson[] = [
   {
@@ -934,6 +947,7 @@ export function AudioCourseView({
       : HSK4_GRAMMAR_DETAILS;
 
   const grammarDetail = grammarDataMap[selectedLesson.number];
+  const hsk1TextbookPlan = courseLevel === 'HSK1' ? HSK1_TEXTBOOK_PLAN[selectedLesson.number] : null;
 
   // Tính toán tiến độ tổng khóa học
   const allCurrentLevelGrammarIds = Object.values(grammarDataMap).flatMap((d) =>
@@ -1417,7 +1431,7 @@ export function AudioCourseView({
               <span>➔</span>
               <span><strong style={{ color: '#0284c7' }}>Bước 3:</strong> Học Từ mới & Ngữ pháp Tiểu Ngữ ➔ Bấm "Đã hiểu"</span>
               <span>➔</span>
-              <span><strong style={{ color: '#0284c7' }}>Bước 4:</strong> Nghe Audio 120 tracks & Ôn Flashcards</span>
+              <span><strong style={{ color: '#0284c7' }}>Bước 4:</strong> Luyện Nghe · Nói · Đọc · Viết và ôn lại</span>
             </div>
           </div>
 
@@ -1475,7 +1489,7 @@ export function AudioCourseView({
               }}
               onClick={() => handleSelectCourseLevel('HSK1')}
             >
-              📘 HSK 1 (15 Bài · 40 Ngữ Pháp)
+              📘 HSK 1 (15 Bài · {HSK1_GRAMMAR_COUNT} Ngữ Pháp)
             </button>
 
             <button
@@ -1978,6 +1992,23 @@ export function AudioCourseView({
                 )}
               </div>
             </div>
+
+            {hsk1TextbookPlan && (
+              <section className="hsk1-lesson-plan" aria-label="Mục tiêu và thực hành bốn kỹ năng">
+                <div className="hsk1-lesson-outcome">
+                  <span>MỤC TIÊU BÀI HỌC</span>
+                  <strong>{hsk1TextbookPlan.outcome}</strong>
+                </div>
+                <div className="hsk1-skill-grid">
+                  {(Object.entries(hsk1TextbookPlan.practice) as [Hsk1PracticeSkill, string][]).map(([skill, task]) => (
+                    <article key={skill} className={`hsk1-skill-card hsk1-skill-${skill}`}>
+                      <span>{HSK1_SKILL_LABELS[skill]}</span>
+                      <p>{task}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* THANH SUBTABS NỘI DUNG CHUẨN FLTRP & HÌNH ẢNH NGỮ CẢNH */}
             <div

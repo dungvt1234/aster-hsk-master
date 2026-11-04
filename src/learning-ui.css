@@ -216,3 +216,25 @@ body, button, input, select, textarea { font-family: var(--font-sans); }
   .auth-overlay { align-items: end; padding: 0; }
   .auth-card { width: 100%; max-height: 94dvh; padding: 24px 20px calc(22px + env(safe-area-inset-bottom)); border-radius: 24px 24px 0 0; }
 }
+
+/* HSK 1 textbook lesson plan */
+.hsk1-lesson-plan { margin-top: 18px; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: color-mix(in srgb, var(--study-soft) 56%, var(--surface)); }
+.hsk1-lesson-outcome { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: 12px; }
+.hsk1-lesson-outcome span { color: var(--study-vermilion); font-size: 10px; font-weight: 800; letter-spacing: .12em; }
+.hsk1-lesson-outcome strong { color: var(--text-heading); font-size: 14px; line-height: 1.5; }
+.hsk1-skill-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.hsk1-skill-card { min-width: 0; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.hsk1-skill-card span { display: inline-block; margin-bottom: 5px; color: var(--study-accent); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.hsk1-skill-card p { margin: 0; color: var(--text-muted); font-size: 12px; line-height: 1.55; }
+.hsk1-skill-speak span, .hsk1-skill-write span { color: var(--study-vermilion); }
+
+@media (max-width: 960px) {
+  .hsk1-skill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .hsk1-lesson-plan { margin-top: 14px; padding: 13px; }
+  .hsk1-lesson-outcome { grid-template-columns: 1fr; gap: 5px; }
+  .hsk1-skill-grid { grid-template-columns: 1fr; gap: 7px; }
+  .hsk1-skill-card { padding: 10px 11px; }
+}
