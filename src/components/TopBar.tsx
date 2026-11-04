@@ -126,17 +126,17 @@ export function TopBar({
         };
       case 'pinyin':
         return {
-          title: 'Hán Ngữ Ngữ Âm & Phát Âm Pinyin 🗣️',
+          title: 'Phát âm pinyin',
           subtitle: 'Bảng 23 thanh mẫu, 36 vận mẫu, 5 thanh điệu, quy tắc biến âm và phòng luyện nghe chuẩn Bắc Kinh',
         };
       case 'writing':
         return {
-          title: 'Studio Tập Viết Chữ Hán 🖌️',
+          title: 'Tập viết chữ Hán',
           subtitle: 'Bàn vẽ cảm ứng Mễ Tự Cách (米字格) rèn trí nhớ cơ bắp và bút thuận chuẩn',
         };
       case 'speaking':
         return {
-          title: 'Studio Luyện Nói & Khẩu Ngữ AI 🎙️',
+          title: 'Luyện nói',
           subtitle: 'Chấm điểm phát âm thời gian thực, rèn ngữ điệu Bắc Kinh và phản xạ khẩu ngữ HSK 1 - 4',
         };
       case 'course':
@@ -146,7 +146,7 @@ export function TopBar({
         };
       case 'flashcards':
         return {
-          title: `Flashcards 3D`,
+          title: `Ôn thẻ từ`,
           subtitle: 'Ghi nhớ từ vựng dài hạn với thuật toán ngắt quãng Spaced Repetition (SRS)',
         };
       case 'quiz':
@@ -199,7 +199,7 @@ export function TopBar({
 
         <div className="topbar-heading">
           <h1 className="topbar-title">{pageInfo.title}</h1>
-          <p className="topbar-subtitle">{pageInfo.subtitle}</p>
+
         </div>
       </div>
 
@@ -280,48 +280,11 @@ export function TopBar({
           <span>100% MIỄN PHÍ</span>
         </div>
 
-        {/* Live Study Presence Indicator (🟢 X Bạn Online) */}
-        <div
-          className="topbar-stat-pill live-presence-pill"
-          onClick={onOpenLiveStudy}
-          style={{
-            cursor: onOpenLiveStudy ? 'pointer' : 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '4px 10px',
-            borderRadius: '20px',
-            background: 'rgba(34, 197, 94, 0.12)',
-            border: '1.5px solid rgba(34, 197, 94, 0.4)',
-            color: '#16a34a',
-            transition: 'all 0.2s ease',
-          }}
-          title="Phòng học mô phỏng với dữ liệu minh họa"
-        >
-          <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: '#22c55e',
-              boxShadow: '0 0 8px #22c55e',
-              display: 'inline-block',
-            }}
-          />
-          <span className="stat-number" style={{ color: '#16a34a', fontWeight: 900 }}>
-            Phòng mẫu
-          </span>
-          <span className="desktop-only" style={{ fontSize: '11px', fontWeight: 700 }}>
-            Mô phỏng
-          </span>
-        </div>
-
         {/* Streak Flame & Shield */}
         <div
           className="topbar-stat-pill streak"
-          onClick={onOpenQuests}
-          style={{ cursor: onOpenQuests ? 'pointer' : 'default', display: 'flex', alignItems: 'center', gap: '5px' }}
-          title="Chuỗi ngày học liên tục. Nhấp để xem Nhiệm Vụ & Rương Bí Mật"
+          style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+          title="Chuỗi ngày học liên tục"
         >
           <Flame size={16} fill="#FF9600" color="#FF9600" />
           <span className="stat-number">{streak}</span>
@@ -389,60 +352,6 @@ export function TopBar({
           </span>
         </div>
 
-        {/* Gems & Store Trigger */}
-        <div
-          className="topbar-stat-pill gems"
-          onClick={onOpenStore}
-          style={{
-            cursor: onOpenStore ? 'pointer' : 'default',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            background: 'rgba(14, 165, 233, 0.1)',
-            border: '1px solid rgba(14, 165, 233, 0.25)',
-          }}
-          title="Kim Cương 💎 tích lũy. Nhấp để mở Cửa Hàng Vật Phẩm"
-        >
-          <Gem size={15} fill="#1CB0F6" color="#1CB0F6" />
-          <span className="stat-number">{gameState.gems}</span>
-          {gamificationService.isDoubleXpActive() && (
-            <span
-              style={{
-                fontSize: '9px',
-                background: '#f59e0b',
-                color: '#ffffff',
-                padding: '1px 4px',
-                borderRadius: '6px',
-                fontWeight: 900,
-              }}
-              title={`Đang kích hoạt Double XP (${gamificationService.getDoubleXpMinutesRemaining()}m)`}
-            >
-              2X
-            </span>
-          )}
-        </div>
-
-        {/* Hearts */}
-        <div
-          className="topbar-stat-pill hearts"
-          onClick={onOpenStore}
-          style={{ cursor: onOpenStore ? 'pointer' : 'default' }}
-          title={
-            gamificationService.isInfiniteHeartsActive()
-              ? `Bất tử tim đang bật (${gamificationService.getInfiniteHeartsMinutesRemaining()}m)`
-              : 'Trái tim học tập (10/10). Nhấp để nạp thêm'
-          }
-        >
-          <Heart
-            size={16}
-            fill={gamificationService.isInfiniteHeartsActive() ? '#fbbf24' : '#FF4B4B'}
-            color={gamificationService.isInfiniteHeartsActive() ? '#d97706' : '#FF4B4B'}
-          />
-          <span className="stat-number">
-            {gamificationService.isInfiniteHeartsActive() ? '∞' : '10/10'}
-          </span>
-        </div>
-
         {/* Sổ Tay Lỗi Sai (Mistakes Notebook) */}
         <div
           className="topbar-stat-pill mistakes"
@@ -499,30 +408,6 @@ export function TopBar({
           <span>{starredCount > 0 ? `${starredCount} Đã Lưu` : '0 Đã Lưu'}</span>
         </div>
 
-        {/* Giải Đấu Tuần (Weekly League 🏆) */}
-        <div
-          className="topbar-stat-pill league"
-          onClick={onOpenLeague}
-          style={{
-            cursor: onOpenLeague ? 'pointer' : 'default',
-            background: 'rgba(234, 179, 8, 0.12)',
-            border: '1.5px solid #eab308',
-            color: '#ca8a04',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '5px',
-            padding: '5px 11px',
-            borderRadius: '20px',
-            fontSize: '11.5px',
-            fontWeight: 800,
-            transition: 'all 0.2s ease',
-          }}
-          title={`Bảng xếp hạng tuần: ${leagueTier.name} (Bạn đang xếp hạng #${userRank})`}
-        >
-          <span>{leagueTier.badge}</span>
-          <span>#{userRank} {leagueTier.name}</span>
-        </div>
-
         {/* Chế độ Nghe Rảnh Tay (Hands-free Podcast 🎧) */}
         <button
           type="button"
@@ -566,11 +451,18 @@ export function TopBar({
           title={
             syncStatus.lastSyncedAt
               ? `Đồng bộ đám mây thành công lúc ${syncStatus.lastSyncedAt}`
-              : 'Tiến độ chỉ lưu trong trình duyệt này. Chưa có sao lưu đám mây.'
+              : user && !user.isGuest
+                ? syncStatus.message || 'Đang chuẩn bị đồng bộ tiến độ.'
+                : 'Tiến độ đang được lưu trên thiết bị này.'
           }
         >
-          <Cloud size={14} color={syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
-          <span>{syncStatus.state === 'syncing' ? 'Đang lưu...' : 'Lưu trên thiết bị'}</span>
+          <Cloud size={14} color={syncStatus.state === 'error' ? '#b84a38' : syncStatus.state === 'syncing' ? '#0284c7' : '#10b981'} />
+          <span>{
+            !user || user.isGuest ? 'Lưu trên thiết bị' :
+              syncStatus.state === 'syncing' ? 'Đang đồng bộ…' :
+                syncStatus.state === 'synced' ? 'Đã đồng bộ' :
+                  syncStatus.state === 'error' ? 'Chờ đồng bộ' : 'Ngoại tuyến'
+          }</span>
         </div>
 
         {/* Lo-Fi Ambient Study Beats Player Toggle */}
@@ -661,7 +553,8 @@ export function TopBar({
         {user ? (
           <button
             type="button"
-            onClick={onOpenProfile}
+            className="study-profile-control"
+            onClick={user.isGuest ? onOpenAuth : onOpenProfile}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -676,11 +569,12 @@ export function TopBar({
               fontWeight: 800,
               boxShadow: 'var(--card-shadow)',
             }}
-            title="Xem hồ sơ và xuất tiến độ"
+            title={user.isGuest ? 'Đăng nhập để đồng bộ tiến độ' : 'Xem tài khoản và trạng thái đồng bộ'}
+            aria-label={user.isGuest ? 'Đăng nhập hoặc tạo tài khoản' : `Mở tài khoản ${user.name}`}
           >
             <span style={{ fontSize: '16px' }}>{user.avatar || '🐼'}</span>
-            <span>
-              {user.isGuest ? 'Tiến độ' : user.name.split(' ').slice(-1)[0]}
+            <span className="study-profile-label">
+              {user.isGuest ? 'Đăng nhập' : user.name.split(' ').slice(-1)[0]}
             </span>
           </button>
         ) : null}

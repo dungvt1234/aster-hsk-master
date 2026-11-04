@@ -81,13 +81,6 @@ export function Sidebar({
       color: '#58CC02',
     },
     {
-      id: 'arena',
-      label: 'Đấu Trường Game',
-      icon: <Gamepad2 size={20} />,
-      color: '#f59e0b',
-      badge: 'Chơi & Học',
-    },
-    {
       id: 'pinyin',
       label: 'Phát Âm Pinyin',
       icon: <Volume2 size={20} />,
@@ -103,7 +96,7 @@ export function Sidebar({
     },
     {
       id: 'speaking',
-      label: 'Luyện Nói AI',
+      label: 'Luyện Nói',
       icon: <Mic size={20} />,
       color: '#10b981',
       badge: 'Speech 🎙️',
@@ -116,7 +109,7 @@ export function Sidebar({
     },
     {
       id: 'flashcards',
-      label: 'Flashcards 3D',
+      label: 'Ôn thẻ từ',
       icon: <Sparkles size={20} />,
       color: '#a855f7',
     },
@@ -179,7 +172,7 @@ export function Sidebar({
             </div>
             <div className="brand-info">
               <h2 className="brand-title">Aster HSK</h2>
-              <span className="brand-subtitle">DUOLINGO MODE</span>
+              <span className="brand-subtitle">HỌC TIẾNG TRUNG</span>
             </div>
           </div>
 
@@ -197,13 +190,17 @@ export function Sidebar({
         </div>
 
         {/* Main Nav Links */}
-        <nav className="sidebar-nav">
+        <nav className="sidebar-nav" aria-label="Menu học tập">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
+              <React.Fragment key={item.id}>
+              {item.id === 'duo_path' && <p className="study-nav-group">HỌC TẬP</p>}
+              {item.id === 'flashcards' && <p className="study-nav-group">LUYỆN TẬP</p>}
+              {item.id === 'books' && <p className="study-nav-group">TÀI LIỆU</p>}
               <button
-                key={item.id}
                 type="button"
+                aria-current={isActive ? 'page' : undefined}
                 className={`sidebar-nav-btn ${isActive ? 'active' : ''}`}
                 onClick={() => handleItemClick(item.id)}
                 style={{
@@ -221,6 +218,7 @@ export function Sidebar({
                 </div>
                 <span className="nav-label">{item.label}</span>
               </button>
+              </React.Fragment>
             );
           })}
         </nav>
@@ -229,59 +227,7 @@ export function Sidebar({
         <div className="sidebar-footer">
           {/* Quick Access: Quests 🎁 & Diamond Shop 💎 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
-            {onOpenQuests && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenQuests();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.08))',
-                  border: '1px solid rgba(245, 158, 11, 0.3)',
-                  color: '#d97706',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Nhiệm Vụ Ngày & Rương May Mắn"
-              >
-                <span>🎁</span> <span>Rương Báu</span>
-              </button>
-            )}
 
-            {onOpenStore && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenStore();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(2, 132, 199, 0.08))',
-                  border: '1px solid rgba(14, 165, 233, 0.3)',
-                  color: '#0284c7',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Cửa Hàng Kim Cương 💎"
-              >
-                <span>💎</span> <span>Cửa Hàng</span>
-              </button>
-            )}
 
             {onOpenMistakes && (
               <button
@@ -312,32 +258,6 @@ export function Sidebar({
               </button>
             )}
 
-            {onOpenLeague && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenLeague();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  background: 'rgba(234, 179, 8, 0.08)',
-                  border: '1px solid rgba(234, 179, 8, 0.25)',
-                  color: '#ca8a04',
-                  borderRadius: '10px',
-                  padding: '7px 6px',
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                }}
-                title="Mở Bảng Xếp Hạng Giải Đấu Tuần"
-              >
-                <span>🏆</span> <span>Giải Đấu</span>
-              </button>
-            )}
 
             {onOpenPodcast && (
               <button
@@ -449,43 +369,6 @@ export function Sidebar({
               </button>
             )}
 
-            {onOpenLiveStudy && (
-              <button
-                type="button"
-                onClick={() => {
-                  onOpenLiveStudy();
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                style={{
-                  gridColumn: '1 / -1',
-                  background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(16, 185, 129, 0.08))',
-                  border: '1.5px solid #22c55e',
-                  color: '#16a34a',
-                  borderRadius: '10px',
-                  padding: '7px 8px',
-                  fontSize: '11.5px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  cursor: 'pointer',
-                  marginTop: '2px',
-                }}
-                title="Mở phòng học mô phỏng"
-              >
-                <span
-                  style={{
-                    width: '7px',
-                    height: '7px',
-                    borderRadius: '50%',
-                    background: '#22c55e',
-                    boxShadow: '0 0 6px #22c55e',
-                  }}
-                />
-                <span>Phòng Học Mô Phỏng</span>
-              </button>
-            )}
 
             {onOpenFeedback && (
               <button
@@ -520,7 +403,9 @@ export function Sidebar({
           {user && (
             <div
               onClick={() => {
-                if (onOpenProfile) onOpenProfile();
+                if (user.isGuest) {
+                  if (onOpenAuth) onOpenAuth();
+                } else if (onOpenProfile) onOpenProfile();
                 if (onCloseMobile) onCloseMobile();
               }}
               style={{
@@ -535,7 +420,7 @@ export function Sidebar({
                 marginBottom: '10px',
                 transition: 'transform 0.15s ease',
               }}
-              title="Xem tiến độ và xuất bản sao dữ liệu"
+              title={user.isGuest ? 'Đăng nhập để đồng bộ tiến độ' : 'Xem tài khoản và xuất bản sao dữ liệu'}
             >
               <span style={{ fontSize: '24px' }}>{user.avatar || '🐼'}</span>
               <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
@@ -543,7 +428,7 @@ export function Sidebar({
                   {user.name}
                 </div>
                 <div style={{ fontSize: '11px', color: user.isGuest ? '#0284c7' : '#10b981', fontWeight: 700 }}>
-                  {user.isGuest ? 'Tiến độ trên thiết bị' : `${user.xp} XP · Trên thiết bị`}
+                  {user.isGuest ? 'Đăng nhập để lưu tiến độ' : `${user.xp} XP · Đã kết nối tài khoản`}
                 </div>
               </div>
             </div>

@@ -21,7 +21,7 @@ import { dailyGoalService } from './services/dailyGoalService';
 import { favoriteVocabService } from './services/favoriteVocabService';
 import { Analytics } from '@vercel/analytics/react';
 import { telemetryService } from './services/telemetryService';
-import { liveStudyPresenceService } from './services/liveStudyPresenceService';
+import { cloudSync } from './services/cloudSyncService';
 
 // Code-Splitting: Lazy loading heavy views and secondary studios
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -31,21 +31,16 @@ const DictionaryView = lazy(() => import('./components/DictionaryView').then(m =
 const AudioCourseView = lazy(() => import('./components/AudioCourseView').then(m => ({ default: m.AudioCourseView })));
 const DriveBooksView = lazy(() => import('./components/DriveBooksView').then(m => ({ default: m.DriveBooksView })));
 const HanziWritingStudio = lazy(() => import('./components/HanziWritingStudio').then(m => ({ default: m.HanziWritingStudio })));
-const HanziArenaGame = lazy(() => import('./components/HanziArenaGame').then(m => ({ default: m.HanziArenaGame })));
 const PinyinMasterStudio = lazy(() => import('./components/PinyinMasterStudio').then(m => ({ default: m.PinyinMasterStudio })));
 const AISpeakingStudio = lazy(() => import('./components/AISpeakingStudio').then(m => ({ default: m.AISpeakingStudio })));
 const AITutorChatbot = lazy(() => import('./components/AITutorChatbot').then(m => ({ default: m.AITutorChatbot })));
 
 // Modals
-const LiveStudyRoomModal = lazy(() => import('./components/LiveStudyRoomModal').then(m => ({ default: m.LiveStudyRoomModal })));
 const CommandPaletteModal = lazy(() => import('./components/CommandPaletteModal').then(m => ({ default: m.CommandPaletteModal })));
 const MemorySprintModal = lazy(() => import('./components/MemorySprintModal').then(m => ({ default: m.MemorySprintModal })));
 const AuthModal = lazy(() => import('./components/AuthModal').then(m => ({ default: m.AuthModal })));
 const UserProfileModal = lazy(() => import('./components/UserProfileModal').then(m => ({ default: m.UserProfileModal })));
-const DiamondStoreModal = lazy(() => import('./components/DiamondStoreModal').then(m => ({ default: m.DiamondStoreModal })));
-const DailyQuestsModal = lazy(() => import('./components/DailyQuestsModal').then(m => ({ default: m.DailyQuestsModal })));
 const MistakesReviewModal = lazy(() => import('./components/MistakesReviewModal').then(m => ({ default: m.MistakesReviewModal })));
-const WeeklyLeagueModal = lazy(() => import('./components/WeeklyLeagueModal').then(m => ({ default: m.WeeklyLeagueModal })));
 const HandsfreePodcastModal = lazy(() => import('./components/HandsfreePodcastModal').then(m => ({ default: m.HandsfreePodcastModal })));
 const AchievementsModal = lazy(() => import('./components/AchievementsModal').then(m => ({ default: m.AchievementsModal })));
 const DailyGoalModal = lazy(() => import('./components/DailyGoalModal').then(m => ({ default: m.DailyGoalModal })));
@@ -65,15 +60,11 @@ export function App() {
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => authService.getCurrentUser());
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isStoreOpen, setIsStoreOpen] = useState(false);
-  const [isQuestsOpen, setIsQuestsOpen] = useState(false);
   const [isMistakesOpen, setIsMistakesOpen] = useState(false);
-  const [isLeagueOpen, setIsLeagueOpen] = useState(false);
   const [isPodcastOpen, setIsPodcastOpen] = useState(false);
   const [isAchievementsOpen, setIsAchievementsOpen] = useState(false);
   const [isDailyGoalOpen, setIsDailyGoalOpen] = useState(false);
   const [isFavoritesOpen, setIsFavoritesOpen] = useState(false);
-  const [isLiveStudyOpen, setIsLiveStudyOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [customReviewCards, setCustomReviewCards] = useState<VocabItem[] | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -85,7 +76,7 @@ export function App() {
       leagueService.addXp(amount);
       dailyGoalService.addXp(amount);
       telemetryService.trackEvent('earn_xp', { amount, level: currentLevel });
-      liveStudyPresenceService.recordMyActivity(`vừa tích lũy +${amount} XP!`, currentLevel, currentUser.name || 'Bạn');
+      cloudSync.triggerSync();
     } catch {
       setSaveError('Chưa cập nhật được điểm thưởng. Tiến độ bài học đã lưu vẫn được giữ.');
     }
@@ -134,7 +125,18 @@ export function App() {
       setProgress(loadedProg);
       setStats(loadedStat);
     });
+    void authService.initialize();
     return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const reloadCloudState = () => {
+      const user = authService.getCurrentUser();
+      setProgress(loadAllProgress(user.id));
+      setStats(loadUserStats(LEVEL_COUNTS, user.id));
+    };
+    window.addEventListener('aster:cloud-restored', reloadCloudState);
+    return () => window.removeEventListener('aster:cloud-restored', reloadCloudState);
   }, []);
 
   const canProtectMissedDay = () => daysSince(loadUserStats(LEVEL_COUNTS, currentUser.id).lastStudyDate) === 2 && gamificationService.getState().streakFreezes > 0;
@@ -145,6 +147,7 @@ export function App() {
       const next = recordReview(vocabId, quality, HSK_VOCABULARY, currentUser.id, protect);
       setProgress(next.progress);
       setStats(next.stats);
+      cloudSync.triggerSync();
       setSaveError(null);
       if (protect) gamificationService.consumeStreakFreeze();
       if (quality >= 2) {
@@ -163,6 +166,7 @@ export function App() {
       const protect = canProtectMissedDay();
       const next = recordCompletedNodes(ids, HSK_VOCABULARY, currentUser.id, protect);
       setStats(next.stats);
+      cloudSync.triggerSync();
       setSaveError(null);
       if (protect) gamificationService.consumeStreakFreeze();
       return next.completed;
@@ -193,15 +197,14 @@ export function App() {
         onOpenProfile={() => setIsProfileOpen(true)}
         onOpenAuth={() => setIsAuthOpen(true)}
         onOpenAI={() => setAiPrompt('Gợi ý cho tôi kế hoạch học tiếng Trung hôm nay')}
-        onOpenStore={() => setIsStoreOpen(true)}
-        onOpenQuests={() => setIsQuestsOpen(true)}
+
         onOpenMistakes={() => setIsMistakesOpen(true)}
-        onOpenLeague={() => setIsLeagueOpen(true)}
+
         onOpenPodcast={() => setIsPodcastOpen(true)}
         onOpenAchievements={() => setIsAchievementsOpen(true)}
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
-        onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+
         onOpenFeedback={() => setIsFeedbackOpen(true)}
         isOpenMobile={mobileDrawerOpen}
         onCloseMobile={() => setMobileDrawerOpen(false)}
@@ -216,14 +219,13 @@ export function App() {
           streak={stats.streak}
           onOpenAI={() => setAiPrompt('Hướng dẫn tôi lộ trình học tiếng Trung hôm nay')}
           onOpenSprint={() => setIsSprintOpen(true)}
-          onOpenStore={() => setIsStoreOpen(true)}
-          onOpenQuests={() => setIsQuestsOpen(true)}
+
           onOpenMistakes={() => setIsMistakesOpen(true)}
-          onOpenLeague={() => setIsLeagueOpen(true)}
+
           onOpenPodcast={() => setIsPodcastOpen(true)}
           onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
           onOpenFavorites={() => setIsFavoritesOpen(true)}
-          onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+
           onOpenFeedback={() => setIsFeedbackOpen(true)}
           onToggleMobileMenu={() => setMobileDrawerOpen((prev) => !prev)}
           user={currentUser}
@@ -246,21 +248,12 @@ export function App() {
                 onAddXp={handleEarnXp}
                 onOpenChatAI={(prompt) => setAiPrompt(prompt)}
                 onOpenSprint={() => setIsSprintOpen(true)}
-                onOpenStore={() => setIsStoreOpen(true)}
-                onOpenQuests={() => setIsQuestsOpen(true)}
+
                 onOpenMistakes={() => setIsMistakesOpen(true)}
                 onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
               />
             )}
 
-            {activeTab === 'arena' && (
-              <HanziArenaGame
-                currentLevel={currentLevel}
-                onSelectLevel={setCurrentLevel}
-                onAddXp={handleEarnXp}
-                onNavigateTab={(tab) => setActiveTab(tab as ActiveTab)}
-              />
-            )}
 
             {activeTab === 'pinyin' && (
               <PinyinMasterStudio
@@ -414,13 +407,13 @@ export function App() {
         }}
         onOpenMenu={() => setMobileDrawerOpen(true)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
-        onOpenLeague={() => setIsLeagueOpen(true)}
+
         onOpenPodcast={() => setIsPodcastOpen(true)}
         onOpenMistakes={() => setIsMistakesOpen(true)}
         onOpenAchievements={() => setIsAchievementsOpen(true)}
         onOpenDailyGoal={() => setIsDailyGoalOpen(true)}
         onOpenFavorites={() => setIsFavoritesOpen(true)}
-        onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+
         onOpenFeedback={() => setIsFeedbackOpen(true)}
       />
 
@@ -438,10 +431,9 @@ export function App() {
           }}
           theme={theme}
           onToggleTheme={toggleTheme}
-          onOpenStore={() => setIsStoreOpen(true)}
-          onOpenQuests={() => setIsQuestsOpen(true)}
+
           onOpenSprint={() => setIsSprintOpen(true)}
-          onOpenLiveStudy={() => setIsLiveStudyOpen(true)}
+
           onOpenFeedback={() => setIsFeedbackOpen(true)}
         />
 
@@ -491,31 +483,6 @@ export function App() {
           }}
         />
 
-        {/* Cửa Hàng Kim Cương 💎 */}
-        <DiamondStoreModal
-          isOpen={isStoreOpen}
-          onClose={() => setIsStoreOpen(false)}
-          onAddXp={(earned) => {
-            authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
-            setCurrentUser(authService.getCurrentUser());
-          }}
-        />
-
-        {/* Nhiệm Vụ Hàng Ngày & Rương May Mắn 🎁 */}
-        <DailyQuestsModal
-          isOpen={isQuestsOpen}
-          onClose={() => setIsQuestsOpen(false)}
-          streak={stats.streak}
-          onAddXp={(earned) => {
-            authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
-            setCurrentUser(authService.getCurrentUser());
-          }}
-          onOpenStore={() => {
-            setIsQuestsOpen(false);
-            setIsStoreOpen(true);
-          }}
-        />
-
         {/* Sổ Tay Lỗi Sai (Mistakes Review Notebook) 📝 */}
         <MistakesReviewModal
           isOpen={isMistakesOpen}
@@ -525,18 +492,6 @@ export function App() {
             authService.updateProfile({ xp: (currentUser.xp || 0) + earned });
             setCurrentUser(authService.getCurrentUser());
             leagueService.addXp(earned);
-          }}
-        />
-
-        {/* Bảng Xếp Hạng Giải Đấu Tuần (Weekly Leagues) 🏆 */}
-        <WeeklyLeagueModal
-          isOpen={isLeagueOpen}
-          onClose={() => setIsLeagueOpen(false)}
-          user={currentUser}
-          streak={stats.streak}
-          onNavigateToLesson={() => {
-            setActiveTab('duo_path');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         />
 
@@ -575,14 +530,6 @@ export function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }}
         />
-
-        {/* Phòng Học Trực Tuyến & Cài đặt theo dõi Admin (Live Study Room) 🟢 */}
-        {isLiveStudyOpen && (
-          <LiveStudyRoomModal
-            isOpen={isLiveStudyOpen}
-            onClose={() => setIsLiveStudyOpen(false)}
-          />
-        )}
 
         {/* Hòm Thư Góp Ý & Báo Lỗi Bài Học 📬 */}
         <FeedbackModal

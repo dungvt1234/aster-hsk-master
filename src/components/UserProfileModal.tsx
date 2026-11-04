@@ -129,7 +129,7 @@ export function UserProfileModal({
             <span>{user.email}</span>
             {!user.isGuest ? (
               <span style={{ fontSize: '10px', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
-                HỒ SƠ TRÊN THIẾT BỊ
+                ĐỒNG BỘ CLOUD
               </span>
             ) : (
               <span style={{ fontSize: '10px', background: 'rgba(245, 158, 11, 0.15)', color: '#d97706', padding: '2px 6px', borderRadius: '4px', fontWeight: 800 }}>
@@ -305,17 +305,22 @@ export function UserProfileModal({
                 boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
               }}
             >
-              <UserCheck size={16} /> Tìm hiểu về lưu tiến độ
+              <UserCheck size={16} /> Đăng nhập để đồng bộ
             </button>
           </div>
         )}
 
         {/* Action Buttons: Logout or Switch Account */}
         <div style={{ display: 'flex', gap: '10px' }}>
-          <button type="button" onClick={() => { onClose(); onOpenAuth(); }} style={{ flex: 1, padding: 10, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface-card)', color: '#0284c7', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-            <Sparkles size={14} /> Thông tin lưu tiến độ
-          </button>
-
+          {user.isGuest ? (
+            <button type="button" onClick={() => { onClose(); onOpenAuth(); }} style={{ flex: 1, padding: 10, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface-card)', color: '#0284c7', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+              <Sparkles size={14} /> Đăng nhập hoặc tạo tài khoản
+            </button>
+          ) : (
+            <button type="button" onClick={onLogout} style={{ flex: 1, padding: 10, borderRadius: 10, border: '1px solid var(--border)', background: 'var(--surface-card)', color: 'var(--text)', fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+              Đăng xuất
+            </button>
+          )}
         </div>
       </div>
     </div>

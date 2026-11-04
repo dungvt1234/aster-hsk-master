@@ -68,10 +68,10 @@ export function MobileBottomNav({
       color: '#a855f7',
     },
     {
-      id: 'arena' as ActiveTab,
-      label: 'Đấu trường',
-      icon: <Gamepad2 size={20} />,
-      color: '#f59e0b',
+      id: 'course' as ActiveTab,
+      label: 'Giáo trình',
+      icon: <BookOpen size={20} />,
+      color: '#0284c7',
     },
   ];
 
@@ -148,9 +148,10 @@ export function MobileBottomNav({
           <div className="mobile-action-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="sheet-drag-handle" />
             <div className="sheet-header">
-              <span className="sheet-title">Chức năng & Tiện ích Aster HSK</span>
+              <span className="sheet-title">Tài liệu & công cụ học</span>
               <button
                 type="button"
+                aria-label="Đóng công cụ học"
                 className="sheet-close-btn"
                 onClick={() => setIsSheetOpen(false)}
               >
@@ -175,32 +176,6 @@ export function MobileBottomNav({
 
             {/* Quick Action Badges (Live, League, Podcast, Mistakes, Achievements, Daily Goal, Favorites) */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(76px, 1fr))', gap: '6px', marginBottom: '14px' }}>
-              {onOpenLiveStudy && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSheetOpen(false);
-                    onOpenLiveStudy();
-                  }}
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.14)',
-                    border: '1.5px solid #10b981',
-                    color: '#059669',
-                    borderRadius: '12px',
-                    padding: '8px 4px',
-                    fontSize: '11px',
-                    fontWeight: 800,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span style={{ fontSize: '16px' }}>🟢</span>
-                  <span>Phòng Live</span>
-                </button>
-              )}
               {onOpenFeedback && (
                 <button
                   type="button"
@@ -225,32 +200,6 @@ export function MobileBottomNav({
                 >
                   <span style={{ fontSize: '16px' }}>📬</span>
                   <span>Góp Ý</span>
-                </button>
-              )}
-              {onOpenLeague && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSheetOpen(false);
-                    onOpenLeague();
-                  }}
-                  style={{
-                    background: 'rgba(234, 179, 8, 0.12)',
-                    border: '1.5px solid #eab308',
-                    color: '#ca8a04',
-                    borderRadius: '12px',
-                    padding: '8px 4px',
-                    fontSize: '11px',
-                    fontWeight: 800,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <span style={{ fontSize: '16px' }}>🏆</span>
-                  <span>Giải Đấu</span>
                 </button>
               )}
 
@@ -416,13 +365,14 @@ export function MobileBottomNav({
       )}
 
       {/* Main Bottom Bar */}
-      <nav className="mobile-bottom-nav">
+      <nav className="mobile-bottom-nav" aria-label="Điều hướng chính">
         {mainTabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              aria-current={isActive ? 'page' : undefined}
               className={`mobile-nav-btn ${isActive ? 'active' : ''}`}
               onClick={() => handleSelectTab(tab.id)}
               style={{
@@ -448,6 +398,8 @@ export function MobileBottomNav({
         <button
           type="button"
           className={`mobile-nav-btn ${isMoreActive ? 'active' : ''}`}
+          aria-expanded={isSheetOpen}
+          aria-label="Mở thêm công cụ học"
           onClick={() => setIsSheetOpen((prev) => !prev)}
           style={{ color: isMoreActive ? 'var(--primary)' : 'var(--text-dim)' }}
         >

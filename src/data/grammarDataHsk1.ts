@@ -278,6 +278,18 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '你什么时候去中国？', pinyin: 'Nǐ shénme shíhou qù Zhōngguó?', vi: 'Khi nào bạn đi Trung Quốc?' },
         ],
       },
+      {
+        id: 'g-hsk1-05-4',
+        title: '4. Câu vị ngữ danh từ để nói ngày, tuổi và giờ',
+        formula: 'Chủ ngữ + [Số lượng / Ngày tháng / Tuổi / Giá tiền]',
+        explanation:
+          'Khi vị ngữ là ngày tháng, tuổi, giờ hoặc số lượng, tiếng Hán thường không cần dùng 是. Phần danh từ hoặc số lượng đứng trực tiếp sau chủ ngữ.',
+        examples: [
+          { cn: '今天星期六。', pinyin: 'Jīntiān xīngqīliù.', vi: 'Hôm nay là thứ Bảy.' },
+          { cn: '我女儿五岁。', pinyin: 'Wǒ nǚ\'ér wǔ suì.', vi: 'Con gái tôi năm tuổi.' },
+        ],
+        pitfall: 'Không thêm 是 theo thói quen tiếng Việt trong các câu đơn giản như 今天星期六 hoặc 我二十岁.',
+      },
     ],
     keyVocab: [
       { hanzi: '今天', pinyin: 'jīntiān', hanViet: 'Kim thiên', meaning: 'Hôm nay' },
@@ -335,6 +347,16 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '你有几个中国朋友？', pinyin: 'Nǐ yǒu jǐ gè Zhōngguó péngyou?', vi: 'Bạn có mấy người bạn Trung Quốc?' },
         ],
       },
+      {
+        id: 'g-hsk1-06-4',
+        title: '4. Đại từ nghi vấn “怎么” hỏi cách làm',
+        formula: 'Chủ ngữ + 怎么 + Động từ (+ Tân ngữ)?',
+        explanation: 'Dùng 怎么 để hỏi một hành động được thực hiện bằng cách nào hoặc đi bằng phương tiện gì.',
+        examples: [
+          { cn: '这个字怎么读？', pinyin: 'Zhège zì zěnme dú?', vi: 'Chữ này đọc thế nào?' },
+          { cn: '你怎么去学校？— 我坐地铁去。', pinyin: 'Nǐ zěnme qù xuéxiào? — Wǒ zuò dìtiě qù.', vi: 'Bạn đi đến trường bằng cách nào? — Tôi đi tàu điện ngầm.' },
+        ],
+      },
     ],
     keyVocab: [
       { hanzi: '想', pinyin: 'xiǎng', hanViet: 'Tưởng', meaning: 'Muốn, nghĩ, nhớ' },
@@ -390,6 +412,16 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
         examples: [
           { cn: '现在七点半。', pinyin: 'Xiànzài qī diǎn bàn.', vi: 'Bây giờ là bảy rưỡi.' },
           { cn: '八点一刻见。', pinyin: 'Bā diǎn yí kè jiàn.', vi: 'Tám giờ mười lăm gặp nhau nhé.' },
+        ],
+      },
+      {
+        id: 'g-hsk1-07-4',
+        title: '4. Trợ từ ngữ khí “呢” để hỏi lại cùng một chủ đề',
+        formula: 'Danh từ / Đại từ + 呢?',
+        explanation: 'Sau khi một thông tin đã được nêu, dùng 呢 để hỏi ngắn gọn “còn… thì sao?” mà không lặp lại toàn bộ câu hỏi.',
+        examples: [
+          { cn: '我六点半下班，你呢？', pinyin: 'Wǒ liù diǎn bàn xiàbān, nǐ ne?', vi: 'Tôi tan làm lúc sáu rưỡi, còn bạn thì sao?' },
+          { cn: '上午我上班，下午呢？', pinyin: 'Shàngwǔ wǒ shàngbān, xiàwǔ ne?', vi: 'Buổi sáng tôi đi làm, còn buổi chiều thì sao?' },
         ],
       },
     ],
@@ -450,6 +482,17 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '我们也都想去中国。', pinyin: 'Wǒmen yě dōu xiǎng qù Zhōngguó.', vi: 'Chúng tôi cũng đều muốn đi Trung Quốc.' },
         ],
       },
+      {
+        id: 'g-hsk1-08-4',
+        title: '4. Động từ năng nguyện “能” nói khả năng và điều kiện',
+        formula: 'Chủ ngữ + 能 / 不能 + Động từ',
+        explanation: 'Dùng 能 khi khả năng phụ thuộc vào sức khỏe, điều kiện hoặc hoàn cảnh; khác với 会 là kỹ năng có được qua học tập.',
+        examples: [
+          { cn: '医生今天能来吗？', pinyin: 'Yīshēng jīntiān néng lái ma?', vi: 'Hôm nay bác sĩ có thể đến không?' },
+          { cn: '我今天很忙，不能去医院。', pinyin: 'Wǒ jīntiān hěn máng, bù néng qù yīyuàn.', vi: 'Hôm nay tôi rất bận, không thể đến bệnh viện.' },
+        ],
+        pitfall: '会 nhấn mạnh “biết làm”; 能 nhấn mạnh “có thể làm trong điều kiện hiện tại”.',
+      },
     ],
     keyVocab: [
       { hanzi: '在', pinyin: 'zài', hanViet: 'Tại', meaning: 'Ở, tại' },
@@ -506,6 +549,17 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '你来我家吧。', pinyin: 'Nǐ lái wǒ jiā ba.', vi: 'Bạn đến nhà tôi chơi nhé (người nói đang ở nhà).' },
           { cn: '明天我们去北京大学。', pinyin: 'Míngtiān wǒmen qù Běijīng Dàxué.', vi: 'Ngày mai chúng mình đi Đại học Bắc Kinh.' },
         ],
+      },
+      {
+        id: 'g-hsk1-09-4',
+        title: '4. Câu tồn hiện với “有”',
+        formula: 'Địa điểm + 有 + Số lượng + Danh từ',
+        explanation: 'Dùng để giới thiệu một người hoặc vật đang tồn tại ở một nơi. Địa điểm đứng đầu câu, còn sự vật mới xuất hiện đứng sau 有.',
+        examples: [
+          { cn: '学校里有一个图书馆。', pinyin: 'Xuéxiào lǐ yǒu yí gè túshūguǎn.', vi: 'Trong trường có một thư viện.' },
+          { cn: '教室里有二十个学生。', pinyin: 'Jiàoshì lǐ yǒu èrshí gè xuésheng.', vi: 'Trong lớp có hai mươi học sinh.' },
+        ],
+        pitfall: 'Câu tồn hiện trả lời “ở nơi đó có gì”, nên không đổi thành trật tự Chủ ngữ + 有 + Địa điểm.',
       },
     ],
     keyVocab: [
@@ -623,6 +677,16 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '你在哪儿呢？', pinyin: 'Nǐ zài nǎr ne?', vi: 'Bạn đang ở đâu đấy?' },
         ],
       },
+      {
+        id: 'g-hsk1-11-4',
+        title: '4. Động từ năng nguyện “要” nói ý định hoặc nhu cầu',
+        formula: 'Chủ ngữ + 要 / 不要 + Động từ (+ Tân ngữ)',
+        explanation: 'Dùng 要 để nói dự định, nhu cầu hoặc việc cần làm. Dùng 不想 khi muốn nói “không muốn”, còn 不要 thường mang nghĩa “đừng”.',
+        examples: [
+          { cn: '我要学习中文。', pinyin: 'Wǒ yào xuéxí Zhōngwén.', vi: 'Tôi muốn/cần học tiếng Trung.' },
+          { cn: '明天我要去大学。', pinyin: 'Míngtiān wǒ yào qù dàxué.', vi: 'Ngày mai tôi sẽ đi đến trường đại học.' },
+        ],
+      },
     ],
     keyVocab: [
       { hanzi: '读', pinyin: 'dú', hanViet: 'Độc', meaning: 'Đọc, học' },
@@ -678,6 +742,16 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
         examples: [
           { cn: '明天会下雨吗？', pinyin: 'Míngtiān huì xiàyǔ ma?', vi: 'Ngày mai trời có mưa không?' },
           { cn: '北京的冬天很冷。', pinyin: 'Běijīng de dōngtiān hěn lěng.', vi: 'Mùa đông Bắc Kinh rất lạnh.' },
+        ],
+      },
+      {
+        id: 'g-hsk1-12-4',
+        title: '4. Câu phi chủ vị dùng cho thời tiết và hiện tượng tự nhiên',
+        formula: 'Động từ / Tính từ chỉ hiện tượng (+ 了)',
+        explanation: 'Một số câu thông báo thời tiết hoặc hiện tượng tự nhiên không cần chủ ngữ rõ ràng; vị ngữ có thể tự tạo thành câu hoàn chỉnh.',
+        examples: [
+          { cn: '下雪了！', pinyin: 'Xiàxuě le!', vi: 'Tuyết rơi rồi!' },
+          { cn: '天冷了。', pinyin: 'Tiān lěng le.', vi: 'Trời trở lạnh rồi.' },
         ],
       },
     ],
@@ -795,6 +869,17 @@ export const HSK1_GRAMMAR_DETAILS: Record<string, LessonDetail> = {
           { cn: '你吃饭了没有？— 我吃了。', pinyin: 'Nǐ chīfàn le méiyǒu? — Wǒ chī le.', vi: 'Bạn đã ăn cơm chưa? — Tôi ăn rồi.' },
           { cn: '你买书了没有？— 还没买。', pinyin: 'Nǐ mǎi shū le méiyǒu? — Hái méi mǎi.', vi: 'Bạn đã mua sách chưa? — Vẫn chưa mua.' },
         ],
+      },
+      {
+        id: 'g-hsk1-14-4',
+        title: '4. Động từ ly hợp và vị trí của “了”',
+        formula: 'Động tố + 了 + [Số lượng] + Tân tố',
+        explanation: 'Một số động từ như 吃饭, 睡觉, 见面 có thể tách ra để chèn 了 hoặc số lượng vào giữa hai phần.',
+        examples: [
+          { cn: '我吃了饭。', pinyin: 'Wǒ chī le fàn.', vi: 'Tôi đã ăn cơm.' },
+          { cn: '昨天我们见了面。', pinyin: 'Zuótiān wǒmen jiàn le miàn.', vi: 'Hôm qua chúng tôi đã gặp nhau.' },
+        ],
+        pitfall: 'Không đặt 了 tùy ý sau toàn bộ động từ ly hợp khi cần nêu số lượng hoặc thành phần chen giữa.',
       },
     ],
     keyVocab: [

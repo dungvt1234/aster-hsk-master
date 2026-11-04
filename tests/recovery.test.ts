@@ -6,6 +6,7 @@ import { daysSince, localDayKey, nextStudyStats, recordReview, recordCompletedNo
 import { loadUserStats, loadAllProgress, calculateSM2 } from '../src/services/srs';
 import { HSK_VOCABULARY, LEVEL_COUNTS } from '../src/data/hskData';
 import { HSK1_ROADMAP_UNITS } from '../src/data/roadmapHsk1';
+import { buildCloudLearningState, mergeCloudLearningStates, restoreCloudLearningState } from '../src/services/cloudProgress';
 
 class StorageMock {
   data = new Map<string, string>();
@@ -38,6 +39,27 @@ test('backup round trip preserves records on a new device and keeps unrelated da
   assert.equal(destination.getItem('aster_hsk_progress_v1'), source.getItem('aster_hsk_progress_v1'));
   assert.equal(destination.getItem('other-app'), 'untouched');
   assert.equal(destination.getItem('aster_gemini_api_key'), null);
+});
+
+test('cloud merge keeps completed lessons from both devices and the newest SRS review', () => {
+  const phone = new StorageMock();
+  const laptop = new StorageMock();
+  const oldCard = { ...calculateSM2(undefined, 'x', 2), lastReviewedAt: '2026-10-01T00:00:00.000Z' };
+  const newCard = { ...calculateSM2(oldCard, 'x', 3), lastReviewedAt: '2026-11-01T00:00:00.000Z' };
+  phone.setItem('aster_completed_nodes', '["phone-lesson"]');
+  phone.setItem('aster_hsk_progress_v1', JSON.stringify({ x: newCard }));
+  phone.setItem('aster_hsk_active_user_v1', JSON.stringify({ id: 'guest_user_default' }));
+  laptop.setItem('aster_completed_nodes', '["laptop-lesson"]');
+  laptop.setItem('aster_hsk_progress_v1', JSON.stringify({ x: oldCard }));
+
+  const merged = mergeCloudLearningStates(buildCloudLearningState(phone), buildCloudLearningState(laptop));
+  assert.equal(merged.data.aster_hsk_active_user_v1, undefined);
+  assert.deepEqual(JSON.parse(merged.data.aster_completed_nodes).sort(), ['laptop-lesson', 'phone-lesson']);
+  assert.equal(JSON.parse(merged.data.aster_hsk_progress_v1).x.lastReviewedAt, newCard.lastReviewedAt);
+
+  const freshDevice = new StorageMock();
+  assert.equal(restoreCloudLearningState(freshDevice, merged), 2);
+  assert.deepEqual(JSON.parse(freshDevice.getItem('aster_completed_nodes')!).sort(), ['laptop-lesson', 'phone-lesson']);
 });
 
 test('invalid, oversized, unsupported, credential and malformed progress files make no writes', () => {

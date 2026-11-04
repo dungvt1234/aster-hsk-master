@@ -34,6 +34,7 @@ jobs:
         run: |
           node tests/browser/greetingsPilot.smoke.mjs
           node tests/browser/pathFocus.smoke.mjs
+          node tests/browser/learningNavigation.smoke.mjs
           node tests/browser/pilotBuildBoundary.smoke.mjs
       - name: Keep pilot browser screenshots
         if: always()
